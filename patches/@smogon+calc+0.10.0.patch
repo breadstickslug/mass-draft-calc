@@ -1,0 +1,69 @@
+diff --git a/node_modules/@smogon/calc/dist/data/species.js b/node_modules/@smogon/calc/dist/data/species.js
+index ae891ad..7a48589 100644
+--- a/node_modules/@smogon/calc/dist/data/species.js
++++ b/node_modules/@smogon/calc/dist/data/species.js
+@@ -5147,6 +5147,13 @@ var XY_PATCH = {
+     Vileplume: { bs: { sa: 110 } },
+     Whimsicott: { types: ['Grass', 'Fairy'] },
+     Wigglytuff: { types: ['Normal', 'Fairy'], bs: { sa: 85 } },
++    'Aegislash': {
++        types: ['Steel', 'Ghost'],
++        bs: { hp: 60, at: 50, df: 150, sa: 50, sd: 150, sp: 60 },
++        weightkg: 53,
++        abilities: { 0: 'Stance Change' },
++        baseSpecies: 'Aegislash-Blade'
++    },
+     'Aegislash-Blade': {
+         types: ['Steel', 'Ghost'],
+         bs: { hp: 60, at: 150, df: 50, sa: 150, sd: 50, sp: 60 },
+@@ -6189,6 +6196,13 @@ var XY_PATCH = {
+         abilities: { 0: 'Fairy Aura' },
+         gender: 'N'
+     },
++    'Xerneas-Neutral': {
++        types: ['Fairy'],
++        bs: { hp: 126, at: 131, df: 95, sa: 131, sd: 98, sp: 99 },
++        weightkg: 215,
++        abilities: { 0: 'Fairy Aura' },
++        gender: 'N'
++    },
+     Yveltal: {
+         types: ['Dark', 'Flying'],
+         bs: { hp: 126, at: 131, df: 95, sa: 131, sd: 98, sp: 99 },
+@@ -9136,6 +9150,12 @@ var SV_PATCH = {
+         gender: 'N',
+         abilities: { 0: 'Sword of Ruin' }
+     },
++    Chuggalong: {
++        types: ['Dragon', 'Poison'],
++        bs: {hp: 45, at: 43, df: 117, sa: 120, sd: 110, sp: 108},
++        weightkg: 201.6,
++        abilities: { 0: 'Armor Tail' },
++      },
+     Clodsire: {
+         types: ['Poison', 'Ground'],
+         bs: { hp: 130, at: 75, df: 60, sa: 45, sd: 100, sp: 20 },
+@@ -9766,6 +9786,12 @@ var SV_PATCH = {
+         gender: 'N',
+         abilities: { 0: 'Protosynthesis' }
+     },
++    Shox: {
++        types: ['Electric', 'Normal'],
++        bs: {hp: 136, at: 73, df: 81, sa: 90, sd: 98, sp: 56},
++        weightkg: 99.9,
++        abilities: {0: 'Electromorphosis'},
++      },
+     Shroodle: {
+         types: ['Poison', 'Normal'],
+         bs: { hp: 40, at: 65, df: 35, sa: 40, sd: 35, sp: 75 },
+diff --git a/node_modules/@smogon/calc/tsconfig.json b/node_modules/@smogon/calc/tsconfig.json
+index 6fdc7c9..26426b5 100644
+--- a/node_modules/@smogon/calc/tsconfig.json
++++ b/node_modules/@smogon/calc/tsconfig.json
+@@ -1,5 +1,5 @@
+ {
+-  "extends": "../tsconfig.json",
++  //"extends": "../tsconfig.json",
+   "compilerOptions": {
+     "rootDir": "./src",
+     "outDir": "dist",

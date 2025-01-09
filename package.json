@@ -1,0 +1,46 @@
+{
+  "name": "draft-helper",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@pkmn/data": "^0.9.26",
+    "@pkmn/dex": "^0.9.26",
+    "@pkmn/img": "^0.2.34",
+    "@pkmn/sets": "^5.1.2",
+    "@smogon/calc": "^0.10.0",
+    "cra-template": "1.2.0",
+    "lodash.debounce": "^4.0.8",
+    "patch-package": "^8.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-scripts": "5.0.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "postinstall-postinstall": "^2.1.0",
+    "web-vitals": "^4.2.4"
+  }
+}
