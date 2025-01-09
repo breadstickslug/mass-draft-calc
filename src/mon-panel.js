@@ -4,7 +4,6 @@ import * as dex from '@pkmn/dex';
 import * as img from '@pkmn/img';
 //import {Generations as DataGenerations, TypeName} from '@pkmn/data' ;
 import React, { useState, useContext, useReducer, useEffect } from 'react';
-import debounce from 'lodash.debounce';
 
 import { partyContext } from "./mons-container.js";
 
@@ -194,7 +193,7 @@ function ItemIcon() {
 
     function changeItem(event) {
       c.setItem(event.target.value);
-      c.updateMon();
+      //c.updateMon();
     }
     
     return (
@@ -247,7 +246,7 @@ function ItemIcon() {
       //c.setMoveName(event.target.value, moveNum);
       c.setMove(event.target.value, moveNum);
       //console.log(c.moves);
-      c.updateMon();
+      //c.updateMon();
     }
   
     return (
@@ -295,7 +294,7 @@ function ItemIcon() {
 
     function changeSpecies(event) {
       c.setSpecies(event.target.value);
-      c.updateMon();
+      //c.updateMon();
     }
   
     return (
@@ -324,7 +323,7 @@ function ItemIcon() {
 
     function changeAbility(event) {
         c.updateAbility(event.target.value);
-        c.updateMon();
+        //c.updateMon();
     }
 
     return (
@@ -351,7 +350,7 @@ function ItemIcon() {
 
     function updateNature(event) {
         c.changeNature(event.target.value);
-        c.updateMon();
+        //c.updateMon();
     }
 
     return (
@@ -395,12 +394,12 @@ function ItemIcon() {
 
     function updateTeraType(event) {
         c.changeTeraType(event.target.value);
-        c.updateMon();
+        //c.updateMon();
     }
 
     function updateTeraStatus(event) {
         c.toggleTera(event.target.checked);
-        c.updateMon();
+        //c.updateMon();
     }
 
     return (
@@ -442,17 +441,17 @@ function ItemIcon() {
 
     function updateEV(event){
         c.setEV(event.target.value, stat);
-        c.updateMon();
+        //c.updateMon();
     }
 
     function updateIV(event){
         c.setIV(event.target.value, stat);
-        c.updateMon();
+        //c.updateMon();
     }
 
     function updateBoost(event){
         c.setBoost(event.target.value, stat);
-        c.updateMon();
+        //c.updateMon();
     }
     var boostPickerNoHP = (stat !== "hp") ? <td><BoostDropdown stat={stat} onChange={updateBoost}></BoostDropdown></td> : <td></td>;
 
@@ -496,25 +495,20 @@ function ItemIcon() {
     const [id] = useState(monID);
     const [species, setSpeciesName] = useState(passedMon.species.name);
     const [nature, setNature] = useState(passedMon.nature);
-    const [teraType, setTeraType] = useState((passedMon.teraType) ? passedMon.teraType : passedMon.types[0]);
+    const [teraType, setTeraType] = useState((passedMon.teraType) ? passedMon.teraType : ((!passedMon.species.name.includes("Terapagos")) ? ((!passedMon.species.name.includes("Ogerpon-")) ?  passedMon.types[0] : ((passedMon.species.name.includes("Teal")) ? "Grass" : passedMon.types[1])) : "Stellar"));
     const [ability, setAbility] = useState(passedMon.ability);
     const [teraActive, setTeraStatus] = useState((passedMon.teraType) ? true : false);
     const [itemName, setItemName] = useState((passedMon.item) ? passedMon.item : "(no item)");
     var [moves, setMoves] = useState({ 
-        1: (passedMon.moves[0] !== undefined) ? passedMon.moves[0] : "(No Move)",
-        2: (passedMon.moves[0] !== undefined) ? passedMon.moves[1] : "(No Move)",
-        3: (passedMon.moves[0] !== undefined) ? passedMon.moves[2] : "(No Move)",
-        4: (passedMon.moves[0] !== undefined) ? passedMon.moves[3] : "(No Move)"});
+        1: (passedMon.moves["1"] !== undefined) ? passedMon.moves["1"] : "(No Move)",
+        2: (passedMon.moves["2"] !== undefined) ? passedMon.moves["2"] : "(No Move)",
+        3: (passedMon.moves["3"] !== undefined) ? passedMon.moves["3"] : "(No Move)",
+        4: (passedMon.moves["4"] !== undefined) ? passedMon.moves["4"] : "(No Move)"});
     var [evs, setEVs] = useState({ hp: passedMon.evs["hp"], atk: passedMon.evs["atk"], def: passedMon.evs["def"], spa: passedMon.evs["spa"], spd: passedMon.evs["spd"], spe: passedMon.evs["spe"] });
     var [ivs, setIVs] = useState({ hp: passedMon.ivs["hp"], atk: passedMon.ivs["atk"], def: passedMon.ivs["def"], spa: passedMon.ivs["spa"], spd: passedMon.ivs["spd"], spe: passedMon.ivs["spe"] });
     var [boosts, setBoosts] = useState({ hp: passedMon.boosts["hp"], atk: passedMon.boosts["atk"], def: passedMon.boosts["def"], spa: passedMon.boosts["spa"], spd: passedMon.boosts["spd"], spe: passedMon.boosts["spe"] });
     var [notes, setNotes] = useState(passedNotes);
     const [, forceUpdate] = useReducer(x => x + 1, 0);
-    const [fetchDataSwitch, setFetchDataSwitch] = useState(false);
-
-    const debouncedFetchData = debounce((cb) => {
-      cb(!fetchDataSwitch);
-    }, 100);
 
     //console.log("mon index "+monID.toString()+" reinitialized with the following species:");
     //console.log(species);
@@ -534,7 +528,7 @@ function ItemIcon() {
             teraType: (teraActive) ? teraType : undefined,
         });
         setMon(newMon);
-        pC.setMon(newMon, id);
+        //pC.setMon(newMon, id);
     }
 
     function setItem(item){
@@ -542,9 +536,13 @@ function ItemIcon() {
         //updateMon();
     }
 
+    useEffect( () => {
+      pC.setItem(itemName, id);
+    }, [itemName]);
+
     function setSpecies(s){
         setSpeciesName(s);
-        var newTeraType = gen.species.get(toID(s)).types[0];
+        var newTeraType = ((!s.includes("Terapagos")) ? ((!s.includes("Ogerpon-")) ? gen.species.get(toID(s)).types[0] : ((s.includes("Teal")) ? "Grass" : gen.species.get(toID(s)).types[1])) : "Stellar");
         changeTeraType(newTeraType);
         var newAbility = gen.species.get(toID(s)).abilities[0];
         updateAbility(newAbility);
@@ -552,25 +550,45 @@ function ItemIcon() {
 
     }
 
+    useEffect( () => {
+      pC.setSpecie(species, id);
+    }, [species]);
+
     function updateAbility(abil){
         setAbility(abil);
         //updateMon();
     }
+
+    useEffect( () => {
+      pC.setAbility(ability, id);
+    }, [ability]);
 
     function toggleTera(status){
         setTeraStatus(status);
         //updateMon();
     }
 
+    useEffect( () => {
+      pC.setTeraActive(teraActive, id);
+    }, [teraActive]);
+
     function changeTeraType(type){
         setTeraType(type);
         //updateMon();
     }
 
+    useEffect( () => {
+      pC.setTeraType(teraType, id);
+    }, [teraType]);
+
     function changeNature(nat){
         setNature(nat);
         //updateMon();
     }
+
+    useEffect( () => {
+      pC.setNature(nature, id);
+    }, [nature]);
 
     function setMove(move, moveNum){
         var movesCopy = {
@@ -584,6 +602,10 @@ function ItemIcon() {
         //updateMon();
         
     }
+
+    useEffect( () => {
+      pC.setMoveset(moves, id);
+    }, [moves]);
 
     function setEV(ev, stat){
         var statsCopy = {
@@ -599,6 +621,10 @@ function ItemIcon() {
         //updateMon();
     }
 
+    useEffect( () => {
+      pC.setEVs(evs, id);
+    }, [evs]);
+
     function setIV(iv, stat){
         var statsCopy = {
             hp: ivs["hp"],
@@ -612,6 +638,10 @@ function ItemIcon() {
         setIVs(statsCopy);
         //updateMon();
     }
+
+    useEffect( () => {
+      pC.setIVs(ivs, id);
+    }, [ivs]);
 
     function setBoost(boost, stat){
         var statsCopy = {
@@ -627,17 +657,16 @@ function ItemIcon() {
         //updateMon();
     }
 
+    useEffect( () => {
+      pC.setBoosts(boosts, id);
+    }, [boosts]);
+
     function updateNotes(info){
         setNotes(info);
         pC.setMonNotes(info);
     }
 
-    useEffect( () => {
-      debouncedFetchData((res) => {
-        setFetchDataSwitch(res);
-      });
-    }, [species, nature, ability, itemName, moves, evs, ivs, boosts, teraType, teraActive]);
-
+    /*
     useEffect( () => {
       var newMon = new Pokemon(gen, species, {
         nature: nature,
@@ -653,10 +682,11 @@ function ItemIcon() {
       pC.setParty([...pC.party.slice(0,id), newMon, ...pC.party.slice(id+1)]);
       //pC.setMonNotes([...pC.notes.slice(0, id), notes, ...pC.notes.slice(id+1)]);
     }, [fetchDataSwitch]);
+    */
   
     return (
-    <context.Provider value={{ mon, setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateMon, updateNotes, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species }}>
-      <div style={{display: "flex"}} className="mon-panel">
+    <context.Provider value={{ mon, setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateNotes, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species }}>
+      <div style={{display: "flex"}}>
         <div>
           <SpeciesSelector></SpeciesSelector>
           <NatureSelector></NatureSelector>
@@ -665,15 +695,16 @@ function ItemIcon() {
           <ItemSelector></ItemSelector>
           <StatsTable></StatsTable>
           <NotesInput></NotesInput>
+          { (sideCode === "attacker") && (
+          <div>
+            <p></p>
+            <div><MoveSelector id={sideCode + "Move1-" + id.toString()} moveNum={1}></MoveSelector></div>
+            <div><MoveSelector id={sideCode + "Move2-" + id.toString()} moveNum={2}></MoveSelector></div>
+            <div><MoveSelector id={sideCode + "Move3-" + id.toString()} moveNum={3}></MoveSelector></div>
+            <div><MoveSelector id={sideCode + "Move4-" + id.toString()} moveNum={4}></MoveSelector></div>
+          </div>
+          )}
         </div>
-        { (sideCode === "attacker") && (
-        <div style={{ "marginTop": "auto", "marginBottom": "auto"}}>
-          <div><MoveSelector id={sideCode + "Move1-" + id.toString()} moveNum={1}></MoveSelector></div>
-          <div><MoveSelector id={sideCode + "Move2-" + id.toString()} moveNum={2}></MoveSelector></div>
-          <div><MoveSelector id={sideCode + "Move3-" + id.toString()} moveNum={3}></MoveSelector></div>
-          <div><MoveSelector id={sideCode + "Move4-" + id.toString()} moveNum={4}></MoveSelector></div>
-        </div>
-        ) }
       </div>
       </context.Provider>
     );

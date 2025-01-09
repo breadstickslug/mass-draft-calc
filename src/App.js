@@ -10,7 +10,7 @@ import { MonsContainer } from "./mons-container.js";
 
 function App() {
   return (
-    <div className="App">
+    <div className="App" style={{height: "1000vh"}}>
       {/*
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -27,7 +27,9 @@ function App() {
         </a>
       </header>
       */}
-      <MonsContainer sideCode={"attacker"}></MonsContainer>
+      <div className="attackers" ><MonsContainer sideCode={"attacker"}></MonsContainer></div>
+      <div className="defenders" ><MonsContainer sideCode={"defender"}></MonsContainer></div>
+      
     </div>
   );
 }

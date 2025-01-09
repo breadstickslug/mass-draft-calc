@@ -28,11 +28,48 @@
   color: #61dafb;
 }
 
+.attackers {
+  position: fixed;
+  overflow: scroll;
+  top: 0px;
+  background-color: #3d7199;
+  width: 100vw;
+  height: 42vh;
+}
+
+.defenders {
+  position: fixed;
+  overflow: scroll;
+  bottom: 0px;
+  background-color: #3d7199;
+  width: 100vw;
+  height: 32vh;
+}
+
 .mon-panel {
+  border: 2px solid #d1dee8;
+  border-radius: 10px;
+  background-color: #66a0cc;
   padding-left: 5px;
   padding-right: 5px;
   padding-top: 5px;
   padding-bottom: 5px;
+}
+
+.index-num {
+  position: absolute;
+  top: -3%;
+  right: 1%;
+  font-size: 70px;
+  color: #d1dee8;
+  color: rgba(209, 222, 232, 0.4);
+  font-weight: bold;
+  text-align: right;
+  z-index: 0;
+}
+
+select {
+  z-index: 1;
 }
 
 @keyframes App-logo-spin {
