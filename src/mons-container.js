@@ -1,35 +1,25 @@
 import { PokemonPanel } from "./mon-panel.js";
-import {calculate, Generations, Pokemon, Move, toID, Field} from '@smogon/calc';
-import * as dex from '@pkmn/dex';
-import React, { useState, useEffect, useReducer, setState, useMemo } from 'react';
-import { List } from "react-virtualized";
+import React, { useState } from 'react';
 
 
-const gen = Generations.get(9);
-const speciesDex = dex.Dex.forGen(9);
-const ev_names = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
-const statList = ["hp", "atk", "def", "spa", "spd", "spe"];
-const boostList = ["+6", "+5", "+4", "+3", "+2", "+1", "--", "-1", "-2", "-3", "-4", "-5", "-6"];
-const boostValues = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6];
 
 export const partyContext = React.createContext(null);
 
 export function MonsContainer({ sideCode }){
     var [party, setParty] = useState([]); // party is dummy list
-    const partyMemo = useMemo(() => party, [party]);
     var [species, setSpecies] = useState([]);
     const [natures, setNatures] = useState([]);
     const [teraTypes, setTeraTypes] = useState([]);
     const [abilities, setAbilities] = useState([]);
     const [terasActive, setTeraStatuses] = useState([]);
     const [items, setItems] = useState([]);
-    var [movesets, setMovesets] = useState([]);
-    var [evsets, setEVsets] = useState([]);
-    var [ivsets, setIVsets] = useState([]);
-    var [boostsets, setBoostSets] = useState([]);
+    const [movesets, setMovesets] = useState([]);
+    const [evsets, setEVsets] = useState([]);
+    const [ivsets, setIVsets] = useState([]);
+    const [boostsets, setBoostSets] = useState([]);
     var [notes, setNotes] = useState([]); // list of mon notes
-    var [side] = useState(sideCode);
-    var [numCreated, setNumCreated] = useState(0);
+    const [side] = useState(sideCode);
+    //const [numCreated, setNumCreated] = useState(0);
     //const [, forceUpdate] = useReducer(x => x + 1, 0);
     /*
     const defaultMon = new Pokemon(gen, "Ababo", {
@@ -82,7 +72,7 @@ export function MonsContainer({ sideCode }){
     }
 
     function setItem(item, index){
-        setItems([...items.slice(0, index), item, ...item.slice(index+1)]);
+        setItems([...items.slice(0, index), item, ...items.slice(index+1)]);
     }
 
     function setMoveset(moves, index){
@@ -102,17 +92,15 @@ export function MonsContainer({ sideCode }){
     }
 
     function setMonNotes(blurb, index){
-        var newNotes = notes;
-        newNotes[index] = blurb;
-        setNotes(newNotes);
+        setNotes([...notes.slice(0, index), blurb.toString(), ...notes.slice(index+1)]);
     }
 
     function addMon(event){
-        var newID = numCreated+1;
-        var nextNumCreated = numCreated+1;
+        //var newID = numCreated+1;
+        //var nextNumCreated = numCreated+1;
         setParty(party.concat("mon"));
         setNotes(notes.concat(""));
-        setNumCreated(nextNumCreated);
+        //setNumCreated(nextNumCreated);
         setSpecies(species.concat("Ababo"));
         setNatures(natures.concat("Serious"));
         setAbilities(abilities.concat("Pixilate"));
@@ -152,10 +140,10 @@ export function MonsContainer({ sideCode }){
     function removeSpecificMon(event){
         //forceUpdate();
         //console.log(event.target.id);
-        const indexToUse = event.target.id;
+        //const indexToUse = event.target.id;
         //console.log(party);
         const spliced = party.toSpliced(event.target.id, 1);
-        const notesSpliced = party.toSpliced(event.target.id, 1);
+        const notesSpliced = notes.toSpliced(event.target.id, 1);
         const speciesS = species.toSpliced(event.target.id, 1);
         const naturesS = natures.toSpliced(event.target.id, 1);
         const abilitiesS = abilities.toSpliced(event.target.id, 1);
@@ -211,7 +199,7 @@ export function MonsContainer({ sideCode }){
         <div>
             <button type="button" style={{width: "30px", height: "30px"}} onClick={addMon}>+</button><button type="button" style={{width: "30px", height: "30px"}} onClick={removeMon}>-</button>
             <div style={{display: "flex"}} >
-                {partyMemo.map((entry, index) => <div key={species[index]+index} className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel 
+                {party.map((entry, index) => <div key={species[index]+index} className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel 
                                                 style={{ textAlign: "center" }} 
                                                 monID={index} 
                                                 monSide={side} 

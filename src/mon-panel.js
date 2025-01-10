@@ -1,9 +1,9 @@
-import {calculate, Generations, Pokemon, Move, toID, Field} from '@smogon/calc';
+import {Generations, toID, Field} from '@smogon/calc';
 //import {Sets, Teams} from '@pkmn/sets';
 import * as dex from '@pkmn/dex';
 import * as img from '@pkmn/img';
 //import {Generations as DataGenerations, TypeName} from '@pkmn/data' ;
-import React, { useState, useContext, useReducer, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
 
 import { partyContext } from "./mons-container.js";
 
@@ -188,7 +188,7 @@ function ItemIcon({ contextC }) {
   
     const itemMemo = useMemo(() => contextC.itemName, [contextC.itemName]);
 
-    var changeItem = useCallback((event) => contextC.setItem(event.target.value));
+    var changeItem = useCallback((event) => contextC.setItem(event.target.value), [contextC]);
 
     return (
       <select value={itemMemo} onChange={changeItem}>
@@ -211,39 +211,40 @@ function ItemIcon({ contextC }) {
   // MOVE SELECTORS
   function MoveIcon({ contextC, moveNum }){
     // COME BACK AND ADD THE FIELD
-    const c = useContext(context);
-
-    const moveMemo = useMemo(() => contextC.moves[moveNum.toString()], [contextC.moves[moveNum.toString()]]);
+    const moveNumMemo = useMemo(() => moveNum, [moveNum]);
+    const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
     const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
     const teraTypeMemo = useMemo(() => contextC.teraType, [contextC.teraType]);
     const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
+    const moveGraphicDataMemo = useCallback((type, teratype, teraactive) => moveGraphicData(type, teratype, teraactive), []);
+    const moveTypeGetMemo = useCallback((move) => gen.moves.get(toID(move)).type, []);
+    const monTypeGetMemo = useCallback((species, index) => gen.species.get(toID(species)).types[index], []);
 
     const graphicDataMemo = useMemo(() => {
-    var graphicData;
-    if (moveMemo !== "(No Move)"){
-        //var dummyMon = new Pokemon(gen, speciesMemo, { teraType: (teraActiveMemo) ? teraTypeMemo : undefined });
-        //dummyMon.moves = [];
-        console.log(gen.moves.get(toID(moveMemo)).type);
-        const moveType = ((!speciesMemo.includes("Terapagos-Stellar") || moveMemo !== "Tera Starstorm") ? // if species isnt terapagos and the move isnt tera starstorm, do the top option
-          ((!speciesMemo.includes("Ogerpon") || moveMemo !== "Ivy Cudgel") ? // if species isnt an ogerpon and the move isnt ivy cudgel, do the top option
-            ((moveMemo === "Tera Blast" && teraActiveMemo) ? // if using terablast with tera active, do the top option
-              teraTypeMemo :
-              gen.moves.get(toID(moveMemo)).type) :
-            (((speciesMemo.includes("Teal")) || !speciesMemo.includes("-")) ? // if this is an ogerpon ivy cudgel + is either the teal tera or base form, to the top option
-              "Grass" :
-              gen.species.get(toID(speciesMemo)).types[1])) :
-          "Stellar");
-        //const fakeCalc = calculate(gen, dummyMon, new Pokemon(gen, "Kricketot"), new Move(gen, moveMemo, { isStellarFirstUse: (teraActiveMemo && teraTypeMemo === "Stellar") ? true : false, }));
-        graphicData = moveGraphicData(moveType, teraTypeMemo, teraActiveMemo);
-    }
-    else{
-        graphicData = {
-            background: "transparent",
-            imgSrc: "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=",
-        }
-    }
-    return graphicData;
-  }, [moveMemo, speciesMemo, teraTypeMemo, teraActiveMemo]);
+      var graphicData;
+      if (movesMemo[moveNumMemo] !== "(No Move)"){
+          //var dummyMon = new Pokemon(gen, speciesMemo, { teraType: (teraActiveMemo) ? teraTypeMemo : undefined });
+          //dummyMon.moves = [];
+          const moveType = ((!speciesMemo.includes("Terapagos-Stellar") || movesMemo[moveNumMemo] !== "Tera Starstorm") ? // if species isnt terapagos and the move isnt tera starstorm, do the top option
+            ((!speciesMemo.includes("Ogerpon") || movesMemo[moveNumMemo] !== "Ivy Cudgel") ? // if species isnt an ogerpon and the move isnt ivy cudgel, do the top option
+              ((movesMemo[moveNumMemo] === "Tera Blast" && teraActiveMemo) ? // if using terablast with tera active, do the top option
+                teraTypeMemo :
+                moveTypeGetMemo(movesMemo[moveNumMemo])) :
+              (((speciesMemo.includes("Teal")) || !speciesMemo.includes("-")) ? // if this is an ogerpon ivy cudgel + is either the teal tera or base form, to the top option
+                "Grass" :
+                monTypeGetMemo(speciesMemo, 1))) :
+            "Stellar");
+          //const fakeCalc = calculate(gen, dummyMon, new Pokemon(gen, "Kricketot"), new Move(gen, moveMemo, { isStellarFirstUse: (teraActiveMemo && teraTypeMemo === "Stellar") ? true : false, }));
+          graphicData = moveGraphicDataMemo(moveType, teraTypeMemo, teraActiveMemo);
+      }
+      else{
+          graphicData = {
+              background: "transparent",
+              imgSrc: "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=",
+          }
+      }
+      return graphicData;
+    }, [speciesMemo, teraTypeMemo, teraActiveMemo, movesMemo, moveNumMemo, monTypeGetMemo, moveTypeGetMemo, moveGraphicDataMemo]);
   
     return (
         <div style={{ background: graphicDataMemo["background"], top: "0px", left: "0px", width: "30px", height: "30px"}}><img src={graphicDataMemo["imgSrc"]} style={{top: "0px", left: "0px", width: "30px", height: "30px"}} alt=""></img></div>
@@ -254,12 +255,12 @@ function ItemIcon({ contextC }) {
       <option value={move} key={index}>{move}</option>
     ), []);
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
-    const moveMemo = useMemo(() => contextC.moves[moveNumMemo.toString()], [contextC.moves[moveNumMemo.toString()]]);
+    const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
 
-    var changeMove = useCallback((event) => contextC.setMove(event.target.value, moveNumMemo));
+    var changeMove = useCallback((event) => contextC.setMove(event.target.value, moveNumMemo), [movesMemo, moveNumMemo, contextC]);
 
     return (
-      <select value={moveMemo} onChange={changeMove}>
+      <select value={movesMemo[moveNumMemo]} onChange={changeMove}>
         { options }
       </select>
     );
@@ -305,7 +306,7 @@ function ItemIcon({ contextC }) {
 
     const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
 
-    var changeSpecies = useCallback((event) => contextC.setSpecies(event.target.value));
+    var changeSpecies = useCallback((event) => contextC.setSpecies(event.target.value), [contextC]);
 
     return (
       <select value={speciesMemo} onChange={changeSpecies}>
@@ -332,7 +333,7 @@ function ItemIcon({ contextC }) {
 
     const abilityMemo = useMemo(() => contextC.ability, [contextC.ability]);
 
-    var changeAbility = useCallback((event) => contextC.updateAbility(event.target.value));
+    var changeAbility = useCallback((event) => contextC.updateAbility(event.target.value), [contextC]);
 
     return (
         <select value={abilityMemo} onChange={changeAbility}>
@@ -357,7 +358,7 @@ function ItemIcon({ contextC }) {
 
     const natureMemo = useMemo(() => contextC.nature, [contextC.nature]);
 
-    var updateNature = useCallback((event) => contextC.changeNature(event.target.value));
+    var updateNature = useCallback((event) => contextC.changeNature(event.target.value), [contextC]);
 
     return (
         <select value={natureMemo} onChange={updateNature}>
@@ -395,7 +396,7 @@ function ItemIcon({ contextC }) {
 
     const teraTypeMemo = useMemo(() => contextC.teraType, [contextC.teraType]);
 
-    var updateTeraType = useCallback((event) => contextC.changeTeraType(event.target.value));
+    var updateTeraType = useCallback((event) => contextC.changeTeraType(event.target.value), [contextC]);
 
     return (
         <select value={teraTypeMemo} onChange={updateTeraType}>
@@ -406,7 +407,7 @@ function ItemIcon({ contextC }) {
   function TeraToggle({ contextC }){
 
     const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
-    var updateTeraStatus = useCallback((event) => contextC.toggleTera(event.target.checked));
+    var updateTeraStatus = useCallback((event) => contextC.toggleTera(event.target.checked), [contextC]);
 
     return (
         <input type="checkbox" onChange={updateTeraStatus} checked={teraActiveMemo}></input>
@@ -426,30 +427,37 @@ function ItemIcon({ contextC }) {
   function EVInput({ contextC, stat }){
 
     const statMemo = useMemo(() => stat, [stat]);
-    const evMemo = useMemo(() => contextC.evs[statMemo], [contextC.evs[statMemo]]);
+    const evsMemo = useMemo(() => contextC.evs, [contextC.evs]);
 
-    var updateEV = useCallback((event) => contextC.setEV(event.target.value, statMemo));
+    var updateEV = useCallback((event) => contextC.setEV(event.target.value, statMemo), [evsMemo, statMemo, contextC]);
 
     useEffect(() => {
       const delayDebounceFn = setTimeout(() => {
       }, 5000)
   
       return () => clearTimeout(delayDebounceFn)
-    }, [evMemo]);
+    }, [evsMemo]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="252" step="1" type="number" placeholder="0" onChange={updateEV} value={evMemo}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="252" step="1" type="number" placeholder="0" onChange={updateEV} value={evsMemo[statMemo]}></input>
     );
   }
   function IVInput({ contextC, stat }){
 
     const statMemo = useMemo(() => stat, [stat]);
-    const ivMemo = useMemo(() => contextC.ivs[statMemo], [contextC.ivs[statMemo]]);
+    const ivsMemo = useMemo(() => contextC.ivs, [contextC.ivs]);
 
-    var updateIV = useCallback((event) => contextC.setIV(event.target.value, statMemo));
+    var updateIV = useCallback((event) => contextC.setIV(event.target.value, statMemo), [ivsMemo, statMemo, contextC]);
+
+    useEffect(() => {
+      const delayDebounceFn = setTimeout(() => {
+      }, 5000)
+  
+      return () => clearTimeout(delayDebounceFn)
+    }, [ivsMemo]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onChange={updateIV} value={ivMemo}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onChange={updateIV} value={ivsMemo[statMemo]}></input>
     );
   }
   function BoostDropdown({ contextC, stat }){
@@ -458,12 +466,12 @@ function ItemIcon({ contextC }) {
     );
 
     const statMemo = useMemo(() => stat, [stat]);
-    const boostMemo = useMemo(() => contextC.boosts[statMemo], [contextC.boosts[statMemo]]);
+    const boostsMemo = useMemo(() => contextC.boosts, [contextC.boosts]);
 
-    var updateBoost = useCallback((event) => contextC.setBoost(event.target.value, statMemo));
+    var updateBoost = useCallback((event) => contextC.setBoost(event.target.value, statMemo), [boostsMemo, statMemo, contextC]);
 
     return (
-        <select value={boostMemo} onChange={updateBoost}>
+        <select value={boostsMemo[statMemo]} onChange={updateBoost}>
             {options}
         </select>
     );
@@ -479,22 +487,23 @@ function ItemIcon({ contextC }) {
     
     var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown contextC={c} stat={statMemo}></BoostDropdown></td> : <td></td>;
 
-    const speciesMemo = useMemo(() => c.species, [c.species]);
-    const evMemo = useMemo(() => c.evs[stat], [c.evs[stat]]);
-    const ivMemo = useMemo(() => c.ivs[stat], [c.ivs[stat]]);
+    //const speciesMemo = useMemo(() => c.species, [c.species]);
+    const evsMemo = useMemo(() => c.evs, [c.evs]);
+    const ivsMemo = useMemo(() => c.ivs, [c.ivs]);
     const natureMemo = useMemo(() => c.nature, [c.nature]);
-    const boostMemo = useMemo(() => c.boosts[stat], [c.boosts[stat]]);
-    const baseStatsMemo = useMemo(() => c.baseStats[stat], [c.baseStats[stat]]);
+    const boostsMemo = useMemo(() => c.boosts, [c.boosts]);
+    const baseStatsMemo = useMemo(() => c.baseStats, [c.baseStats]);
+
     const statNumMemo = useMemo(() => {
-    const statFirstStep = Math.floor((2 * baseStatsMemo + ivMemo + Math.floor(evMemo/4)) * 100 / 100) // level 100 assumed
+    const statFirstStep = Math.floor((2 * baseStatsMemo[statMemo] + ivsMemo[statMemo] + Math.floor(evsMemo[statMemo]/4)) * 100 / 100) // level 100 assumed
     const plus = gen.natures.get(toID(natureMemo)).plus;
     const minus = gen.natures.get(toID(natureMemo)).minus;
     const natureMod = (plus === statMemo && plus !== minus) ? 1.1 : ((minus === statMemo && minus !== plus) ? 0.9 : 1);
     const statSecondStep = (statMemo === "hp") ? statFirstStep + 100 + 10 : (statFirstStep + 5) * natureMod; // level 100 assumed
     //var dummyMon = new Pokemon(gen, speciesMemo, {evs: evMemoObj, ivs: ivMemoObj, ability: abilityMemo, nature: natureMemo});
-    var statNum = Math.floor(statSecondStep * (2+Math.max(0, boostMemo))/(2-Math.min(0, boostMemo)));
+    var statNum = Math.floor(statSecondStep * (2+Math.max(0, boostsMemo[statMemo]))/(2-Math.min(0, boostsMemo[statMemo])));
     return statNum;
-    }, [baseStatsMemo, ivMemo, evMemo, boostMemo, statMemo]);
+    }, [baseStatsMemo, natureMemo, ivsMemo, evsMemo, boostsMemo, statMemo]);
 
     return (
         <tr><td>{ev_names[statIndexMemo]}: </td><td><EVInput contextC={c} stat={statMemo}></EVInput></td><td> IV: </td><td><IVInput contextC={c} stat={statMemo}></IVInput></td>{boostPickerNoHP}<td>{statNumMemo}</td></tr>
@@ -522,7 +531,7 @@ function ItemIcon({ contextC }) {
     //    c.updateNotes(event.target.value);
     //}
 
-    var reviseNotes = useCallback((event) => c.updateNotes(event.target.value));
+    var reviseNotes = useCallback((event) => c.updateNotes(event.target.value), [c]);
     
     return (
         <div style={{display: "flex"}}>Notes: <input onChange={reviseNotes}></input></div>
@@ -557,7 +566,8 @@ function ItemIcon({ contextC }) {
     var [ivs, setIVs] = useState({ hp: pIVs["hp"], atk: pIVs["atk"], def: pIVs["def"], spa: pIVs["spa"], spd: pIVs["spd"], spe: pIVs["spe"] });
     var [boosts, setBoosts] = useState({ hp: pBoosts["hp"], atk: pBoosts["atk"], def: pBoosts["def"], spa: pBoosts["spa"], spd: pBoosts["spd"], spe: pBoosts["spe"] });
     var [notes, setNotes] = useState(passedNotes);
-    const [, forceUpdate] = useReducer(x => x + 1, 0);
+
+    //const [, forceUpdate] = useReducer(x => x + 1, 0);
 
     //console.log("incoming species for ", id, " is ", pSpecies, " and is it the same as previous value ", species, "? ", (pSpecies === species));
 
@@ -565,6 +575,7 @@ function ItemIcon({ contextC }) {
     //console.log(species);
     var pC = useContext(partyContext);
 
+    /*
     function updateMon(){
         forceUpdate();
         //console.log(species);
@@ -581,6 +592,7 @@ function ItemIcon({ contextC }) {
         //setMon(newMon);
         //pC.setMon(newMon, id);
     }
+    */
 
     function setItem(item){
         setItemName(item);
@@ -651,7 +663,6 @@ function ItemIcon({ contextC }) {
             3: moves["3"],
             4: moves["4"],
         }
-        console.log("movesCopy is ",movesCopy);
         movesCopy[moveNum.toString()] = move;
         setMoves(movesCopy);
         //updateMon();
@@ -717,10 +728,12 @@ function ItemIcon({ contextC }) {
     }, [boosts]);
 
     function updateNotes(info){
-        setNotes(info);
-        pC.setMonNotes(info);
+      setNotes(info);
     }
 
+    useEffect( () => {
+      pC.setMonNotes(notes, id);
+    }, [notes]);
     /*
     useEffect( () => {
       var newMon = new Pokemon(gen, species, {
