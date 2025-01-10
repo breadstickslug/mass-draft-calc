@@ -1,7 +1,8 @@
 import { PokemonPanel } from "./mon-panel.js";
 import {calculate, Generations, Pokemon, Move, toID, Field} from '@smogon/calc';
 import * as dex from '@pkmn/dex';
-import React, { useState, useEffect, useReducer, setState } from 'react';
+import React, { useState, useEffect, useReducer, setState, useMemo } from 'react';
+import { List } from "react-virtualized";
 
 
 const gen = Generations.get(9);
@@ -14,7 +15,8 @@ const boostValues = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6];
 export const partyContext = React.createContext(null);
 
 export function MonsContainer({ sideCode }){
-    var [party, setParty] = useState([]); // party is list of mons
+    var [party, setParty] = useState([]); // party is dummy list
+    const partyMemo = useMemo(() => party, [party]);
     var [species, setSpecies] = useState([]);
     const [natures, setNatures] = useState([]);
     const [teraTypes, setTeraTypes] = useState([]);
@@ -60,17 +62,6 @@ export function MonsContainer({ sideCode }){
     */
 
     function setSpecie(specie, index){
-        /*
-        var newMon = new Pokemon(gen, specie, {
-            nature: natures[index],
-            teraType: (terasActive[index]) ? teraTypes[index] : undefined,
-            ability: abilities[index],
-            evs: evs[index],
-            ivs: ivs[index],
-            boosts: boosts[index],
-        })
-         */
-        //setParty([...party.slice(0,index), mon, ...party.slice(index+1)]);
         setSpecies([...species.slice(0, index), specie, ...species.slice(index+1)]);
     }
 
@@ -195,13 +186,54 @@ export function MonsContainer({ sideCode }){
     //    console.log(abilities);
     //}, [abilities]);
 
+    /*
+    const renderMon = ({ index, key, style }) => (
+        <div key={key} className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel 
+            style={{ textAlign: "center" }} 
+            monID={index} 
+            monSide={side} 
+            pSpecies={species[index]} 
+            pNature={natures[index]} 
+            pAbility={abilities[index]} 
+            pItem={items[index]} 
+            pTeraType={teraTypes[index]} 
+            pTeraActive={terasActive[index]} 
+            pMoves={movesets[index]} 
+            pEVs={evsets[index]} 
+            pIVs={ivsets[index]} 
+            pBoosts={boostsets[index]} 
+            passedNotes={notes[index]}></PokemonPanel>}</div>
+    );
+    */
+
     return (
-        <partyContext.Provider value={{ party, notes, setParty, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts }}>
+        <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts }}>
         <div>
             <button type="button" style={{width: "30px", height: "30px"}} onClick={addMon}>+</button><button type="button" style={{width: "30px", height: "30px"}} onClick={removeMon}>-</button>
             <div style={{display: "flex"}} >
-                {party.map((entry, index) => <div key={species[index]+index} className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel style={{ textAlign: "center" }} monID={index} monSide={side} passedMon={new Pokemon(gen, species[index], {
-                    nature: natures[index],
+                {partyMemo.map((entry, index) => <div key={species[index]+index} className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel 
+                                                style={{ textAlign: "center" }} 
+                                                monID={index} 
+                                                monSide={side} 
+                                                pSpecies={species[index]} 
+                                                pNature={natures[index]} 
+                                                pAbility={abilities[index]} 
+                                                pItem={items[index]} 
+                                                pTeraType={teraTypes[index]} 
+                                                pTeraActive={terasActive[index]} 
+                                                pMoves={movesets[index]} 
+                                                pEVs={evsets[index]} 
+                                                pIVs={ivsets[index]} 
+                                                pBoosts={boostsets[index]} 
+                                                passedNotes={notes[index]}></PokemonPanel>}</div>)}
+            </div>
+        </div>
+        </partyContext.Provider>
+    );
+}
+
+/*
+nature: natures[index],
                     ability: abilities[index],
                     item: (items[index] !== "(no item)") ? items[index]: undefined,
                     teraType: (terasActive[index]) ? (teraTypes[index]) : undefined,
@@ -209,10 +241,4 @@ export function MonsContainer({ sideCode }){
                     evs: evsets[index],
                     ivs: ivsets[index],
                     boosts: boostsets[index]
-                })} passedNotes={notes[index]}></PokemonPanel>}</div> )}
-            </div>
-        </div>
-        </partyContext.Provider>
-    );
-}
-
+                    */
