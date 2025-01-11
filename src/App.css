@@ -35,6 +35,28 @@
   background-color: #3d7199;
   width: 100vw;
   height: 42vh;
+  transition: height 300ms;
+}
+
+.attackers-buttons {
+  text-align: center;
+  position: fixed;
+  top: 42vh;
+  width: 100vw;
+  height: 30px;
+  transition: top 300ms;
+}
+
+.minified {
+  border: 0px solid black;
+}
+
+#active {
+  background-color: #3d7199;
+}
+
+#inactive {
+  background-color: #66a0cc;
 }
 
 .defenders {
@@ -44,6 +66,16 @@
   background-color: #3d7199;
   width: 100vw;
   height: 32vh;
+  transition: height 300ms;
+}
+
+.defenders-buttons {
+  text-align: center;
+  position: fixed;
+  bottom: 32vh;
+  width: 100vw;
+  height: 30px;
+  transition: bottom 300ms;
 }
 
 .mon-panel {

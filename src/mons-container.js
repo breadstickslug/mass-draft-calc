@@ -1,11 +1,16 @@
 import { PokemonPanel } from "./mon-panel.js";
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { MonsMini } from "./mons-mini.js";
 
 
 
 export const partyContext = React.createContext(null);
 
-export function MonsContainer({ sideCode }){
+export function MonsContainer({ tabActive, collapsed, sideCode, imported }){
+    const importedMemo = useMemo(() => imported, [imported]);
+    console.log("importedMemo is ",importedMemo);
+    const tabActiveMemo = useMemo(() => tabActive, [tabActive]);
+    const collapsedMemo = useMemo(() => collapsed, [collapsed]);
     var [party, setParty] = useState([]); // party is dummy list
     var [species, setSpecies] = useState([]);
     const [natures, setNatures] = useState([]);
@@ -19,6 +24,31 @@ export function MonsContainer({ sideCode }){
     const [boostsets, setBoostSets] = useState([]);
     var [notes, setNotes] = useState([]); // list of mon notes
     const [side] = useState(sideCode);
+
+    const importTeam = useCallback(() => {
+        if (Object.keys(importedMemo).length > 0){
+            console.log("importedMemo is ",importedMemo);
+            setParty(new Array(importedMemo.species.length).fill("mon")); // party is dummy list
+            setSpecies(importedMemo.species);
+            console.log(importedMemo.species);
+            setNatures(importedMemo.natures);
+            setTeraTypes(importedMemo.teraTypes);
+            setAbilities(importedMemo.abilities);
+            setTeraStatuses(new Array(importedMemo.species.length).fill(false));
+            setItems(importedMemo.items);
+            setMovesets(importedMemo.moves);
+            setEVsets(importedMemo.evs);
+            setIVsets(importedMemo.ivs);
+            setBoostSets(new Array(importedMemo.species.length).fill({hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0}));
+            setNotes(importedMemo.notes); // list of mon notes
+        }
+    }, [importedMemo]);
+    //importCallback();
+
+    useEffect(() => {
+        importTeam();
+    }, [importedMemo, importTeam]);
+
     //const [numCreated, setNumCreated] = useState(0);
     //const [, forceUpdate] = useReducer(x => x + 1, 0);
     /*
@@ -170,9 +200,10 @@ export function MonsContainer({ sideCode }){
         setBoostSets([...boostsetsS]);
     }
 
-    //useEffect (() => {
-    //    console.log(abilities);
-    //}, [abilities]);
+    useEffect (() => {
+        console.log("notes changed!");
+        console.log(notes);
+    }, [species]);
 
     /*
     const renderMon = ({ index, key, style }) => (
@@ -197,8 +228,9 @@ export function MonsContainer({ sideCode }){
     return (
         <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts }}>
         <div>
-            <button type="button" style={{width: "30px", height: "30px"}} onClick={addMon}>+</button><button type="button" style={{width: "30px", height: "30px"}} onClick={removeMon}>-</button>
-            <div style={{display: "flex"}} >
+            <div><MonsMini sideCode={sideCode} importedSpecies={species} visible={collapsedMemo}></MonsMini></div>
+            <div style={{display: (tabActiveMemo && !collapsedMemo) ? "inline" : "none", textAlign: "center"}}><button type="button" style={{width: "30px", height: "30px"}} onClick={addMon}>+</button><button type="button" style={{width: "30px", height: "30px"}} onClick={removeMon}>-</button></div>
+            <div style={{display: (tabActiveMemo && !collapsedMemo) ? "flex" : "none"}}>
                 {party.map((entry, index) => <div key={species[index]+index} className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel 
                                                 style={{ textAlign: "center" }} 
                                                 monID={index} 

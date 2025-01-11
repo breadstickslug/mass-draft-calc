@@ -247,7 +247,7 @@ function ItemIcon({ contextC }) {
     }, [speciesMemo, teraTypeMemo, teraActiveMemo, movesMemo, moveNumMemo, monTypeGetMemo, moveTypeGetMemo, moveGraphicDataMemo]);
   
     return (
-        <div style={{ background: graphicDataMemo["background"], top: "0px", left: "0px", width: "30px", height: "30px"}}><img src={graphicDataMemo["imgSrc"]} style={{top: "0px", left: "0px", width: "30px", height: "30px"}} alt=""></img></div>
+        <div style={{ marginLeft: "auto", position: "relative", background: graphicDataMemo["background"], top: "0px", width: "30px", height: "30px"}}><img src={graphicDataMemo["imgSrc"]} style={{top: "0px", left: "0px", width: "30px", height: "30px"}} alt=""></img></div>
     );
   }
   function MoveDropdown({ contextC, moveNum }){
@@ -260,7 +260,7 @@ function ItemIcon({ contextC }) {
     var changeMove = useCallback((event) => contextC.setMove(event.target.value, moveNumMemo), [movesMemo, moveNumMemo, contextC]);
 
     return (
-      <select value={movesMemo[moveNumMemo]} onChange={changeMove}>
+      <select value={movesMemo[moveNumMemo]} style={{ marginRight: "auto", position: "relative" }} onChange={changeMove}>
         { options }
       </select>
     );
@@ -534,7 +534,7 @@ function ItemIcon({ contextC }) {
     var reviseNotes = useCallback((event) => c.updateNotes(event.target.value), [c]);
     
     return (
-        <div style={{display: "flex"}}>Notes: <input onChange={reviseNotes}></input></div>
+        <div style={{display: "flex"}}>Notes: <input onChange={reviseNotes} value={c.notes}></input></div>
     );
   }
 
@@ -779,3 +779,5 @@ function ItemIcon({ contextC }) {
   }
 
   //export const PokemonPanelMemo = React.memo(PokemonPanel, () => {console.log("Memo check"); return true;});
+
+  
