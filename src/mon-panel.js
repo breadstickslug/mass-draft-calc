@@ -177,6 +177,10 @@ function ItemIcon({ contextC }) {
         imageRendering: "pixelated",
         border: "0",
         background: imgSrcMemo,
+        marginTop: "auto",
+        marginBottom: "auto",
+        marginLeft: "5px",
+        marginRight: "5px",
       }}></img>
     );
   }
@@ -200,9 +204,7 @@ function ItemIcon({ contextC }) {
     const c = useContext(context);
 
     return (
-      <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon contextC={c} style={{
-        "margin-top": "auto",
-        "margin-bottom": "auto"}}></ItemIcon><ItemDropdown contextC={c}></ItemDropdown></div>
+      <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon contextC={c}></ItemIcon><ItemDropdown contextC={c}></ItemDropdown></div>
     );
   }
   
@@ -336,7 +338,7 @@ function ItemIcon({ contextC }) {
     var changeAbility = useCallback((event) => contextC.updateAbility(event.target.value), [contextC]);
 
     return (
-        <select value={abilityMemo} onChange={changeAbility}>
+        <select value={abilityMemo} style={{marginLeft: "10px", marginRight: "auto"}} onChange={changeAbility}>
             {options}
         </select>
     )
@@ -361,7 +363,7 @@ function ItemIcon({ contextC }) {
     var updateNature = useCallback((event) => contextC.changeNature(event.target.value), [contextC]);
 
     return (
-        <select value={natureMemo} onChange={updateNature}>
+        <select value={natureMemo} style={{marginLeft: "10px", marginRight: "auto"}} onChange={updateNature}>
             {options}
         </select>
     )
@@ -379,13 +381,16 @@ function ItemIcon({ contextC }) {
   // TERA TYPE SELECTOR
   function TeraIcon({ contextC }){
 
-    const teraTypeMemo = useMemo(() => contextC.teraType, [contextC.teraType]);
+    const contextMemo = useMemo(() => contextC, [contextC]);
+    const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
     const imgSrcMemo = useMemo(() => process.env.PUBLIC_URL + "/img/tera_" + teraTypeMemo.toLowerCase() + "_gem.png", [teraTypeMemo]);
     
     return (
         <img src={imgSrcMemo} alt="" style={{
           width: "30px",
           height: "30px",
+          marginLeft: "5px",
+          marginRight: "5px",
         }}></img>
       );
   }
@@ -394,9 +399,10 @@ function ItemIcon({ contextC }) {
         <option value={t} key={index}>{t}</option>
     );
 
-    const teraTypeMemo = useMemo(() => contextC.teraType, [contextC.teraType]);
+    const contextMemo = useMemo(() => contextC, [contextC]);
+    const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
 
-    var updateTeraType = useCallback((event) => contextC.changeTeraType(event.target.value), [contextC]);
+    var updateTeraType = useCallback((event) => contextMemo.changeTeraType(event.target.value), [contextMemo]);
 
     return (
         <select value={teraTypeMemo} onChange={updateTeraType}>
@@ -427,9 +433,13 @@ function ItemIcon({ contextC }) {
   function EVInput({ contextC, stat }){
 
     const statMemo = useMemo(() => stat, [stat]);
-    const evsMemo = useMemo(() => contextC.evs, [contextC.evs]);
+    const evsMemo = useMemo(() => contextC.evs, [contextC]);
 
     var updateEV = useCallback((event) => contextC.setEV(event.target.value, statMemo), [evsMemo, statMemo, contextC]);
+
+    //function updateEVLocal(event){
+    //  contextC.setEV(event.target.value, statMemo);
+    //}
 
     useEffect(() => {
       const delayDebounceFn = setTimeout(() => {
@@ -439,13 +449,13 @@ function ItemIcon({ contextC }) {
     }, [evsMemo]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="252" step="1" type="number" placeholder="0" onChange={updateEV} value={evsMemo[statMemo]}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="252" step="1" type="number" placeholder="0" onBlur={updateEV} defaultValue={evsMemo[statMemo]}></input>
     );
   }
   function IVInput({ contextC, stat }){
 
     const statMemo = useMemo(() => stat, [stat]);
-    const ivsMemo = useMemo(() => contextC.ivs, [contextC.ivs]);
+    const ivsMemo = useMemo(() => contextC.ivs, [contextC]);
 
     var updateIV = useCallback((event) => contextC.setIV(event.target.value, statMemo), [ivsMemo, statMemo, contextC]);
 
@@ -457,7 +467,7 @@ function ItemIcon({ contextC }) {
     }, [ivsMemo]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onChange={updateIV} value={ivsMemo[statMemo]}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onBlur={updateIV} defaultValue={ivsMemo[statMemo]}></input>
     );
   }
   function BoostDropdown({ contextC, stat }){
@@ -476,9 +486,6 @@ function ItemIcon({ contextC }) {
         </select>
     );
   }
-  //const EVInputMemo = React.memo(EVInput);
-  //const IVInputMemo = React.memo(IVInput);
-  //const BoostDropdownMemo = React.memo(BoostDropdown);
   function StatsTableRow({ stat, statIndex }){
     const c = useContext(context);
 
@@ -493,11 +500,11 @@ function ItemIcon({ contextC }) {
     const natureMemo = useMemo(() => c.nature, [c.nature]);
     const boostsMemo = useMemo(() => c.boosts, [c.boosts]);
     const baseStatsMemo = useMemo(() => c.baseStats, [c.baseStats]);
+    const plus = useMemo(() => gen.natures.get(toID(natureMemo)).plus, [natureMemo]);
+    const minus = useMemo(() => gen.natures.get(toID(natureMemo)).minus, [natureMemo]);
 
     const statNumMemo = useMemo(() => {
     const statFirstStep = Math.floor((2 * baseStatsMemo[statMemo] + ivsMemo[statMemo] + Math.floor(evsMemo[statMemo]/4)) * 100 / 100) // level 100 assumed
-    const plus = gen.natures.get(toID(natureMemo)).plus;
-    const minus = gen.natures.get(toID(natureMemo)).minus;
     const natureMod = (plus === statMemo && plus !== minus) ? 1.1 : ((minus === statMemo && minus !== plus) ? 0.9 : 1);
     const statSecondStep = (statMemo === "hp") ? statFirstStep + 100 + 10 : (statFirstStep + 5) * natureMod; // level 100 assumed
     //var dummyMon = new Pokemon(gen, speciesMemo, {evs: evMemoObj, ivs: ivMemoObj, ability: abilityMemo, nature: natureMemo});
@@ -506,7 +513,7 @@ function ItemIcon({ contextC }) {
     }, [baseStatsMemo, natureMemo, ivsMemo, evsMemo, boostsMemo, statMemo]);
 
     return (
-        <tr><td>{ev_names[statIndexMemo]}: </td><td><EVInput contextC={c} stat={statMemo}></EVInput></td><td> IV: </td><td><IVInput contextC={c} stat={statMemo}></IVInput></td>{boostPickerNoHP}<td>{statNumMemo}</td></tr>
+        <tr><td style={{color: (statMemo === minus && minus !== plus) ? "#1680f6" : ((statMemo === plus && plus !== minus) ? "#ff5a84": "#ffd21f")}}>{ev_names[statIndexMemo]}: </td><td><EVInput contextC={c} stat={statMemo}></EVInput></td><td> IV: </td><td><IVInput contextC={c} stat={statMemo}></IVInput></td>{boostPickerNoHP}<td><b>{statNumMemo}</b></td></tr>
     );
   }
   function StatsTable(){
@@ -534,20 +541,15 @@ function ItemIcon({ contextC }) {
     var reviseNotes = useCallback((event) => c.updateNotes(event.target.value), [c]);
     
     return (
-        <div style={{display: "flex"}}>Notes: <input onChange={reviseNotes} value={c.notes}></input></div>
+        <div style={{display: "flex"}}>Notes: <input style={{ marginLeft: "10px" }} onBlur={reviseNotes} defaultValue={c.notes}></input></div>
     );
   }
-
-  //const SpeciesSelectorMemo = React.memo(SpeciesSelector, () => { console.log("species selector being rerendered"); });
-  //const NatureSelectorMemo = React.memo(NatureSelector);
-  //const TeraTypeSelectorMemo = React.memo(TeraTypeSelector);
-  //const AbilitySelectorMemo = React.memo(AbilitySelector);
-  //const ItemSelectorMemo = React.memo(ItemSelector);
-  //const MoveSelectorMemo = React.memo(MoveSelector);
 
   // MAIN PANEL
   export function PokemonPanel({ passedNotes, monID, monSide, pSpecies, pNature, pTeraType, pAbility, pTeraActive, pItem, pMoves, pEVs, pIVs, pBoosts }) {
     //var [mon, setMon] = useState(passedMon);
+    var pC = useContext(partyContext);
+
     const [sideCode] = useState(monSide);
     const [id] = useState(monID);
     const [species, setSpeciesName] = useState(pSpecies);
@@ -573,7 +575,7 @@ function ItemIcon({ contextC }) {
 
     //console.log("mon index "+monID.toString()+" reinitialized with the following species:");
     //console.log(species);
-    var pC = useContext(partyContext);
+    
 
     /*
     function updateMon(){
@@ -670,6 +672,7 @@ function ItemIcon({ contextC }) {
     }
 
     useEffect( () => {
+      //console.log("passing up moves ",moves," to mon ",monID," of ",monSide,"s");
       pC.setMoveset(moves, id);
     }, [moves]);
 
@@ -711,12 +714,12 @@ function ItemIcon({ contextC }) {
 
     function setBoost(boost, stat){
         var statsCopy = {
-            hp: boosts["hp"],
-            atk: boosts["atk"],
-            def: boosts["def"],
-            spa: boosts["spa"],
-            spd: boosts["spd"],
-            spe: boosts["spe"],
+            hp: parseInt(boosts["hp"]),
+            atk: parseInt(boosts["atk"]),
+            def: parseInt(boosts["def"]),
+            spa: parseInt(boosts["spa"]),
+            spd: parseInt(boosts["spd"]),
+            spe: parseInt(boosts["spe"]),
         }
         statsCopy[stat] = boost;
         setBoosts(statsCopy);
@@ -756,11 +759,11 @@ function ItemIcon({ contextC }) {
     <context.Provider value={{ setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateNotes, id, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species, baseStats }}>
       <div style={{display: "flex"}}>
         <div>
-          <SpeciesSelector></SpeciesSelector>
-          <NatureSelector></NatureSelector>
-          <TeraTypeSelector></TeraTypeSelector>
-          <AbilitySelector></AbilitySelector>
-          <ItemSelector></ItemSelector>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector></SpeciesSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector></NatureSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector></TeraTypeSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector></AbilitySelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector></ItemSelector></div>
           <StatsTable></StatsTable>
           <NotesInput></NotesInput>
           { (sideCode === "attacker") && (

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import * as img from '@pkmn/img';
 
 export function MonsMini({ sideCode, importedSpecies, visible }) {
@@ -18,9 +18,8 @@ export function MonsMini({ sideCode, importedSpecies, visible }) {
         setSpecies(importedMemo);
     }, [importedMemo]);
 
-    console.log(window.innerHeight);
     return (
-        <div className="minified" style={{ display: (visibleMemo) ? "inline-block" : "none", minWidth: "100px", height: "30px"}}>
+        <div className="minified" style={{ position: "relative", top: "2px", display: (visibleMemo) ? "inline-block" : "none", minWidth: "100px", height: "30px"}}>
             <div style={{...{ display: "flex", alignItems: "center" }, ...(species.length < 1) ? { height: "100%" } : {}}}>{(species.length < 1) ? "(no "+sideCode+"s)" : ""}</div>
             {species.map((s, index) => <img key={s+index} src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
                 width: "40px",

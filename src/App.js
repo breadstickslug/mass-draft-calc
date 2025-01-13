@@ -2,6 +2,7 @@
 import {Generations, toID} from '@smogon/calc';
 import './App.css';
 import { MonsContainer } from "./mons-container.js";
+import { CalcTable } from "./calc-table.js";
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {Sets, Teams} from '@pkmn/sets';
 
@@ -10,13 +11,19 @@ const gen = Generations.get(9);
 
 const tabNames = ["Mons", "Import"];
 
+function capitalize(val) {
+  return val.charAt(0).toUpperCase()+val.slice(1);
+}
 
-function PanelButton({ text, tab, focusTab, id }) {
+
+function PanelButton({ text, tab, focusTab, id, sideCode }) {
   const memoTab = useMemo(() => tab, [tab]);
   const memoText = useMemo(() => text, [text]);
   const memoFocusTab = useCallback(() => focusTab(memoTab), [memoTab, focusTab]);
+
+  const sideMemo = useMemo(() => sideCode, [sideCode]);
   return (
-    <button type="button" id={id} onClick={memoFocusTab} >{memoText}</button>
+    <button className={sideMemo+"-button"} type="button" id={id} onClick={memoFocusTab} >{memoText}</button>
   );
 }
 
@@ -28,24 +35,26 @@ function ImportContainer({ sideCode, importFunc }) {
 
   const updateImported = useCallback((event) => setImportText(event.target.value), [setImportText]);
 
-  useEffect(() => {
-    console.log(importText); 
-  }, [importText]);
+  //useEffect(() => {
+  //  console.log(importText); 
+  //}, [importText]);
 
   return (
-    <div>
-      <textarea id={sideMemo} cols="75" rows="10" onChange={updateImported} value={importText}></textarea>
-      <p /><button type="button" onClick={importFuncMemo}>Import</button>
+    <div style={{ display: "flex", height: "100%"}}>
+      <div style={{ marginTop: "auto", marginBottom: "auto", marginLeft: "auto", marginRight: "auto"}}>
+        <textarea id={sideMemo} cols="75" rows="20" onChange={updateImported} value={importText}></textarea>
+        <p /><button type="button" onClick={importFuncMemo}>Import</button>
+      </div>
     </div>
   );
 }
 
-function TabManager({ sideCode }) {
+function TabManager({ sideCode, updateMons }) {
   const [tabsActive, setTabsActive] = useState([true, false]);
   const [importedTeamStorage, setImportedTeamStorage] = useState({});
   const sideMemo = useMemo(() => sideCode, [sideCode]);
-  const [containerTransition, setContainerTransition] = useState({ height: "51px"});
-  const [buttonTransition, setButtonTransition] = useState((sideCode === "attacker") ? { top: "50px" } : { bottom: "44px" });
+  const [containerTransition, setContainerTransition] = useState({ height: "34px"});
+  const [buttonTransition, setButtonTransition] = useState((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
   const [containerCollapsed, setContainerCollapsed] = useState(true);
   
   function focusTab(tab) {
@@ -61,19 +70,19 @@ function TabManager({ sideCode }) {
   }
   function forceOpenContainer(){
     setContainerTransition({ height: ((sideCode === "attacker") ? "552" : "421")+"px" });
-    setButtonTransition((sideCode === "attacker") ? { top: "551px" } : { bottom: "414px" });
+    setButtonTransition((sideCode === "attacker") ? { top: "551px" } : { bottom: "421px" });
     setContainerCollapsed(false);
   }
   function collapseContainer(tab) {
     console.log("collapsing");
     if (containerCollapsed){
       setContainerTransition({ height: ((sideCode === "attacker") ? "552" : "421")+"px" });
-      setButtonTransition((sideCode === "attacker") ? { top: "551px" } : { bottom: "414px" });
+      setButtonTransition((sideCode === "attacker") ? { top: "551px" } : { bottom: "421px" });
       setContainerCollapsed(false);
     }
     else {
-      setContainerTransition({ height: "51px" });
-      setButtonTransition((sideCode === "attacker") ? { top: "50px" } : { bottom: "44px" });
+      setContainerTransition({ height: "34px" });
+      setButtonTransition((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
       setContainerCollapsed(true);
     }
   }
@@ -138,12 +147,12 @@ function TabManager({ sideCode }) {
 
   return (
     <div>
-      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage}></MonsContainer></div>
-      <div className={sideCode+"s"} id={sideCode+"Import"} style={{...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={sideCode} importFunc={importMons}></ImportContainer></div>
+      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage}></MonsContainer></div>
+      <div className={sideCode+"s"} id={sideCode+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={sideCode} importFunc={importMons}></ImportContainer></div>
       <div className={sideCode+"s-buttons"} style={{ ...buttonTransition }}>
-          <PanelButton text={sideCode+"s"} tab={tabNames[0]} focusTab={focusTab} id={(tabsActive[0]) ? "active" : "inactive"}></PanelButton>
-          <PanelButton text="Import" tab={tabNames[1]} focusTab={focusTab} id={(tabsActive[1]) ? "active" : "inactive"}></PanelButton>
-          <PanelButton text="Collapse/Expand" tab={tabNames[0]} focusTab={collapseContainer} id={"inactive"}></PanelButton>
+          <PanelButton text={capitalize(sideCode)+"s"} sideCode={sideCode} tab={tabNames[0]} focusTab={focusTab} id={(tabsActive[0]) ? "active" : "inactive"}></PanelButton>
+          <PanelButton text="Import" sideCode={sideCode} tab={tabNames[1]} focusTab={focusTab} id={(tabsActive[1]) ? "active" : "inactive"}></PanelButton>
+          <PanelButton text="Collapse/Expand" sideCode={sideCode} tab={tabNames[0]} focusTab={collapseContainer} id={"inactive"}></PanelButton>
       </div>
     </div>
   );
@@ -153,8 +162,34 @@ function TabManager({ sideCode }) {
 
 function App() {
 
+  const [attackerMons, setAttackerMons] = useState([]);
+  const [defenderMons, setDefenderMons] = useState([]);
+
+  function updateMons(sideCode, packaged){
+    /*
+    const monified = packaged.map((mon) =>
+      new Pokemon(gen, mon.species, {
+        nature: mon.nature,
+        ability: mon.ability,
+        item: mon.item,
+        teraType: (mon.teraActive) ? (mon.teraType) : undefined,
+        moves: mon.moves,
+        evs: mon.evs,
+        ivs: mon.ivs,
+        name: mon.notes,
+      })
+    )
+    */
+    if (sideCode === "attacker") {
+      setAttackerMons(packaged);
+    }
+    else if (sideCode === "defender") {
+      setDefenderMons(packaged);
+    }
+  }
+
   return (
-    <div className="App" style={{height: "1000vh"}}>
+    <div className="App" >
       {/*
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
@@ -171,8 +206,12 @@ function App() {
         </a>
       </header>
       */}
-      <TabManager sideCode="attacker"></TabManager>
-      <TabManager sideCode="defender"></TabManager>
+      <div className="calcTable" style={{position: "absolute", width: "100%", top: "80px"}}>
+        <CalcTable attackers={attackerMons} defenders={defenderMons}></CalcTable>
+        <div style={{height: "80px"}}></div>
+      </div>
+      <TabManager sideCode="attacker" updateMons={updateMons}></TabManager>
+      <TabManager sideCode="defender" updateMons={updateMons}></TabManager>
       
     </div>
   );

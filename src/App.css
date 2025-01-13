@@ -1,5 +1,14 @@
+@font-face {
+  font-family: UDKakugoC80;
+  src: url(FOT-UDKakugoC80Pro-M.otf);
+  font-size-adjust: 0.5;
+}
+
 .App {
   text-align: center;
+}
+
+table {
 }
 
 .App-logo {
@@ -28,45 +37,92 @@
   color: #61dafb;
 }
 
+select {
+  background-color: rgba(209, 222, 232, 0.8);
+  border-radius: 5px;
+  border: 1px solid rgba(209, 222, 232, 1);
+}
+
 .attackers {
   position: fixed;
   overflow: scroll;
   top: 0px;
-  background-color: #3d7199;
+  background-color: #1a2a43;
   width: 100vw;
   height: 42vh;
   transition: height 300ms;
+  color: #fff;
 }
+
+.attacker-button {
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  height: 30px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 2px solid #1a2a43;
+}
+
+.attacker-button#active {
+  border-top: 2px solid #1a2a43;
+}
+
+.attacker-button#inactive {
+  border-top: 1px solid #1a2a43;
+}
+
 
 .attackers-buttons {
   text-align: center;
   position: fixed;
   top: 42vh;
   width: 100vw;
-  height: 30px;
+  height: 60px;
   transition: top 300ms;
 }
 
 .minified {
   border: 0px solid black;
+  border-radius: 5px;
+  background-color: rgba(209, 222, 232, 0.2);
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 #active {
-  background-color: #3d7199;
+  background-color: #1a2a43;
+  color: #fff;
 }
 
 #inactive {
-  background-color: #66a0cc;
+  background-color: #364059;
+  color: #fff;
 }
 
 .defenders {
   position: fixed;
   overflow: scroll;
   bottom: 0px;
-  background-color: #3d7199;
+  background-color: #1a2a43;
   width: 100vw;
   height: 32vh;
   transition: height 300ms;
+  color: #fff;
+}
+
+.defender-button {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  height: 30px;
+  border: 2px solid #1a2a43;
+}
+
+.defender-button#active {
+  border-bottom: 2px solid #1a2a43;
+}
+
+.defender-button#inactive {
+  border-bottom: 2px solid #364059;
 }
 
 .defenders-buttons {
@@ -76,12 +132,13 @@
   width: 100vw;
   height: 30px;
   transition: bottom 300ms;
+  color: #fff;
 }
 
 .mon-panel {
-  border: 2px solid #d1dee8;
+  border: 2px solid rgba(209, 222, 232, 0.6);
   border-radius: 10px;
-  background-color: #66a0cc;
+  background-color: #364059;
   padding-left: 5px;
   padding-right: 5px;
   padding-top: 5px;
