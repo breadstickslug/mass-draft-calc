@@ -4,6 +4,7 @@ import * as dex from '@pkmn/dex';
 import * as img from '@pkmn/img';
 //import {Generations as DataGenerations, TypeName} from '@pkmn/data' ;
 import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
+import Select from 'react-select';
 
 import { partyContext } from "./mons-container.js";
 
@@ -29,11 +30,12 @@ const typeColors = {
 	fairy: '#EF70EF',
   //stellar: '#33D6F0',
   //stellar: 'conic-gradient(90deg, #EE3030, #b15b0c, #ffc746, #49b641, #33d6f0, #0a53a8, #c2558c, #ee3030)',
-  stellar: 'conic-gradient( #fde144, #f7a519, #f5672b, #e34a6a, #c666ba, #8d49cb, #8362c1, #6f7ba6, #879eab, #5bb9e1, #33beea, #287ada, #345ac3, #4da2ba, #61d94c, #cbdc65, #e4e8c6, #e7cc9c, #fde144)',
+  stellar: 'conic-gradient(#fde144, #f7a519, #f5672b, #e34a6a, #c666ba, #8d49cb, #8362c1, #6f7ba6, #879eab, #5bb9e1, #33beea, #287ada, #345ac3, #4da2ba, #61d94c, #cbdc65, #e4e8c6, #e7cc9c, #fde144)',
 };
 
 const gen = Generations.get(9);
 const speciesDex = dex.Dex.forGen(9);
+console.log(speciesDex);
 const ev_names = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
 const statList = ["hp", "atk", "def", "spa", "spd", "spe"];
 const boostList = ["+6", "+5", "+4", "+3", "+2", "+1", "--", "-1", "-2", "-3", "-4", "-5", "-6"];
@@ -303,17 +305,116 @@ function ItemIcon({ contextC }) {
   }
   function SpeciesDropdown({ contextC }){
     const options = useMemo(() => sortedMons.map((specie, index) =>
-      <option value={specie} key={index}>{specie}</option>
+      //<option value={specie} key={index}>{specie}</option>
+      new Object({
+        value: specie,
+        label: specie,
+        key: index,
+      })
     ), []);
-
     const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
 
-    var changeSpecies = useCallback((event) => contextC.setSpecies(event.target.value), [contextC]);
+    var changeSpecies = useCallback((option, reason) => {
+      if (reason.action === "set-value" ||
+        reason.action === "input-blur" ||
+        reason.action === "menu-close") {
+          return;
+      }
+      contextC.setSpecies(option.value)}, [contextC]);
 
     return (
-      <select value={speciesMemo} onChange={changeSpecies}>
-        {options}
-      </select>
+      <Select menuPosition="fixed" options={options} classNamePrefix="species" value={options.find(x => x.value === speciesMemo)} onChange={changeSpecies} onSelectResetsInput={false} menuPortalTarget={document.body}
+      
+      styles={{
+        container: (baseStyles, state) => ({
+          ...baseStyles,
+          lineHeight: "30px",
+          height: "30px",
+        }),
+        
+        control: (baseStyles, state) => ({
+          ...baseStyles,
+          backgroundColor: "rgba(209, 222, 232, 0.8)",
+          borderRadius: "5px",
+          border: "1px solid rgba(209, 222, 232, 1)",
+          // height: "25px",
+          minHeight: "30px",
+          width: "200px",
+          lineHeight: "30px",
+          height: "30px",
+          fontSize: "0.8em",
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif",
+        }),
+
+        valueContainer: (baseStyles, state) => ({
+          ...baseStyles,
+          height: "30px",
+          color: "black",
+          //lineHeight: "25px",
+          textAlign: "left",
+          padding: "0px 8px",
+          //alignItems: "start",
+        }),
+
+        singleValue: (baseStyles, state) => ({
+          ...baseStyles,
+          color: "black",
+          fontSize: "1em",
+          height: "30px",
+        }),
+
+        indicatorsContainer: (baseStyles, state) => ({
+          ...baseStyles,
+          //lineHeight: "25px",
+          height: "30px",
+        }),
+
+        dropdownIndicator: (baseStyles, state) => ({
+          ...baseStyles,
+          color: "black",
+          height: "30px",
+          width: "30px",
+          alignItems: "center",
+        }),
+
+        indicatorSeparator: (baseStyles, state) => ({
+          ...baseStyles,
+          backgroundColor: "black",
+        }),
+
+        menuPortal: (baseStyles, state) => ({
+          ...baseStyles,
+          zIndex: 9999,
+        }),
+
+        menu: (baseStyles, state) => ({
+          ...baseStyles,
+        }),
+
+        menuList: (baseStyles, state) => ({
+          ...baseStyles,
+          "::-webkit-scrollbar": {
+              width: "4px",
+          },
+          scrollbarWidth: "thin",
+        }),
+
+        option: (baseStyles, state) => ({
+          ...baseStyles,
+          color: "black",
+          height: "30px",
+          lineHeight: "20px",
+          fontSize: "0.77em",
+        }),
+
+        input: (baseStyles, state) => ({
+          ...baseStyles,
+          input: {
+            opacity: "1 !important",
+          },
+          lineHeight: "15px",
+        })
+      }} />
     );
   }
   function SpeciesSelector() {
@@ -613,7 +714,7 @@ function ItemIcon({ contextC }) {
         changeTeraType(newTeraType);
         var newAbility = gen.species.get(toID(s)).abilities[0];
         updateAbility(newAbility);
-        setTeraStatus((s.includes("-Tera") || s.includes("Stellar")) ? true : false);
+        setTeraStatus(((s.includes("-Tera") && !s.includes("pagos")) || s.includes("Stellar")) ? true : false);
         //updateMon();
 
     }

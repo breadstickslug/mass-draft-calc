@@ -145,6 +145,48 @@ select {
   padding-bottom: 5px;
 }
 
+.field {
+  position: fixed;
+  overflow: scroll;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  left: 0px;
+  top: 275px;
+  background-color: #1a2a43;
+  width: 200px;
+  height: 600px;
+  transition: width 300ms;
+  color: #fff;
+}
+
+.field-buttons {
+  text-align: center;
+  position: fixed;
+  top: 275px;
+  width: 40px;
+  height: 600px;
+  transition: left 300ms;
+  color: #fff;
+}
+
+.field-button {
+  position: relative;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  left: 0px;
+  height: 30px;
+  border: 2px solid #1a2a43;
+  top: 285px;
+}
+
+.field-button#active {
+  border-right: 2px solid #1a2a43;
+}
+
+.field-button#inactive {
+  border-right: 2px solid #364059;
+}
+
 .index-num {
   position: absolute;
   top: -3%;

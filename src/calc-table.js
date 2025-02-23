@@ -25,7 +25,7 @@ const typeColors = {
 	fairy: '#EF70EF',
   //stellar: '#33D6F0',
   //stellar: 'conic-gradient(90deg, #EE3030, #b15b0c, #ffc746, #49b641, #33d6f0, #0a53a8, #c2558c, #ee3030)',
-  stellar: 'conic-gradient( #fde144, #f7a519, #f5672b, #e34a6a, #c666ba, #8d49cb, #8362c1, #6f7ba6, #879eab, #5bb9e1, #33beea, #287ada, #345ac3, #4da2ba, #61d94c, #cbdc65, #e4e8c6, #e7cc9c, #fde144)',
+  stellar: 'conic-gradient(from 0deg at 20px 20px, #fde144, #f7a519, #f5672b, #e34a6a, #c666ba, #8d49cb, #8362c1, #6f7ba6, #879eab, #5bb9e1, #33beea, #287ada, #345ac3, #4da2ba, #61d94c, #cbdc65, #e4e8c6, #e7cc9c, #fde144)',
 };
 // takes move information and returns background color + img icon src
 function moveGraphicData(type, teratype, teraactive) {
@@ -119,7 +119,7 @@ function colorMap(colors, pct)
     return resultColor;
 }
 
-function AttackerRows({ attacker, defenders }){
+function AttackerRows({ attacker, defenders, field }){
     //const [calcs, setCalcs] = useState([]);
     //const attackerMemo = useMemo(() => attacker, [attacker]);
     //const defendersMemo = useMemo(() => defenders, [defenders]);
@@ -131,6 +131,7 @@ function AttackerRows({ attacker, defenders }){
 
     // calcs is a list corresponding to moves producing lists of calcs vs defenders
     const calcs = useMemo(() => defenders.map((defender) => {
+        console.log(field);
         var tempDefender = defender.clone();
         if (defender.item === "(no item)") { tempDefender.item = undefined; }
         tempDefender.name = tempDefender.species.name;
@@ -140,9 +141,9 @@ function AttackerRows({ attacker, defenders }){
             const m = new Move(gen, move, {isStellarFirstUse: (attacker.teraType && attacker.teraType === "Stellar")});
             //console.log("attacker ",attacker," defender ",tempDefender," move ",m);
             //console.log(calculate(gen, attacker, tempDefender, m));
-            return calculate(gen, tempAttacker, tempDefender, m);
+            return calculate(gen, tempAttacker, tempDefender, m, field);
         });
-    }), [attacker, defenders, movesFiltered]);
+    }), [attacker, defenders, movesFiltered, field]);
 
 
     const rows = useMemo(() => calcs.map((defs, index1) => { // over defenders
@@ -183,9 +184,9 @@ function AttackerRows({ attacker, defenders }){
                                 border: "0",
                                 background: "transparent url("+img.Icons.getPokemon(calc.attacker.species.name).url+") no-repeat scroll "+img.Icons.getPokemon(calc.attacker.species.name).left.toString()+"px "+img.Icons.getPokemon(calc.attacker.species.name).top.toString()+"px",
                                 }}></img></td>
-                <td style={{ textAlign: "center", paddingRight: "5px" }}>{calc.attacker.species.name + ((attacker.name !== undefined) ? " ("+attacker.name+")" : "")}</td>
+                <td style={{ textAlign: "center", paddingRight: "5px" }}>{calc.attacker.species.name + ((attacker.name !== undefined && attacker.name !== "") ? " ("+attacker.name+")" : "")}</td>
                 <td style={{ textAlign: "center", display: "flex", lineHeight: "34px", background: gD["background"]}}>
-                    <div style={{position: "relative", display: "inline-block", height: "30px", width: "30px"}}>
+                    <div style={{position: "relative", display: "inline-block", height: "30px", width: "45px"}}>
                         <img src={gD["imgSrc"]} alt="" style={{
                             left: "0px",
                             top: "2px",
@@ -195,7 +196,8 @@ function AttackerRows({ attacker, defenders }){
                             position: "absolute",
                         }}></img>
                     </div>
-                <div style={{ ...{ textAlign: "center", paddingLeft: "10px", paddingRight: "10px", color: "#fff", fontWeight: "bold" }, ...{
+                <div style={{ ...{ background: (moveType === "Stellar") ? 'linear-gradient(90deg,rgba(141, 73, 203, 0.4),rgba(131, 98, 193, 0.4),rgba(111, 123, 166, 0.4),rgba(135, 158, 171, 0.4),rgba(91, 185, 225, 0.4),rgba(51, 190, 234, 0.4),rgba(40, 122, 218, 0.4),rgba(52, 90, 195, 0.4),rgba(77, 162, 186, 0.4),rgba(97, 217, 76, 0.4),rgba(203, 220, 101, 0.4),rgba(228, 232, 198, 0.4),rgba(231, 204, 156, 0.4),rgba(253, 225, 68, 0.4),rgba(253, 225, 68, 0.4),rgba(247, 165, 25, 0.4),rgba(245, 103, 43, 0.4),rgba(227, 74, 106, 0.4),rgba(198, 102, 186, 0.4))' : ("rgba(0, 0, 0, 0.15)"), 
+                                    width: "100%", borderTopLeftRadius: "8px", borderBottomLeftRadius: "8px", textAlign: "center", color: "#fff", fontWeight: "bold" }, ...{
                     textShadow: (calc.move.isStellarFirstUse || (calc.attacker.teraType && moveType === calc.attacker.teraType)) ? "1px 1px 2px #111, -1px 1px 2px #111, -1px -1px 1px #000, 1px -1px 2px #111" : "#000 0px 0px 0px"
                 }}}>{calc.move.name}</div></td>
                 <td style={{ textAlign: "center", paddingLeft: "5px"}}><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
@@ -219,9 +221,10 @@ function AttackerRows({ attacker, defenders }){
     return rows.map((r, index) => r);
 }
 
-export function CalcTable({ attackers, defenders}) {
+export function CalcTable({ attackers, defenders, field }) {
     const a = useMemo(() => attackers, [attackers]);
     const d = useMemo(() => defenders, [defenders]);
+    const f = useMemo(() => field, [field]);
 
     useEffect(() => {
         console.log("DEFENDERS UPDATED", d);
@@ -236,18 +239,18 @@ export function CalcTable({ attackers, defenders}) {
         <table style={{backgroundColor: "#fff", textAlign: "center", marginLeft: "auto", marginRight: "auto", borderCollapse: "collapse"}}>
             <thead style={{backgroundColor: "#1a2a43", color: "#fff" }}>
                 <tr>
-                    <th></th>
-                    <th>Attacker</th>
-                    <th>Move</th>
-                    <th></th>
-                    <th>Defender</th>
-                    <th>Damage</th>
-                    <th>% Range</th>
+                    <th style={{paddingLeft: "5px", paddingRight: "5px"}}></th>
+                    <th style={{paddingLeft: "5px", paddingRight: "5px"}}>Attacker</th>
+                    <th style={{paddingLeft: "5px", paddingRight: "5px"}}>Move</th>
+                    <th style={{paddingLeft: "5px", paddingRight: "5px"}}></th>
+                    <th style={{paddingLeft: "5px", paddingRight: "5px"}}>Defender</th>
+                    <th style={{paddingLeft: "5px", paddingRight: "5px"}}>Damage</th>
+                    <th style={{paddingLeft: "5px", paddingRight: "5px"}}>% Range</th>
                 </tr>
             </thead>
             <tbody>
                 {a.map((attacker, index) =>
-                    <AttackerRows key={attacker.species+index} attacker={attacker} defenders={d}></AttackerRows>
+                    <AttackerRows key={attacker.species+index} attacker={attacker} defenders={d} field={f}></AttackerRows>
                 )}
             </tbody>
         </table>
