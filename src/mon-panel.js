@@ -6,6 +6,7 @@ import * as img from '@pkmn/img';
 import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
 import Select from 'react-select';
 import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow'
 
 import { partyContext } from "./mons-container.js";
 
@@ -163,7 +164,7 @@ function moveGraphicData(type, teratype, teraactive) {
 function ItemIcon({ monStateStore }) {
     //const c = useContext(context);
 
-    const itemName = monStateStore((state) => state.itemName);
+    const itemName = monStateStore(useShallow((state) => state.itemName));
 
     //const itemMemo = useMemo(() => contextC.itemName, [contextC.itemName]);
     
@@ -191,8 +192,8 @@ function ItemIcon({ monStateStore }) {
     );
   }
   function ItemDropdown({ monStateStore }) {
-    const itemName = monStateStore((state) => state.itemName);
-    const setItemName = monStateStore((state) => state.setItemName);
+    const itemName = monStateStore(useShallow((state) => state.itemName));
+    const setItemName = monStateStore(useShallow((state) => state.setItemName));
   
     const options = useMemo(() => sortedItems.map((item, index) =>
       <option value={item} key={index}>{item}</option>
@@ -210,8 +211,8 @@ function ItemIcon({ monStateStore }) {
   }
   function ItemSelector({ monStateStore }) {
     //const c = useContext(context);
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
     return (
       <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon key={sideCode + id.toString() + "itemicon"} monStateStore={monStateStore}></ItemIcon><ItemDropdown key={sideCode + id.toString() + "itempicker"} monStateStore={monStateStore}></ItemDropdown></div>
@@ -225,13 +226,13 @@ function ItemIcon({ monStateStore }) {
     // COME BACK AND ADD THE FIELD
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
     //const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
-    const moves = monStateStore((state) => state.moves);
+    const moves = monStateStore(useShallow((state) => state.moves));
     //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
-    const species = monStateStore((state) => state.species);
+    const species = monStateStore(useShallow((state) => state.species));
     //const teraTypeMemo = useMemo(() => contextC.teraType, [contextC.teraType]);
-    const teraType = monStateStore((state) => state.teraType);
+    const teraType = monStateStore(useShallow((state) => state.teraType));
     //const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
-    const teraActive = monStateStore((state) => state.teraActive);
+    const teraActive = monStateStore(useShallow((state) => state.teraActive));
     const moveGraphicDataMemo = useCallback((type, teratype, teraactive) => moveGraphicData(type, teratype, teraactive), []);
     const moveTypeGetMemo = useCallback((move) => gen.moves.get(toID(move)).type, []);
     const monTypeGetMemo = useCallback((species, index) => gen.species.get(toID(species)).types[index], []);
@@ -272,8 +273,8 @@ function ItemIcon({ monStateStore }) {
     ), []);
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
     //const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
-    const moves = monStateStore((state) => state.moves);
-    const setMoves = monStateStore((state) => state.setMoves);
+    const moves = monStateStore(useShallow((state) => state.moves));
+    const setMoves = monStateStore(useShallow((state) => state.setMoves));
 
     //var changeMove = useCallback((event) => contextC.setMove(event.target.value, moveNumMemo), [movesMemo, moveNumMemo, contextC]);
 
@@ -297,8 +298,8 @@ function ItemIcon({ monStateStore }) {
   function MoveSelector({ monStateStore, moveNum }) {
     //const c = useContext(context);
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
   
     return (
         <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={sideCode + id.toString() + "moveicon" + moveNumMemo.toString()} monStateStore={monStateStore} moveNum={moveNumMemo}></MoveIcon><MoveDropdown key={sideCode + id.toString() + "movepicker" + moveNumMemo.toString()} monStateStore={monStateStore} moveNum={moveNumMemo}></MoveDropdown></div>
@@ -310,7 +311,7 @@ function ItemIcon({ monStateStore }) {
   function SpeciesIcon({ monStateStore }){
 
     //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
-    const species = monStateStore((state) => state.species);
+    const species = monStateStore(useShallow((state) => state.species));
 
     const imgSrcMemo = useMemo(() => {
     return "transparent url(".concat(img.Icons.getPokemon(species).url)
@@ -341,10 +342,10 @@ function ItemIcon({ monStateStore }) {
       })
     ), []);
     //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
-    const species = monStateStore((state) => state.species);
-    const setSpeciesName = monStateStore((state) => state.setSpeciesName);
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const species = monStateStore(useShallow((state) => state.species));
+    const setSpeciesName = monStateStore(useShallow((state) => state.setSpeciesName));
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
     /*
     var changeSpecies = useCallback((option, reason) => {
@@ -455,8 +456,8 @@ function ItemIcon({ monStateStore }) {
   function SpeciesSelector({ monStateStore }) {
     //const c = useContext(context);
 
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
     return (
       <div style={{display: "flex", "lineHeight": "34px"}}><SpeciesIcon key={sideCode + id.toString() + "speciesicon"} monStateStore={monStateStore}></SpeciesIcon><SpeciesDropdown key={sideCode + id.toString() + "speciespicker"} monStateStore={monStateStore}></SpeciesDropdown></div>
@@ -468,8 +469,8 @@ function ItemIcon({ monStateStore }) {
   // ABILITY SELECTOR
   function AbilityDropdown({ monStateStore }){
 
-    const ability = monStateStore((state) => state.ability);
-    const setAbility = monStateStore((state) => state.setAbility);
+    const ability = monStateStore(useShallow((state) => state.ability));
+    const setAbility = monStateStore(useShallow((state) => state.setAbility));
 
     const options = useMemo(() => sortedAbilities.map((abil, index) =>
         <option value={abil} key={index}>{abil}</option>
@@ -487,8 +488,8 @@ function ItemIcon({ monStateStore }) {
   }
   function AbilitySelector({ monStateStore }) {
     //const c = useContext(context);
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
     return (
         <div style={{display: "flex"}}>Ability: <AbilityDropdown key={sideCode + id.toString() + "abilitypicker"} monStateStore={monStateStore}></AbilityDropdown></div>
@@ -504,8 +505,8 @@ function ItemIcon({ monStateStore }) {
     ), []);
 
     //const natureMemo = useMemo(() => contextC.nature, [contextC.nature]);
-    const nature = monStateStore((state) => state.nature);
-    const setNature = monStateStore((state) => state.setNature);
+    const nature = monStateStore(useShallow((state) => state.nature));
+    const setNature = monStateStore(useShallow((state) => state.setNature));
 
     //var updateNature = useCallback((event) => contextC.changeNature(event.target.value), [contextC]);
 
@@ -517,8 +518,8 @@ function ItemIcon({ monStateStore }) {
   }
   function NatureSelector({ monStateStore }) {
     //const c = useContext(context);
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
     return (
         <div style={{display: "flex"}}>Nature: <NatureDropdown key={sideCode + id.toString() + "naturepicker"} monStateStore={monStateStore}></NatureDropdown></div>
@@ -532,7 +533,7 @@ function ItemIcon({ monStateStore }) {
 
     //const contextMemo = useMemo(() => contextC, [contextC]);
     //const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
-    const teraType = monStateStore((state) => state.teraType);
+    const teraType = monStateStore(useShallow((state) => state.teraType));
     const imgSrcMemo = useMemo(() => process.env.PUBLIC_URL + "/img/tera_" + teraType.toLowerCase() + "_gem.png", [teraType]);
     
     return (
@@ -551,8 +552,8 @@ function ItemIcon({ monStateStore }) {
 
     //const contextMemo = useMemo(() => contextC, [contextC]);
     //const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
-    const teraType = monStateStore((state) => state.teraType);
-    const setTeraType = monStateStore((state) => state.setTeraType);
+    const teraType = monStateStore(useShallow((state) => state.teraType));
+    const setTeraType = monStateStore(useShallow((state) => state.setTeraType));
 
     //var updateTeraType = useCallback((event) => contextMemo.changeTeraType(event.target.value), [contextMemo]);
 
@@ -565,8 +566,8 @@ function ItemIcon({ monStateStore }) {
   function TeraToggle({ monStateStore }){
 
     //const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
-    const teraActive = monStateStore((state) => state.teraActive);
-    const setTeraStatus = monStateStore((state) => state.setTeraStatus);
+    const teraActive = monStateStore(useShallow((state) => state.teraActive));
+    const setTeraStatus = monStateStore(useShallow((state) => state.setTeraStatus));
     //var updateTeraStatus = useCallback((event) => contextC.toggleTera(event.target.checked), [contextC]);
 
     return (
@@ -575,8 +576,8 @@ function ItemIcon({ monStateStore }) {
   }
   function TeraTypeSelector({ monStateStore }){
     //const c = useContext(context);
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
     return (
         <div style={{display: "flex", "lineHeight": "30px"}}>Tera Type: <TeraIcon key={sideCode + id.toString() + "teraicon"} monStateStore={monStateStore}></TeraIcon><TeraDropdown key={sideCode + id.toString() + "terapicker"} monStateStore={monStateStore}></TeraDropdown><TeraToggle key={sideCode + id.toString() + "teratoggle"} monStateStore={monStateStore}></TeraToggle></div>
@@ -590,8 +591,8 @@ function ItemIcon({ monStateStore }) {
 
     const statMemo = useMemo(() => stat, [stat]);
     //const evsMemo = useMemo(() => contextC.evs, [contextC]);
-    const evs = monStateStore((state) => state.evs);
-    const setEVs = monStateStore((state) => state.setEVs);
+    const evs = monStateStore(useShallow((state) => state.evs));
+    const setEVs = monStateStore(useShallow((state) => state.setEVs));
 
     //var updateEV = useCallback((event) => contextC.setEV(event.target.value, statMemo), [evsMemo, statMemo, contextC]);
 
@@ -628,8 +629,8 @@ function ItemIcon({ monStateStore }) {
 
     const statMemo = useMemo(() => stat, [stat]);
     //const ivsMemo = useMemo(() => contextC.ivs, [contextC]);
-    const ivs = monStateStore((state) => state.ivs);
-    const setIVs = monStateStore((state) => state.setIVs);
+    const ivs = monStateStore(useShallow((state) => state.ivs));
+    const setIVs = monStateStore(useShallow((state) => state.setIVs));
 
     //var updateIV = useCallback((event) => contextC.setIV(event.target.value, statMemo), [ivsMemo, statMemo, contextC]);
 
@@ -665,8 +666,8 @@ function ItemIcon({ monStateStore }) {
 
     const statMemo = useMemo(() => stat, [stat]);
     //const boostsMemo = useMemo(() => contextC.boosts, [contextC.boosts]);
-    const boosts = monStateStore((state) => state.boosts);
-    const setBoosts = monStateStore((state) => state.setBoosts);
+    const boosts = monStateStore(useShallow((state) => state.boosts));
+    const setBoosts = monStateStore(useShallow((state) => state.setBoosts));
 
     function setBoost(boost, stat){
       var statsCopy = {
@@ -692,8 +693,8 @@ function ItemIcon({ monStateStore }) {
   }
   function StatsTableRow({ monStateStore, stat, statIndex }){
     //const c = useContext(context);
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
     const statMemo = useMemo(() => stat, [stat])
     const statIndexMemo = useMemo(() => statIndex, [statIndex]);
@@ -702,15 +703,15 @@ function ItemIcon({ monStateStore }) {
 
     //const speciesMemo = useMemo(() => c.species, [c.species]);
     //const evsMemo = useMemo(() => c.evs, [c.evs]);
-    const evs = monStateStore((state) => state.evs);
+    const evs = monStateStore(useShallow((state) => state.evs));
     //const ivsMemo = useMemo(() => c.ivs, [c.ivs]);
-    const ivs = monStateStore((state) => state.ivs);
+    const ivs = monStateStore(useShallow((state) => state.ivs));
     //const natureMemo = useMemo(() => c.nature, [c.nature]);
-    const nature = monStateStore((state) => state.nature);
+    const nature = monStateStore(useShallow((state) => state.nature));
     //const boostsMemo = useMemo(() => c.boosts, [c.boosts]);
-    const boosts = monStateStore((state) => state.boosts);
+    const boosts = monStateStore(useShallow((state) => state.boosts));
     //const baseStatsMemo = useMemo(() => c.baseStats, [c.baseStats]);
-    const baseStats = monStateStore((state) => state.baseStats);
+    const baseStats = monStateStore(useShallow((state) => state.baseStats));
     const plus = useMemo(() => gen.natures.get(toID(nature)).plus, [nature]);
     const minus = useMemo(() => gen.natures.get(toID(nature)).minus, [nature]);
 
@@ -728,8 +729,8 @@ function ItemIcon({ monStateStore }) {
     );
   }
   function StatsTable({ monStateStore }){
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
     const rows = statList.map((stat, index) =>
         <StatsTableRow stat={stat} statIndex={index} key={sideCode + id.toString() + stat} monStateStore={monStateStore}></StatsTableRow>
@@ -747,11 +748,11 @@ function ItemIcon({ monStateStore }) {
   // NOTES INPUT
   function NotesInput({ monStateStore }){
     //const c = useContext(context);
-    const sideCode = monStateStore((state) => state.sideCode);
-    const id = monStateStore((state) => state.id);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
 
-    const notes = monStateStore((state) => state.notes);
-    const setNotes = monStateStore((state) => state.setNotes);
+    const notes = monStateStore(useShallow((state) => state.notes));
+    const setNotes = monStateStore(useShallow((state) => state.setNotes));
 
     //function reviseNotes(event){
     //    c.updateNotes(event.target.value);
@@ -804,49 +805,49 @@ function ItemIcon({ monStateStore }) {
     })));
 
     //const [sideCode] = useState(monSide);
-    const sideCode = monStateStore((state) => state.sideCode);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
     //const [id] = useState(monID);
-    const id = monStateStore((state) => state.id);
+    const id = monStateStore(useShallow((state) => state.id));
     //const [species, setSpeciesName] = useState(pSpecies);
-    const species = monStateStore((state) => state.species);
-    const setSpeciesName = monStateStore((state) => state.setSpeciesName);
+    const species = monStateStore(useShallow((state) => state.species));
+    const setSpeciesName = monStateStore(useShallow((state) => state.setSpeciesName));
     //const [baseStats, setBaseStats] = useState(gen.species.get(toID(pSpecies)).baseStats);
-    const baseStats = monStateStore((state) => state.baseStats);
-    const setBaseStats = monStateStore((state) => state.setBaseStats);
+    const baseStats = monStateStore(useShallow((state) => state.baseStats));
+    const setBaseStats = monStateStore(useShallow((state) => state.setBaseStats));
     //const [nature, setNature] = useState(pNature);
-    const nature = monStateStore((state) => state.nature);
-    const setNature = monStateStore((state) => state.setNature);
+    const nature = monStateStore(useShallow((state) => state.nature));
+    const setNature = monStateStore(useShallow((state) => state.setNature));
     //const [teraType, setTeraType] = useState((pTeraType) ? pTeraType : ((!pSpecies.includes("Terapagos")) ? ((!pSpecies.includes("Ogerpon-")) ?  gen.species.get(toID(pSpecies)).types[0] : ((pSpecies.includes("Teal")) ? "Grass" : gen.species.get(toID(pSpecies)).types[1])) : "Stellar"));
-    const teraType = monStateStore((state) => state.teraType);
-    const setTeraType = monStateStore((state) => state.setTeraType);
+    const teraType = monStateStore(useShallow((state) => state.teraType));
+    const setTeraType = monStateStore(useShallow((state) => state.setTeraType));
     //const [ability, setAbility] = useState(pAbility);
-    const ability = monStateStore((state) => state.ability);
-    const setAbility = monStateStore((state) => state.setAbility);
+    const ability = monStateStore(useShallow((state) => state.ability));
+    const setAbility = monStateStore(useShallow((state) => state.setAbility));
     //const [teraActive, setTeraStatus] = useState(pTeraActive);
-    const teraActive = monStateStore((state) => state.teraActive);
-    const setTeraStatus = monStateStore((state) => state.setTeraStatus);
+    const teraActive = monStateStore(useShallow((state) => state.teraActive));
+    const setTeraStatus = monStateStore(useShallow((state) => state.setTeraStatus));
     //const [itemName, setItemName] = useState((pItem) ? pItem : "(no item)");
-    const itemName = monStateStore((state) => state.itemName);
-    const setItemName = monStateStore((state) => state.setItemName);
+    const itemName = monStateStore(useShallow((state) => state.itemName));
+    const setItemName = monStateStore(useShallow((state) => state.setItemName));
     //var [moves, setMoves] = useState({ 
     //    1: (pMoves["1"] !== undefined) ? pMoves["1"] : "(No Move)",
     //    2: (pMoves["2"] !== undefined) ? pMoves["2"] : "(No Move)",
     //    3: (pMoves["3"] !== undefined) ? pMoves["3"] : "(No Move)",
     //    4: (pMoves["4"] !== undefined) ? pMoves["4"] : "(No Move)"});
-    const moves = monStateStore((state) => state.moves);
-    const setMoves = monStateStore((state) => state.setMoves);
+    const moves = monStateStore(useShallow((state) => state.moves));
+    const setMoves = monStateStore(useShallow((state) => state.setMoves));
     //var [evs, setEVs] = useState({ hp: pEVs["hp"], atk: pEVs["atk"], def: pEVs["def"], spa: pEVs["spa"], spd: pEVs["spd"], spe: pEVs["spe"] });
-    const evs = monStateStore((state) => state.evs);
-    const setEVs = monStateStore((state) => state.setEVs);
+    const evs = monStateStore(useShallow((state) => state.evs));
+    const setEVs = monStateStore(useShallow((state) => state.setEVs));
     //var [ivs, setIVs] = useState({ hp: pIVs["hp"], atk: pIVs["atk"], def: pIVs["def"], spa: pIVs["spa"], spd: pIVs["spd"], spe: pIVs["spe"] });
-    const ivs = monStateStore((state) => state.ivs);
-    const setIVs = monStateStore((state) => state.setIVs);
+    const ivs = monStateStore(useShallow((state) => state.ivs));
+    const setIVs = monStateStore(useShallow((state) => state.setIVs));
     //var [boosts, setBoosts] = useState({ hp: pBoosts["hp"], atk: pBoosts["atk"], def: pBoosts["def"], spa: pBoosts["spa"], spd: pBoosts["spd"], spe: pBoosts["spe"] });
-    const boosts = monStateStore((state) => state.boosts);
-    const setBoosts = monStateStore((state) => state.setBoosts);
+    const boosts = monStateStore(useShallow((state) => state.boosts));
+    const setBoosts = monStateStore(useShallow((state) => state.setBoosts));
     //var [notes, setNotes] = useState(passedNotes);
-    const notes = monStateStore((state) => state.notes);
-    const setNotes = monStateStore((state) => state.setNotes);
+    const notes = monStateStore(useShallow((state) => state.notes));
+    const setNotes = monStateStore(useShallow((state) => state.setNotes));
 
     //const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -1034,8 +1035,9 @@ function ItemIcon({ monStateStore }) {
     }, [fetchDataSwitch]);
     */
   
+    //     <context.Provider value={{ sideCode, setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateNotes, id, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species, baseStats }}>
+
     return (
-    <context.Provider value={{ sideCode, setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateNotes, id, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species, baseStats }}>
       <div style={{display: "flex"}}>
         <div>
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector key={sideCode + id.toString() + "species"} monStateStore={monStateStore}></SpeciesSelector></div>
@@ -1056,8 +1058,9 @@ function ItemIcon({ monStateStore }) {
           )}
         </div>
       </div>
-      </context.Provider>
     );
+
+    //</context.Provider>
   }
 
   //export const PokemonPanelMemo = React.memo(PokemonPanel, () => {console.log("Memo check"); return true;});
