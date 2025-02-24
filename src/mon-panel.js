@@ -5,10 +5,12 @@ import * as img from '@pkmn/img';
 //import {Generations as DataGenerations, TypeName} from '@pkmn/data' ;
 import React, { useState, useContext, useEffect, useMemo, useCallback } from 'react';
 import Select from 'react-select';
+import { create } from 'zustand';
 
 import { partyContext } from "./mons-container.js";
 
 let context = React.createContext(null);
+
 const typeColors = {
 	normal: '#9FA19F',
 	fire: '#E62829',
@@ -158,19 +160,21 @@ function moveGraphicData(type, teratype, teraactive) {
 
 
 // ITEM SELECTOR
-function ItemIcon({ contextC }) {
+function ItemIcon({ monStateStore }) {
     //const c = useContext(context);
 
-    const itemMemo = useMemo(() => contextC.itemName, [contextC.itemName]);
+    const itemName = monStateStore((state) => state.itemName);
+
+    //const itemMemo = useMemo(() => contextC.itemName, [contextC.itemName]);
     
     const imgSrcMemo = useMemo(() => {
-      return "transparent url(".concat(img.Icons.getItem(itemMemo).url)
+      return "transparent url(".concat(img.Icons.getItem(itemName).url)
                               .concat(") no-repeat scroll ")
-                              .concat(img.Icons.getItem(itemMemo).left.toString())
+                              .concat(img.Icons.getItem(itemName).left.toString())
                               .concat("px ")
-                              .concat(img.Icons.getItem(itemMemo).top.toString())
+                              .concat(img.Icons.getItem(itemName).top.toString())
                               .concat("px");
-    }, [itemMemo]);
+    }, [itemName]);
     return (
       <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
         width: "24px",
@@ -186,60 +190,68 @@ function ItemIcon({ contextC }) {
       }}></img>
     );
   }
-  function ItemDropdown( { contextC } ) {
+  function ItemDropdown({ monStateStore }) {
+    const itemName = monStateStore((state) => state.itemName);
+    const setItemName = monStateStore((state) => state.setItemName);
   
     const options = useMemo(() => sortedItems.map((item, index) =>
       <option value={item} key={index}>{item}</option>
     ), []);
   
-    const itemMemo = useMemo(() => contextC.itemName, [contextC.itemName]);
+    //const itemMemo = useMemo(() => contextC.itemName, [contextC.itemName]);
 
-    var changeItem = useCallback((event) => contextC.setItem(event.target.value), [contextC]);
+    //var changeItem = useCallback((event) => contextC.setItem(event.target.value), [contextC]);
 
     return (
-      <select value={itemMemo} onChange={changeItem}>
+      <select value={itemName} onChange={(e) => { setItemName(e.target.value); }}>
         {options}
       </select>
     );
   }
-  function ItemSelector() {
-    const c = useContext(context);
+  function ItemSelector({ monStateStore }) {
+    //const c = useContext(context);
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
 
     return (
-      <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon key={c.sideCode + c.id.toString() + "itemicon"} contextC={c}></ItemIcon><ItemDropdown key={c.sideCode + c.id.toString() + "itempicker"} contextC={c}></ItemDropdown></div>
+      <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon key={sideCode + id.toString() + "itemicon"} monStateStore={monStateStore}></ItemIcon><ItemDropdown key={sideCode + id.toString() + "itempicker"} monStateStore={monStateStore}></ItemDropdown></div>
     );
   }
   
 
 
   // MOVE SELECTORS
-  function MoveIcon({ contextC, moveNum }){
+  function MoveIcon({ monStateStore, moveNum }){
     // COME BACK AND ADD THE FIELD
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
-    const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
-    const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
-    const teraTypeMemo = useMemo(() => contextC.teraType, [contextC.teraType]);
-    const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
+    //const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
+    const moves = monStateStore((state) => state.moves);
+    //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
+    const species = monStateStore((state) => state.species);
+    //const teraTypeMemo = useMemo(() => contextC.teraType, [contextC.teraType]);
+    const teraType = monStateStore((state) => state.teraType);
+    //const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
+    const teraActive = monStateStore((state) => state.teraActive);
     const moveGraphicDataMemo = useCallback((type, teratype, teraactive) => moveGraphicData(type, teratype, teraactive), []);
     const moveTypeGetMemo = useCallback((move) => gen.moves.get(toID(move)).type, []);
     const monTypeGetMemo = useCallback((species, index) => gen.species.get(toID(species)).types[index], []);
 
     const graphicDataMemo = useMemo(() => {
       var graphicData;
-      if (movesMemo[moveNumMemo] !== "(No Move)"){
+      if (moves[moveNumMemo] !== "(No Move)"){
           //var dummyMon = new Pokemon(gen, speciesMemo, { teraType: (teraActiveMemo) ? teraTypeMemo : undefined });
           //dummyMon.moves = [];
-          const moveType = ((!speciesMemo.includes("Terapagos-Stellar") || movesMemo[moveNumMemo] !== "Tera Starstorm") ? // if species isnt terapagos and the move isnt tera starstorm, do the top option
-            ((!speciesMemo.includes("Ogerpon") || movesMemo[moveNumMemo] !== "Ivy Cudgel") ? // if species isnt an ogerpon and the move isnt ivy cudgel, do the top option
-              ((movesMemo[moveNumMemo] === "Tera Blast" && teraActiveMemo) ? // if using terablast with tera active, do the top option
-                teraTypeMemo :
-                moveTypeGetMemo(movesMemo[moveNumMemo])) :
-              (((speciesMemo.includes("Teal")) || !speciesMemo.includes("-")) ? // if this is an ogerpon ivy cudgel + is either the teal tera or base form, to the top option
+          const moveType = ((!species.includes("Terapagos-Stellar") || moves[moveNumMemo] !== "Tera Starstorm") ? // if species isnt terapagos and the move isnt tera starstorm, do the top option
+            ((!species.includes("Ogerpon") || moves[moveNumMemo] !== "Ivy Cudgel") ? // if species isnt an ogerpon and the move isnt ivy cudgel, do the top option
+              ((moves[moveNumMemo] === "Tera Blast" && teraActive) ? // if using terablast with tera active, do the top option
+                teraType :
+                moveTypeGetMemo(moves[moveNumMemo])) :
+              (((species.includes("Teal")) || !species.includes("-")) ? // if this is an ogerpon ivy cudgel + is either the teal tera or base form, to the top option
                 "Grass" :
-                monTypeGetMemo(speciesMemo, 1))) :
+                monTypeGetMemo(species, 1))) :
             "Stellar");
           //const fakeCalc = calculate(gen, dummyMon, new Pokemon(gen, "Kricketot"), new Move(gen, moveMemo, { isStellarFirstUse: (teraActiveMemo && teraTypeMemo === "Stellar") ? true : false, }));
-          graphicData = moveGraphicDataMemo(moveType, teraTypeMemo, teraActiveMemo);
+          graphicData = moveGraphicDataMemo(moveType, teraType, teraActive);
       }
       else{
           graphicData = {
@@ -248,50 +260,66 @@ function ItemIcon({ contextC }) {
           }
       }
       return graphicData;
-    }, [speciesMemo, teraTypeMemo, teraActiveMemo, movesMemo, moveNumMemo, monTypeGetMemo, moveTypeGetMemo, moveGraphicDataMemo]);
+    }, [species, teraType, teraActive, moves, moveNumMemo, monTypeGetMemo, moveTypeGetMemo, moveGraphicDataMemo]);
   
     return (
         <div style={{ marginLeft: "auto", position: "relative", background: graphicDataMemo["background"], top: "0px", width: "30px", height: "30px"}}><img src={graphicDataMemo["imgSrc"]} style={{top: "0px", left: "0px", width: "30px", height: "30px"}} alt=""></img></div>
     );
   }
-  function MoveDropdown({ contextC, moveNum }){
+  function MoveDropdown({ monStateStore, moveNum }){
     const options = useMemo(() => sortedMoves.map((move, index) =>
       <option value={move} key={index}>{move}</option>
     ), []);
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
-    const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
+    //const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
+    const moves = monStateStore((state) => state.moves);
+    const setMoves = monStateStore((state) => state.setMoves);
 
-    var changeMove = useCallback((event) => contextC.setMove(event.target.value, moveNumMemo), [movesMemo, moveNumMemo, contextC]);
+    //var changeMove = useCallback((event) => contextC.setMove(event.target.value, moveNumMemo), [movesMemo, moveNumMemo, contextC]);
+
+    function setMove(move, moveNum){
+      var movesCopy = {
+          1: moves["1"],
+          2: moves["2"],
+          3: moves["3"],
+          4: moves["4"],
+      }
+      movesCopy[moveNum.toString()] = move;
+      setMoves(movesCopy);
+  }
 
     return (
-      <select value={movesMemo[moveNumMemo]} style={{ marginRight: "auto", position: "relative" }} onChange={changeMove}>
+      <select value={moves[moveNumMemo]} style={{ marginRight: "auto", position: "relative" }} onChange={(e) => { setMove(e.target.value, moveNumMemo); }}>
         { options }
       </select>
     );
   }
-  function MoveSelector({ moveNum }) {
-    const c = useContext(context);
+  function MoveSelector({ monStateStore, moveNum }) {
+    //const c = useContext(context);
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
   
     return (
-        <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={c.sideCode + c.id.toString() + "moveicon" + moveNumMemo.toString()} contextC={c} moveNum={moveNumMemo}></MoveIcon><MoveDropdown key={c.sideCode + c.id.toString() + "movepicker" + moveNumMemo.toString()} contextC={c} moveNum={moveNumMemo}></MoveDropdown></div>
+        <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={sideCode + id.toString() + "moveicon" + moveNumMemo.toString()} monStateStore={monStateStore} moveNum={moveNumMemo}></MoveIcon><MoveDropdown key={sideCode + id.toString() + "movepicker" + moveNumMemo.toString()} monStateStore={monStateStore} moveNum={moveNumMemo}></MoveDropdown></div>
     );
   }
   
 
   // SPECIES SELECTOR
-  function SpeciesIcon({ contextC }){
+  function SpeciesIcon({ monStateStore }){
 
-    const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
+    //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
+    const species = monStateStore((state) => state.species);
 
     const imgSrcMemo = useMemo(() => {
-    return "transparent url(".concat(img.Icons.getPokemon(speciesMemo).url)
+    return "transparent url(".concat(img.Icons.getPokemon(species).url)
                       .concat(") no-repeat scroll ")
-                      .concat(img.Icons.getPokemon(speciesMemo).left.toString())
+                      .concat(img.Icons.getPokemon(species).left.toString())
                       .concat("px ")
-                      .concat(img.Icons.getPokemon(speciesMemo).top.toString())
+                      .concat(img.Icons.getPokemon(species).top.toString())
                       .concat("px");},
-    [speciesMemo]);
+    [species]);
     return (
       <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
         width: "40px",
@@ -303,7 +331,7 @@ function ItemIcon({ contextC }) {
       }}></img>
     );
   }
-  function SpeciesDropdown({ contextC }){
+  function SpeciesDropdown({ monStateStore }){
     const options = useMemo(() => sortedMons.map((specie, index) =>
       //<option value={specie} key={index}>{specie}</option>
       new Object({
@@ -312,8 +340,13 @@ function ItemIcon({ contextC }) {
         key: index,
       })
     ), []);
-    const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
+    //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
+    const species = monStateStore((state) => state.species);
+    const setSpeciesName = monStateStore((state) => state.setSpeciesName);
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
 
+    /*
     var changeSpecies = useCallback((option, reason) => {
       if (reason.action === "set-value" ||
         reason.action === "input-blur" ||
@@ -322,8 +355,10 @@ function ItemIcon({ contextC }) {
       }
       contextC.setSpecies(option.value)}, [contextC]);
 
+    */
+
     return (
-      <Select key={contextC.sideCode + contextC.id.toString() + "speciesselect"} menuPosition="fixed" options={options} classNamePrefix="species" value={options.find(x => x.value === speciesMemo)} onChange={changeSpecies} onSelectResetsInput={false} menuPortalTarget={document.body}
+      <Select key={sideCode + id.toString() + "speciesselect"} menuPosition="fixed" options={options} classNamePrefix="species" value={options.find(x => x.value === species)} onChange={(o) => { setSpeciesName(o.value); }} onSelectResetsInput={false} menuPortalTarget={document.body}
       
       styles={{
         container: (baseStyles, state) => ({
@@ -417,74 +452,88 @@ function ItemIcon({ contextC }) {
       }} />
     );
   }
-  function SpeciesSelector() {
-    const c = useContext(context);
+  function SpeciesSelector({ monStateStore }) {
+    //const c = useContext(context);
+
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
 
     return (
-      <div style={{display: "flex", "lineHeight": "34px"}}><SpeciesIcon key={c.sideCode + c.id.toString() + "speciesicon"} contextC={c}></SpeciesIcon><SpeciesDropdown key={c.sideCode + c.id.toString() + "speciespicker"} contextC={c}></SpeciesDropdown></div>
+      <div style={{display: "flex", "lineHeight": "34px"}}><SpeciesIcon key={sideCode + id.toString() + "speciesicon"} monStateStore={monStateStore}></SpeciesIcon><SpeciesDropdown key={sideCode + id.toString() + "speciespicker"} monStateStore={monStateStore}></SpeciesDropdown></div>
     );
   }
 
 
 
   // ABILITY SELECTOR
-  function AbilityDropdown({ contextC }){
+  function AbilityDropdown({ monStateStore }){
+
+    const ability = monStateStore((state) => state.ability);
+    const setAbility = monStateStore((state) => state.setAbility);
 
     const options = useMemo(() => sortedAbilities.map((abil, index) =>
         <option value={abil} key={index}>{abil}</option>
     ), []);
 
-    const abilityMemo = useMemo(() => contextC.ability, [contextC.ability]);
+    //const abilityMemo = useMemo(() => contextC.ability, [contextC.ability]);
 
-    var changeAbility = useCallback((event) => contextC.updateAbility(event.target.value), [contextC]);
+    //var changeAbility = useCallback((event) => contextC.updateAbility(event.target.value), [contextC]);
 
     return (
-        <select value={abilityMemo} style={{marginLeft: "10px", marginRight: "auto"}} onChange={changeAbility}>
+        <select value={ability} style={{marginLeft: "10px", marginRight: "auto"}} onChange={(e) => { setAbility(e.target.value); }}>
             {options}
         </select>
     )
   }
-  function AbilitySelector() {
-    const c = useContext(context);
+  function AbilitySelector({ monStateStore }) {
+    //const c = useContext(context);
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
+
     return (
-        <div style={{display: "flex"}}>Ability: <AbilityDropdown key={c.sideCode + c.id.toString() + "abilitypicker"} contextC={c}></AbilityDropdown></div>
+        <div style={{display: "flex"}}>Ability: <AbilityDropdown key={sideCode + id.toString() + "abilitypicker"} monStateStore={monStateStore}></AbilityDropdown></div>
     );
   }
 
 
   // NATURE SELECTOR
-  function NatureDropdown({ contextC }){
+  function NatureDropdown({ monStateStore }){
     
     const options = useMemo(() => Array.from(gen.natures).map((nat, index) =>
         <option value={nat.name} key={index}>{nat.name}</option>
     ), []);
 
-    const natureMemo = useMemo(() => contextC.nature, [contextC.nature]);
+    //const natureMemo = useMemo(() => contextC.nature, [contextC.nature]);
+    const nature = monStateStore((state) => state.nature);
+    const setNature = monStateStore((state) => state.setNature);
 
-    var updateNature = useCallback((event) => contextC.changeNature(event.target.value), [contextC]);
+    //var updateNature = useCallback((event) => contextC.changeNature(event.target.value), [contextC]);
 
     return (
-        <select value={natureMemo} style={{marginLeft: "10px", marginRight: "auto"}} onChange={updateNature}>
+        <select value={nature} style={{marginLeft: "10px", marginRight: "auto"}} onChange={(e) => { setNature(e.target.value); }}>
             {options}
         </select>
     )
   }
-  function NatureSelector() {
-    const c = useContext(context);
+  function NatureSelector({ monStateStore }) {
+    //const c = useContext(context);
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
 
     return (
-        <div style={{display: "flex"}}>Nature: <NatureDropdown key={c.sideCode + c.id.toString() + "naturepicker"} contextC={c}></NatureDropdown></div>
+        <div style={{display: "flex"}}>Nature: <NatureDropdown key={sideCode + id.toString() + "naturepicker"} monStateStore={monStateStore}></NatureDropdown></div>
     );
   }
 
 
 
   // TERA TYPE SELECTOR
-  function TeraIcon({ contextC }){
+  function TeraIcon({ monStateStore }){
 
-    const contextMemo = useMemo(() => contextC, [contextC]);
-    const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
-    const imgSrcMemo = useMemo(() => process.env.PUBLIC_URL + "/img/tera_" + teraTypeMemo.toLowerCase() + "_gem.png", [teraTypeMemo]);
+    //const contextMemo = useMemo(() => contextC, [contextC]);
+    //const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
+    const teraType = monStateStore((state) => state.teraType);
+    const imgSrcMemo = useMemo(() => process.env.PUBLIC_URL + "/img/tera_" + teraType.toLowerCase() + "_gem.png", [teraType]);
     
     return (
         <img src={imgSrcMemo} alt="" style={{
@@ -495,131 +544,195 @@ function ItemIcon({ contextC }) {
         }}></img>
       );
   }
-  function TeraDropdown({ contextC }){
+  function TeraDropdown({ monStateStore }){
     const options = sortedTypes.map((t, index) =>
         <option value={t} key={index}>{t}</option>
     );
 
-    const contextMemo = useMemo(() => contextC, [contextC]);
-    const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
+    //const contextMemo = useMemo(() => contextC, [contextC]);
+    //const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
+    const teraType = monStateStore((state) => state.teraType);
+    const setTeraType = monStateStore((state) => state.setTeraType);
 
-    var updateTeraType = useCallback((event) => contextMemo.changeTeraType(event.target.value), [contextMemo]);
+    //var updateTeraType = useCallback((event) => contextMemo.changeTeraType(event.target.value), [contextMemo]);
 
     return (
-        <select value={teraTypeMemo} onChange={updateTeraType}>
+        <select value={teraType} onChange={(e) => { setTeraType(e.target.value); }}>
             {options}
         </select>
     );
   }
-  function TeraToggle({ contextC }){
+  function TeraToggle({ monStateStore }){
 
-    const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
-    var updateTeraStatus = useCallback((event) => contextC.toggleTera(event.target.checked), [contextC]);
+    //const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
+    const teraActive = monStateStore((state) => state.teraActive);
+    const setTeraStatus = monStateStore((state) => state.setTeraStatus);
+    //var updateTeraStatus = useCallback((event) => contextC.toggleTera(event.target.checked), [contextC]);
 
     return (
-        <input type="checkbox" onChange={updateTeraStatus} checked={teraActiveMemo}></input>
+        <input type="checkbox" onChange={(e) => { setTeraStatus(e.target.checked); }} checked={teraActive}></input>
     );
   }
-  function TeraTypeSelector(){
-    const c = useContext(context);
+  function TeraTypeSelector({ monStateStore }){
+    //const c = useContext(context);
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
 
     return (
-        <div style={{display: "flex", "lineHeight": "30px"}}>Tera Type: <TeraIcon key={c.sideCode + c.id.toString() + "teraicon"} contextC={c}></TeraIcon><TeraDropdown key={c.sideCode + c.id.toString() + "terapicker"} contextC={c}></TeraDropdown><TeraToggle key={c.sideCode + c.id.toString() + "teratoggle"} contextC={c}></TeraToggle></div>
+        <div style={{display: "flex", "lineHeight": "30px"}}>Tera Type: <TeraIcon key={sideCode + id.toString() + "teraicon"} monStateStore={monStateStore}></TeraIcon><TeraDropdown key={sideCode + id.toString() + "terapicker"} monStateStore={monStateStore}></TeraDropdown><TeraToggle key={sideCode + id.toString() + "teratoggle"} monStateStore={monStateStore}></TeraToggle></div>
     );
   }
 
 
   
   // STATS TABLE
-  function EVInput({ contextC, stat }){
+  function EVInput({ monStateStore, stat }){
 
     const statMemo = useMemo(() => stat, [stat]);
-    const evsMemo = useMemo(() => contextC.evs, [contextC]);
+    //const evsMemo = useMemo(() => contextC.evs, [contextC]);
+    const evs = monStateStore((state) => state.evs);
+    const setEVs = monStateStore((state) => state.setEVs);
 
-    var updateEV = useCallback((event) => contextC.setEV(event.target.value, statMemo), [evsMemo, statMemo, contextC]);
+    //var updateEV = useCallback((event) => contextC.setEV(event.target.value, statMemo), [evsMemo, statMemo, contextC]);
 
     //function updateEVLocal(event){
     //  contextC.setEV(event.target.value, statMemo);
     //}
 
+    function setEV(ev, stat){
+      var statsCopy = {
+          hp: evs["hp"],
+          atk: evs["atk"],
+          def: evs["def"],
+          spa: evs["spa"],
+          spd: evs["spd"],
+          spe: evs["spe"],
+      }
+      statsCopy[stat] = Math.min(Math.max(ev, 0), 252);
+      setEVs(statsCopy);
+      //updateMon();
+  }
+
     useEffect(() => {
       const delayDebounceFn = setTimeout(() => {
       }, 5000)
   
       return () => clearTimeout(delayDebounceFn)
-    }, [evsMemo]);
+    }, [evs]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="252" step="1" type="number" placeholder="0" onBlur={updateEV} defaultValue={evsMemo[statMemo]}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="252" step="1" type="number" placeholder="0" onBlur={(e) => { setEV(e.target.value, statMemo); }} defaultValue={evs[statMemo]}></input>
     );
   }
-  function IVInput({ contextC, stat }){
+  function IVInput({ monStateStore, stat }){
 
     const statMemo = useMemo(() => stat, [stat]);
-    const ivsMemo = useMemo(() => contextC.ivs, [contextC]);
+    //const ivsMemo = useMemo(() => contextC.ivs, [contextC]);
+    const ivs = monStateStore((state) => state.ivs);
+    const setIVs = monStateStore((state) => state.setIVs);
 
-    var updateIV = useCallback((event) => contextC.setIV(event.target.value, statMemo), [ivsMemo, statMemo, contextC]);
+    //var updateIV = useCallback((event) => contextC.setIV(event.target.value, statMemo), [ivsMemo, statMemo, contextC]);
+
+    function setIV(iv, stat){
+      var statsCopy = {
+          hp: ivs["hp"],
+          atk: ivs["atk"],
+          def: ivs["def"],
+          spa: ivs["spa"],
+          spd: ivs["spd"],
+          spe: ivs["spe"],
+      }
+      statsCopy[stat] = Math.min(Math.max(iv, 0), 31);
+      setIVs(statsCopy);
+      //updateMon();
+  }
 
     useEffect(() => {
       const delayDebounceFn = setTimeout(() => {
       }, 5000)
   
       return () => clearTimeout(delayDebounceFn)
-    }, [ivsMemo]);
+    }, [ivs]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onBlur={updateIV} defaultValue={ivsMemo[statMemo]}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onBlur={(e) => { setIV(e.target.value, statMemo);}} defaultValue={ivs[statMemo]}></input>
     );
   }
-  function BoostDropdown({ contextC, stat }){
+  function BoostDropdown({ monStateStore, stat }){
     var options = boostList.map((boost, index) => 
         <option value={boostValues[index]} key={index}>{boost}</option>
     );
 
     const statMemo = useMemo(() => stat, [stat]);
-    const boostsMemo = useMemo(() => contextC.boosts, [contextC.boosts]);
+    //const boostsMemo = useMemo(() => contextC.boosts, [contextC.boosts]);
+    const boosts = monStateStore((state) => state.boosts);
+    const setBoosts = monStateStore((state) => state.setBoosts);
 
-    var updateBoost = useCallback((event) => contextC.setBoost(event.target.value, statMemo), [boostsMemo, statMemo, contextC]);
+    function setBoost(boost, stat){
+      var statsCopy = {
+          hp: parseInt(boosts["hp"]),
+          atk: parseInt(boosts["atk"]),
+          def: parseInt(boosts["def"]),
+          spa: parseInt(boosts["spa"]),
+          spd: parseInt(boosts["spd"]),
+          spe: parseInt(boosts["spe"]),
+      }
+      statsCopy[stat] = boost;
+      setBoosts(statsCopy);
+      //updateMon();
+  }
+
+    //var updateBoost = useCallback((event) => contextC.setBoost(event.target.value, statMemo), [boostsMemo, statMemo, contextC]);
 
     return (
-        <select value={boostsMemo[statMemo]} onChange={updateBoost}>
+        <select value={boosts[statMemo]} onChange={(e) => { setBoost(e.target.value, statMemo)}}>
             {options}
         </select>
     );
   }
-  function StatsTableRow({ stat, statIndex }){
-    const c = useContext(context);
+  function StatsTableRow({ monStateStore, stat, statIndex }){
+    //const c = useContext(context);
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
 
     const statMemo = useMemo(() => stat, [stat])
     const statIndexMemo = useMemo(() => statIndex, [statIndex]);
     
-    var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown key={c.sideCode + c.id.toString() + "boost" + statMemo} contextC={c} stat={statMemo}></BoostDropdown></td> : <td></td>;
+    var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown key={sideCode + id.toString() + "boost" + statMemo} monStateStore={monStateStore} stat={statMemo}></BoostDropdown></td> : <td></td>;
 
     //const speciesMemo = useMemo(() => c.species, [c.species]);
-    const evsMemo = useMemo(() => c.evs, [c.evs]);
-    const ivsMemo = useMemo(() => c.ivs, [c.ivs]);
-    const natureMemo = useMemo(() => c.nature, [c.nature]);
-    const boostsMemo = useMemo(() => c.boosts, [c.boosts]);
-    const baseStatsMemo = useMemo(() => c.baseStats, [c.baseStats]);
-    const plus = useMemo(() => gen.natures.get(toID(natureMemo)).plus, [natureMemo]);
-    const minus = useMemo(() => gen.natures.get(toID(natureMemo)).minus, [natureMemo]);
+    //const evsMemo = useMemo(() => c.evs, [c.evs]);
+    const evs = monStateStore((state) => state.evs);
+    //const ivsMemo = useMemo(() => c.ivs, [c.ivs]);
+    const ivs = monStateStore((state) => state.ivs);
+    //const natureMemo = useMemo(() => c.nature, [c.nature]);
+    const nature = monStateStore((state) => state.nature);
+    //const boostsMemo = useMemo(() => c.boosts, [c.boosts]);
+    const boosts = monStateStore((state) => state.boosts);
+    //const baseStatsMemo = useMemo(() => c.baseStats, [c.baseStats]);
+    const baseStats = monStateStore((state) => state.baseStats);
+    const plus = useMemo(() => gen.natures.get(toID(nature)).plus, [nature]);
+    const minus = useMemo(() => gen.natures.get(toID(nature)).minus, [nature]);
 
     const statNumMemo = useMemo(() => {
-    const statFirstStep = Math.floor((2 * baseStatsMemo[statMemo] + ivsMemo[statMemo] + Math.floor(evsMemo[statMemo]/4)) * 100 / 100) // level 100 assumed
+    const statFirstStep = Math.floor((2 * baseStats[statMemo] + ivs[statMemo] + Math.floor(evs[statMemo]/4)) * 100 / 100) // level 100 assumed
     const natureMod = (plus === statMemo && plus !== minus) ? 1.1 : ((minus === statMemo && minus !== plus) ? 0.9 : 1);
     const statSecondStep = (statMemo === "hp") ? statFirstStep + 100 + 10 : (statFirstStep + 5) * natureMod; // level 100 assumed
     //var dummyMon = new Pokemon(gen, speciesMemo, {evs: evMemoObj, ivs: ivMemoObj, ability: abilityMemo, nature: natureMemo});
-    var statNum = Math.floor(statSecondStep * (2+Math.max(0, boostsMemo[statMemo]))/(2-Math.min(0, boostsMemo[statMemo])));
+    var statNum = Math.floor(statSecondStep * (2+Math.max(0, boosts[statMemo]))/(2-Math.min(0, boosts[statMemo])));
     return statNum;
-    }, [baseStatsMemo, natureMemo, ivsMemo, evsMemo, boostsMemo, statMemo]);
+    }, [baseStats, nature, ivs, evs, boosts, statMemo]);
 
     return (
-        <tr><td style={{color: (statMemo === minus && minus !== plus) ? "#1680f6" : ((statMemo === plus && plus !== minus) ? "#ff5a84": "#ffd21f")}}>{ev_names[statIndexMemo]}: </td><td><EVInput key={c.sideCode + c.id.toString() + "EV" + statMemo} contextC={c} stat={statMemo}></EVInput></td><td> IV: </td><td><IVInput key={c.sideCode + c.id.toString() + "IV" + statMemo} contextC={c} stat={statMemo}></IVInput></td>{boostPickerNoHP}<td><b>{statNumMemo}</b></td></tr>
+        <tr><td style={{color: (statMemo === minus && minus !== plus) ? "#1680f6" : ((statMemo === plus && plus !== minus) ? "#ff5a84": "#ffd21f")}}>{ev_names[statIndexMemo]}: </td><td><EVInput key={sideCode + id.toString() + "EV" + statMemo} monStateStore={monStateStore} stat={statMemo}></EVInput></td><td> IV: </td><td><IVInput key={sideCode + id.toString() + "IV" + statMemo} monStateStore={monStateStore} stat={statMemo}></IVInput></td>{boostPickerNoHP}<td><b>{statNumMemo}</b></td></tr>
     );
   }
-  function StatsTable(){
+  function StatsTable({ monStateStore }){
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
+
     const rows = statList.map((stat, index) =>
-        <StatsTableRow stat={stat} statIndex={index} key={index}></StatsTableRow>
+        <StatsTableRow stat={stat} statIndex={index} key={sideCode + id.toString() + stat} monStateStore={monStateStore}></StatsTableRow>
     );
 
     return (
@@ -632,17 +745,22 @@ function ItemIcon({ contextC }) {
   }
 
   // NOTES INPUT
-  function NotesInput(){
-    const c = useContext(context);
+  function NotesInput({ monStateStore }){
+    //const c = useContext(context);
+    const sideCode = monStateStore((state) => state.sideCode);
+    const id = monStateStore((state) => state.id);
+
+    const notes = monStateStore((state) => state.notes);
+    const setNotes = monStateStore((state) => state.setNotes);
 
     //function reviseNotes(event){
     //    c.updateNotes(event.target.value);
     //}
 
-    var reviseNotes = useCallback((event) => c.updateNotes(event.target.value), [c]);
+    //var reviseNotes = useCallback((event) => c.updateNotes(event.target.value), [c]);
     
     return (
-        <div style={{display: "flex"}}>Notes: <input style={{ marginLeft: "10px" }} onBlur={reviseNotes} defaultValue={c.notes}></input></div>
+        <div style={{display: "flex"}}>Notes: <input style={{ marginLeft: "10px" }} onBlur={(e) => { setNotes(e.target.value); }} defaultValue={notes}></input></div>
     );
   }
 
@@ -651,24 +769,84 @@ function ItemIcon({ contextC }) {
     //var [mon, setMon] = useState(passedMon);
     var pC = useContext(partyContext);
 
-    const [sideCode] = useState(monSide);
-    const [id] = useState(monID);
-    const [species, setSpeciesName] = useState(pSpecies);
-    const [baseStats, setBaseStats] = useState(gen.species.get(toID(pSpecies)).baseStats);
-    const [nature, setNature] = useState(pNature);
-    const [teraType, setTeraType] = useState((pTeraType) ? pTeraType : ((!pSpecies.includes("Terapagos")) ? ((!pSpecies.includes("Ogerpon-")) ?  gen.species.get(toID(pSpecies)).types[0] : ((pSpecies.includes("Teal")) ? "Grass" : gen.species.get(toID(pSpecies)).types[1])) : "Stellar"));
-    const [ability, setAbility] = useState(pAbility);
-    const [teraActive, setTeraStatus] = useState(pTeraActive);
-    const [itemName, setItemName] = useState((pItem) ? pItem : "(no item)");
-    var [moves, setMoves] = useState({ 
+    const [monStateStore] = useState(() => create((set) => ({
+      sideCode: monSide,
+      id: monID,
+      species: pSpecies,
+      setSpeciesName: (s) => set({ species: s }),
+      baseStats: gen.species.get(toID(pSpecies)).baseStats,
+      setBaseStats: (bs) => set({ baseStats: bs }),
+      nature: pNature,
+      setNature: (n) => set({ nature: n }),
+      teraType: (pTeraType) ? pTeraType : ((!pSpecies.includes("Terapagos")) ? ((!pSpecies.includes("Ogerpon-")) ?  gen.species.get(toID(pSpecies)).types[0] : ((pSpecies.includes("Teal")) ? "Grass" : gen.species.get(toID(pSpecies)).types[1])) : "Stellar"),
+      setTeraType: (tt) => set({ teraType: tt }),
+      ability: pAbility,
+      setAbility: (a) => set({ ability: a }),
+      teraActive: pTeraActive,
+      setTeraStatus: (ta) => set({ teraActive: ta }),
+      itemName: pItem,
+      setItemName: (i) => set({ itemName: i }),
+      changeItem: (event) => set({ itemName: event.target.value }),
+      moves: { 
         1: (pMoves["1"] !== undefined) ? pMoves["1"] : "(No Move)",
         2: (pMoves["2"] !== undefined) ? pMoves["2"] : "(No Move)",
         3: (pMoves["3"] !== undefined) ? pMoves["3"] : "(No Move)",
-        4: (pMoves["4"] !== undefined) ? pMoves["4"] : "(No Move)"});
-    var [evs, setEVs] = useState({ hp: pEVs["hp"], atk: pEVs["atk"], def: pEVs["def"], spa: pEVs["spa"], spd: pEVs["spd"], spe: pEVs["spe"] });
-    var [ivs, setIVs] = useState({ hp: pIVs["hp"], atk: pIVs["atk"], def: pIVs["def"], spa: pIVs["spa"], spd: pIVs["spd"], spe: pIVs["spe"] });
-    var [boosts, setBoosts] = useState({ hp: pBoosts["hp"], atk: pBoosts["atk"], def: pBoosts["def"], spa: pBoosts["spa"], spd: pBoosts["spd"], spe: pBoosts["spe"] });
-    var [notes, setNotes] = useState(passedNotes);
+        4: (pMoves["4"] !== undefined) ? pMoves["4"] : "(No Move)"},
+      setMoves: (m) => set({ moves: m }),
+      evs: { hp: pEVs["hp"], atk: pEVs["atk"], def: pEVs["def"], spa: pEVs["spa"], spd: pEVs["spd"], spe: pEVs["spe"] },
+      setEVs: (e) => set({ evs: e }),
+      ivs: { hp: pIVs["hp"], atk: pIVs["atk"], def: pIVs["def"], spa: pIVs["spa"], spd: pIVs["spd"], spe: pIVs["spe"] },
+      setIVs: (i) => set({ ivs: i }),
+      boosts: { hp: pBoosts["hp"], atk: pBoosts["atk"], def: pBoosts["def"], spa: pBoosts["spa"], spd: pBoosts["spd"], spe: pBoosts["spe"] },
+      setBoosts: (b) => set({ boosts: b }),
+      notes: passedNotes,
+      setNotes: (n) => set({ notes: n }),
+    })));
+
+    //const [sideCode] = useState(monSide);
+    const sideCode = monStateStore((state) => state.sideCode);
+    //const [id] = useState(monID);
+    const id = monStateStore((state) => state.id);
+    //const [species, setSpeciesName] = useState(pSpecies);
+    const species = monStateStore((state) => state.species);
+    const setSpeciesName = monStateStore((state) => state.setSpeciesName);
+    //const [baseStats, setBaseStats] = useState(gen.species.get(toID(pSpecies)).baseStats);
+    const baseStats = monStateStore((state) => state.baseStats);
+    const setBaseStats = monStateStore((state) => state.setBaseStats);
+    //const [nature, setNature] = useState(pNature);
+    const nature = monStateStore((state) => state.nature);
+    const setNature = monStateStore((state) => state.setNature);
+    //const [teraType, setTeraType] = useState((pTeraType) ? pTeraType : ((!pSpecies.includes("Terapagos")) ? ((!pSpecies.includes("Ogerpon-")) ?  gen.species.get(toID(pSpecies)).types[0] : ((pSpecies.includes("Teal")) ? "Grass" : gen.species.get(toID(pSpecies)).types[1])) : "Stellar"));
+    const teraType = monStateStore((state) => state.teraType);
+    const setTeraType = monStateStore((state) => state.setTeraType);
+    //const [ability, setAbility] = useState(pAbility);
+    const ability = monStateStore((state) => state.ability);
+    const setAbility = monStateStore((state) => state.setAbility);
+    //const [teraActive, setTeraStatus] = useState(pTeraActive);
+    const teraActive = monStateStore((state) => state.teraActive);
+    const setTeraStatus = monStateStore((state) => state.setTeraStatus);
+    //const [itemName, setItemName] = useState((pItem) ? pItem : "(no item)");
+    const itemName = monStateStore((state) => state.itemName);
+    const setItemName = monStateStore((state) => state.setItemName);
+    //var [moves, setMoves] = useState({ 
+    //    1: (pMoves["1"] !== undefined) ? pMoves["1"] : "(No Move)",
+    //    2: (pMoves["2"] !== undefined) ? pMoves["2"] : "(No Move)",
+    //    3: (pMoves["3"] !== undefined) ? pMoves["3"] : "(No Move)",
+    //    4: (pMoves["4"] !== undefined) ? pMoves["4"] : "(No Move)"});
+    const moves = monStateStore((state) => state.moves);
+    const setMoves = monStateStore((state) => state.setMoves);
+    //var [evs, setEVs] = useState({ hp: pEVs["hp"], atk: pEVs["atk"], def: pEVs["def"], spa: pEVs["spa"], spd: pEVs["spd"], spe: pEVs["spe"] });
+    const evs = monStateStore((state) => state.evs);
+    const setEVs = monStateStore((state) => state.setEVs);
+    //var [ivs, setIVs] = useState({ hp: pIVs["hp"], atk: pIVs["atk"], def: pIVs["def"], spa: pIVs["spa"], spd: pIVs["spd"], spe: pIVs["spe"] });
+    const ivs = monStateStore((state) => state.ivs);
+    const setIVs = monStateStore((state) => state.setIVs);
+    //var [boosts, setBoosts] = useState({ hp: pBoosts["hp"], atk: pBoosts["atk"], def: pBoosts["def"], spa: pBoosts["spa"], spd: pBoosts["spd"], spe: pBoosts["spe"] });
+    const boosts = monStateStore((state) => state.boosts);
+    const setBoosts = monStateStore((state) => state.setBoosts);
+    //var [notes, setNotes] = useState(passedNotes);
+    const notes = monStateStore((state) => state.notes);
+    const setNotes = monStateStore((state) => state.setNotes);
 
     //const [, forceUpdate] = useReducer(x => x + 1, 0);
 
@@ -860,20 +1038,20 @@ function ItemIcon({ contextC }) {
     <context.Provider value={{ sideCode, setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateNotes, id, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species, baseStats }}>
       <div style={{display: "flex"}}>
         <div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector key={sideCode + id.toString() + "species"}></SpeciesSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={sideCode + id.toString() + "nature"}></NatureSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector key={sideCode + id.toString() + "teratype"}></TeraTypeSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector key={sideCode + id.toString() + "ability"}></AbilitySelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector key={sideCode + id.toString() + "item"}></ItemSelector></div>
-          <StatsTable key={sideCode + id.toString() + "stats"}></StatsTable>
-          <NotesInput key={sideCode + id.toString() + "notes"}></NotesInput>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector key={sideCode + id.toString() + "species"} monStateStore={monStateStore}></SpeciesSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={sideCode + id.toString() + "nature"} monStateStore={monStateStore}></NatureSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector key={sideCode + id.toString() + "teratype"} monStateStore={monStateStore}></TeraTypeSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector key={sideCode + id.toString() + "ability"} monStateStore={monStateStore}></AbilitySelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector key={sideCode + id.toString() + "item"} monStateStore={monStateStore}></ItemSelector></div>
+          <StatsTable key={sideCode + id.toString() + "stats"} monStateStore={monStateStore}></StatsTable>
+          <NotesInput key={sideCode + id.toString() + "notes"} monStateStore={monStateStore}></NotesInput>
           { (sideCode === "attacker") && (
           <div>
             <p></p>
-            <div><MoveSelector key={sideCode + id.toString() + "move1"} id={sideCode + "Move1-" + id.toString()} moveNum={1}></MoveSelector></div>
-            <div><MoveSelector key={sideCode + id.toString() + "move2"} id={sideCode + "Move2-" + id.toString()} moveNum={2}></MoveSelector></div>
-            <div><MoveSelector key={sideCode + id.toString() + "move3"} id={sideCode + "Move3-" + id.toString()} moveNum={3}></MoveSelector></div>
-            <div><MoveSelector key={sideCode + id.toString() + "move4"} id={sideCode + "Move4-" + id.toString()} moveNum={4}></MoveSelector></div>
+            <div><MoveSelector key={sideCode + id.toString() + "move1"} id={sideCode + "Move1-" + id.toString()} moveNum={1} monStateStore={monStateStore}></MoveSelector></div>
+            <div><MoveSelector key={sideCode + id.toString() + "move2"} id={sideCode + "Move2-" + id.toString()} moveNum={2} monStateStore={monStateStore}></MoveSelector></div>
+            <div><MoveSelector key={sideCode + id.toString() + "move3"} id={sideCode + "Move3-" + id.toString()} moveNum={3} monStateStore={monStateStore}></MoveSelector></div>
+            <div><MoveSelector key={sideCode + id.toString() + "move4"} id={sideCode + "Move4-" + id.toString()} moveNum={4} monStateStore={monStateStore}></MoveSelector></div>
           </div>
           )}
         </div>
