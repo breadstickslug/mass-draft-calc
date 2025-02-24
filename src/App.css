@@ -115,6 +115,8 @@ select {
   border-top-right-radius: 5px;
   height: 30px;
   border: 2px solid #1a2a43;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .defender-button#active {

@@ -20,7 +20,7 @@ export function MonsMini({ sideCode, importedSpecies, visible }) {
 
     return (
         <div className="minified" style={{ position: "relative", top: "2px", display: (visibleMemo) ? "inline-block" : "none", minWidth: "100px", height: "30px"}}>
-            <div style={{...{ display: "flex", alignItems: "center" }, ...(species.length < 1) ? { height: "100%" } : {}}}>{(species.length < 1) ? "(no "+sideCode+"s)" : ""}</div>
+            <div style={{...{ display: "flex", justifyContent: "center", alignItems: "center" }, ...(species.length < 1) ? { height: "100%" } : {}}}>{(species.length < 1) ? "(no "+sideCode+"s)" : ""}</div>
             {species.map((s, index) => <img key={s+index} src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
                 width: "40px",
                 height: "30px",
