@@ -206,7 +206,7 @@ function ItemIcon({ contextC }) {
     const c = useContext(context);
 
     return (
-      <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon contextC={c}></ItemIcon><ItemDropdown contextC={c}></ItemDropdown></div>
+      <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon key={c.sideCode + c.id.toString() + "itemicon"} contextC={c}></ItemIcon><ItemDropdown key={c.sideCode + c.id.toString() + "itempicker"} contextC={c}></ItemDropdown></div>
     );
   }
   
@@ -274,7 +274,7 @@ function ItemIcon({ contextC }) {
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
   
     return (
-        <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon contextC={c} moveNum={moveNumMemo}></MoveIcon><MoveDropdown contextC={c} moveNum={moveNumMemo}></MoveDropdown></div>
+        <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={c.sideCode + c.id.toString() + "moveicon" + moveNumMemo.toString()} contextC={c} moveNum={moveNumMemo}></MoveIcon><MoveDropdown key={c.sideCode + c.id.toString() + "movepicker" + moveNumMemo.toString()} contextC={c} moveNum={moveNumMemo}></MoveDropdown></div>
     );
   }
   
@@ -323,7 +323,7 @@ function ItemIcon({ contextC }) {
       contextC.setSpecies(option.value)}, [contextC]);
 
     return (
-      <Select menuPosition="fixed" options={options} classNamePrefix="species" value={options.find(x => x.value === speciesMemo)} onChange={changeSpecies} onSelectResetsInput={false} menuPortalTarget={document.body}
+      <Select key={contextC.sideCode + contextC.id.toString() + "speciesselect"} menuPosition="fixed" options={options} classNamePrefix="species" value={options.find(x => x.value === speciesMemo)} onChange={changeSpecies} onSelectResetsInput={false} menuPortalTarget={document.body}
       
       styles={{
         container: (baseStyles, state) => ({
@@ -421,7 +421,7 @@ function ItemIcon({ contextC }) {
     const c = useContext(context);
 
     return (
-      <div style={{display: "flex", "lineHeight": "34px"}}><SpeciesIcon contextC={c}></SpeciesIcon><SpeciesDropdown contextC={c}></SpeciesDropdown></div>
+      <div style={{display: "flex", "lineHeight": "34px"}}><SpeciesIcon key={c.sideCode + c.id.toString() + "speciesicon"} contextC={c}></SpeciesIcon><SpeciesDropdown key={c.sideCode + c.id.toString() + "speciespicker"} contextC={c}></SpeciesDropdown></div>
     );
   }
 
@@ -447,7 +447,7 @@ function ItemIcon({ contextC }) {
   function AbilitySelector() {
     const c = useContext(context);
     return (
-        <div style={{display: "flex"}}>Ability: <AbilityDropdown contextC={c}></AbilityDropdown></div>
+        <div style={{display: "flex"}}>Ability: <AbilityDropdown key={c.sideCode + c.id.toString() + "abilitypicker"} contextC={c}></AbilityDropdown></div>
     );
   }
 
@@ -473,7 +473,7 @@ function ItemIcon({ contextC }) {
     const c = useContext(context);
 
     return (
-        <div style={{display: "flex"}}>Nature: <NatureDropdown contextC={c}></NatureDropdown></div>
+        <div style={{display: "flex"}}>Nature: <NatureDropdown key={c.sideCode + c.id.toString() + "naturepicker"} contextC={c}></NatureDropdown></div>
     );
   }
 
@@ -524,7 +524,7 @@ function ItemIcon({ contextC }) {
     const c = useContext(context);
 
     return (
-        <div style={{display: "flex", "lineHeight": "30px"}}>Tera Type: <TeraIcon contextC={c}></TeraIcon><TeraDropdown contextC={c}></TeraDropdown><TeraToggle contextC={c}></TeraToggle></div>
+        <div style={{display: "flex", "lineHeight": "30px"}}>Tera Type: <TeraIcon key={c.sideCode + c.id.toString() + "teraicon"} contextC={c}></TeraIcon><TeraDropdown key={c.sideCode + c.id.toString() + "terapicker"} contextC={c}></TeraDropdown><TeraToggle key={c.sideCode + c.id.toString() + "teratoggle"} contextC={c}></TeraToggle></div>
     );
   }
 
@@ -593,7 +593,7 @@ function ItemIcon({ contextC }) {
     const statMemo = useMemo(() => stat, [stat])
     const statIndexMemo = useMemo(() => statIndex, [statIndex]);
     
-    var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown contextC={c} stat={statMemo}></BoostDropdown></td> : <td></td>;
+    var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown key={c.sideCode + c.id.toString() + "boost" + statMemo} contextC={c} stat={statMemo}></BoostDropdown></td> : <td></td>;
 
     //const speciesMemo = useMemo(() => c.species, [c.species]);
     const evsMemo = useMemo(() => c.evs, [c.evs]);
@@ -614,7 +614,7 @@ function ItemIcon({ contextC }) {
     }, [baseStatsMemo, natureMemo, ivsMemo, evsMemo, boostsMemo, statMemo]);
 
     return (
-        <tr><td style={{color: (statMemo === minus && minus !== plus) ? "#1680f6" : ((statMemo === plus && plus !== minus) ? "#ff5a84": "#ffd21f")}}>{ev_names[statIndexMemo]}: </td><td><EVInput contextC={c} stat={statMemo}></EVInput></td><td> IV: </td><td><IVInput contextC={c} stat={statMemo}></IVInput></td>{boostPickerNoHP}<td><b>{statNumMemo}</b></td></tr>
+        <tr><td style={{color: (statMemo === minus && minus !== plus) ? "#1680f6" : ((statMemo === plus && plus !== minus) ? "#ff5a84": "#ffd21f")}}>{ev_names[statIndexMemo]}: </td><td><EVInput key={c.sideCode + c.id.toString() + "EV" + statMemo} contextC={c} stat={statMemo}></EVInput></td><td> IV: </td><td><IVInput key={c.sideCode + c.id.toString() + "IV" + statMemo} contextC={c} stat={statMemo}></IVInput></td>{boostPickerNoHP}<td><b>{statNumMemo}</b></td></tr>
     );
   }
   function StatsTable(){
@@ -857,23 +857,23 @@ function ItemIcon({ contextC }) {
     */
   
     return (
-    <context.Provider value={{ setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateNotes, id, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species, baseStats }}>
+    <context.Provider value={{ sideCode, setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateNotes, id, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species, baseStats }}>
       <div style={{display: "flex"}}>
         <div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector></SpeciesSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector></NatureSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector></TeraTypeSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector></AbilitySelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector></ItemSelector></div>
-          <StatsTable></StatsTable>
-          <NotesInput></NotesInput>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector key={sideCode + id.toString() + "species"}></SpeciesSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={sideCode + id.toString() + "nature"}></NatureSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector key={sideCode + id.toString() + "teratype"}></TeraTypeSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector key={sideCode + id.toString() + "ability"}></AbilitySelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector key={sideCode + id.toString() + "item"}></ItemSelector></div>
+          <StatsTable key={sideCode + id.toString() + "stats"}></StatsTable>
+          <NotesInput key={sideCode + id.toString() + "notes"}></NotesInput>
           { (sideCode === "attacker") && (
           <div>
             <p></p>
-            <div><MoveSelector id={sideCode + "Move1-" + id.toString()} moveNum={1}></MoveSelector></div>
-            <div><MoveSelector id={sideCode + "Move2-" + id.toString()} moveNum={2}></MoveSelector></div>
-            <div><MoveSelector id={sideCode + "Move3-" + id.toString()} moveNum={3}></MoveSelector></div>
-            <div><MoveSelector id={sideCode + "Move4-" + id.toString()} moveNum={4}></MoveSelector></div>
+            <div><MoveSelector key={sideCode + id.toString() + "move1"} id={sideCode + "Move1-" + id.toString()} moveNum={1}></MoveSelector></div>
+            <div><MoveSelector key={sideCode + id.toString() + "move2"} id={sideCode + "Move2-" + id.toString()} moveNum={2}></MoveSelector></div>
+            <div><MoveSelector key={sideCode + id.toString() + "move3"} id={sideCode + "Move3-" + id.toString()} moveNum={3}></MoveSelector></div>
+            <div><MoveSelector key={sideCode + id.toString() + "move4"} id={sideCode + "Move4-" + id.toString()} moveNum={4}></MoveSelector></div>
           </div>
           )}
         </div>
