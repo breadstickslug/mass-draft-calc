@@ -343,28 +343,29 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
           <option value="Psychic">Psychic Terrain</option>
           <option value="Misty">Misty Terrain</option>
         </select>
-        <div style={{textAlign: "left", textOverflow: "clip"}}>
-          <div><input type="checkbox" onChange={changeGravity} checked={gravityMemo}></input> Gravity</div>
-          <div><input type="checkbox" onChange={changeReflectDefender} checked={reflectDefenderMemo}></input> Reflect</div>
-          <div><input type="checkbox" onChange={changeLightscreenDefender} checked={lightscreenDefenderMemo}></input> Light Screen</div>
-          <div><input type="checkbox" onChange={changeVeilDefender} checked={veilDefenderMemo}></input> Aurora Veil</div>
-          <div><input type="checkbox" onChange={changeMagicRoom} checked={magicroomMemo}></input> Magic Room</div>
-          <div><input type="checkbox" onChange={changeWonderRoom} checked={wonderroomMemo}></input> Wonder Room</div>
-          <div><input type="checkbox" onChange={changeHelpinghand} checked={helpinghandMemo}></input> Helping Hand</div>
-          <div><input type="checkbox" onChange={changeTailwind} checked={tailwindMemo}></input> Tailwind (attacking)</div>
-          <div><input type="checkbox" onChange={changeTailwindDef} checked={tailwindDefMemo}></input> Tailwind (defending)</div>
-          <div><input type="checkbox" onChange={changeFriendguard} checked={friendguardMemo}></input> Friend Guard</div>
-          <div><input type="checkbox" onChange={changeBattery} checked={batteryMemo}></input> Battery</div>
-          <div><input type="checkbox" onChange={changePowerspot} checked={powerspotMemo}></input> Power Spot</div>
-          <div><input type="checkbox" onChange={changeFlowergift} checked={flowergiftMemo}></input> Flower Gift (attacking)</div>
-          <div><input type="checkbox" onChange={changeFlowergiftDef} checked={flowergiftDefMemo}></input> Flower Gift (defending)</div>
-          <div><input type="checkbox" onChange={changeBeadsofruin} checked={beadsofruinMemo}></input> Beads of Ruin</div>
-          <div><input type="checkbox" onChange={changeSwordofruin} checked={swordofruinMemo}></input> Sword of Ruin</div>
-          <div><input type="checkbox" onChange={changeTabletsofruin} checked={tabletsofruinMemo}></input> Tablets of Ruin</div>
-          <div><input type="checkbox" onChange={changeVesselofruin} checked={vesselofruinMemo}></input> Vessel of Ruin</div>
-          <div><input type="checkbox" onChange={changeAurabreak} checked={aurabreakMemo}></input> Aura Break</div>
-          <div><input type="checkbox" onChange={changeDarkaura} checked={darkauraMemo}></input> Dark Aura</div>
-          <div><input type="checkbox" onChange={changeFairyaura} checked={fairyauraMemo}></input> Fairy Aura</div>
+        <div className="field-check-div"></div>
+        <div style={{textAlign: "center", textOverflow: "clip"}}>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="gravity" onChange={changeGravity} checked={gravityMemo}></input><label id="gravity-btn" className="btn btn-primary" htmlFor="gravity">Gravity</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="reflect" onChange={changeReflectDefender} checked={reflectDefenderMemo}></input><label id="reflect-btn" className="btn btn-primary" htmlFor="reflect">Reflect</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="lightscreen" onChange={changeLightscreenDefender} checked={lightscreenDefenderMemo}></input><label id="lightscreen-btn" className="btn btn-primary" htmlFor="lightscreen">Light Screen</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="auroraveil" onChange={changeVeilDefender} checked={veilDefenderMemo}></input><label id="auroraveil-btn" className="btn btn-primary" htmlFor="auroraveil">Aurora Veil</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="magicroom" onChange={changeMagicRoom} checked={magicroomMemo}></input><label id="magicroom-btn" className="btn btn-primary" htmlFor="magicroom">Magic Room</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="wonderroom" onChange={changeWonderRoom} checked={wonderroomMemo}></input><label id="wonderroom-btn" className="btn btn-primary" htmlFor="wonderroom">Wonder Room</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="helpinghand" onChange={changeHelpinghand} checked={helpinghandMemo}></input><label id="helpinghand-btn" className="btn btn-primary" htmlFor="helpinghand">Helping Hand</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="tailwind" onChange={changeTailwind} checked={tailwindMemo}></input><label id="tailwind-btn" className="btn btn-primary" htmlFor="tailwind">Tailwind (attacking)</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="tailwinddef" onChange={changeTailwindDef} checked={tailwindDefMemo}></input><label id="tailwinddef-btn" className="btn btn-primary" htmlFor="tailwinddef">Tailwind (defending)</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="friendguard" onChange={changeFriendguard} checked={friendguardMemo}></input><label id="friendguard-btn" className="btn btn-primary" htmlFor="friendguard">Friend Guard</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="battery" onChange={changeBattery} checked={batteryMemo}></input><label id="battery-btn" className="btn btn-primary" htmlFor="battery">Battery</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="powerspot" onChange={changePowerspot} checked={powerspotMemo}></input><label id="powerspot-btn" className="btn btn-primary" htmlFor="powerspot">Power Spot</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="flowergift" onChange={changeFlowergift} checked={flowergiftMemo}></input><label id="flowergift-btn" className="btn btn-primary" htmlFor="flowergift">Flower Gift (attacking)</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="flowergiftdef" onChange={changeFlowergiftDef} checked={flowergiftDefMemo}></input><label id="flowergiftdef-btn" className="btn btn-primary" htmlFor="flowergiftdef">Flower Gift (defending)</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="beadsofruin" onChange={changeBeadsofruin} checked={beadsofruinMemo}></input><label id="beadsofruin-btn" className="btn btn-primary" htmlFor="beadsofruin">Beads of Ruin</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="swordofruin" onChange={changeSwordofruin} checked={swordofruinMemo}></input><label id="swordofruin-btn" className="btn btn-primary" htmlFor="swordofruin">Sword of Ruin</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="tabletsofruin" onChange={changeTabletsofruin} checked={tabletsofruinMemo}></input><label id="tabletsofruin-btn" className="btn btn-primary" htmlFor="tabletsofruin">Tablets of Ruin</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="vesselofruin" onChange={changeVesselofruin} checked={vesselofruinMemo}></input><label id="vesselofruin-btn" className="btn btn-primary" htmlFor="vesselofruin">Vessel of Ruin</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="aurabreak" onChange={changeAurabreak} checked={aurabreakMemo}></input><label id="aurabreak-btn" className="btn btn-primary" htmlFor="aurabreak">Aura Break</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="darkaura" onChange={changeDarkaura} checked={darkauraMemo}></input><label id="darkaura-btn" className="btn btn-primary" htmlFor="darkaura">Dark Aura</label></div>
+          <div className="field-check-div"><input type="checkbox" className="btn-check" id="fairyaura" onChange={changeFairyaura} checked={fairyauraMemo}></input><label id="fairyaura-btn" className="btn btn-primary" htmlFor="fairyaura">Fairy Aura</label></div>
         </div>
       </div>
       
