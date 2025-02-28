@@ -7,6 +7,7 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {Sets, Teams} from '@pkmn/sets';
 
 const gen = Generations.get(9);
+const root = document.documentElement;
 
 
 const tabNames = ["Mons", "Import"];
@@ -93,7 +94,9 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
   }
   function forceOpenContainer(){
     setContainerTransition({ height: ((sideCode === "attacker") ? "552" : "421")+"px" });
+    root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", ((sideCode === "attacker") ? "552" : "421") + "px");
     setButtonTransition((sideCode === "attacker") ? { top: "551px" } : { bottom: "421px" });
+    root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "551" : "421") + "px");
     setContainerCollapsed(false);
     setMonsPanelOpen(true);
   }
@@ -101,14 +104,18 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
     console.log("collapsing");
     if (containerCollapsed){
       setContainerTransition({ height: ((sideCode === "attacker") ? "552" : "421")+"px" });
+      root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", ((sideCode === "attacker") ? "552" : "421") + "px");
       setButtonTransition((sideCode === "attacker") ? { top: "551px" } : { bottom: "421px" });
+      root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "551" : "421") + "px");
       setContainerCollapsed(false);
       setMonsPanelOpen(true);
       closeFieldPanel();
     }
     else {
       setContainerTransition({ height: "34px" });
+      root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", "34px");
       setButtonTransition((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
+      root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "33" : "34") + "px");
       setContainerCollapsed(true);
       //setMonsPanelOpen(false);
       //closeMonsPanels();
@@ -117,7 +124,9 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
   function forceClosedContainer(){
     console.log("closing");
     setContainerTransition({ height: "34px" });
+    root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", "34px");
     setButtonTransition((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
+    root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "33" : "34") + "px");
     setContainerCollapsed(true);
     setMonsPanelOpen(false);
   }
@@ -664,7 +673,7 @@ function App() {
         </a>
       </header>
       */}
-      <div className="calcTable" style={{position: "absolute", width: "100%", top: "80px"}}>
+      <div className="calcTable" style={{position: "absolute", width: "100%", top: "calc(var(--attacker-panel-height) + 80px)", transition: "top 300ms"}}>
         <CalcTable attackers={attackerMons} defenders={defenderMons} field={field}></CalcTable>
         <div style={{height: "80px"}}></div>
       </div>

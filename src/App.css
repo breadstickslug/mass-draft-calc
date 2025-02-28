@@ -4,6 +4,14 @@
   font-size-adjust: 0.5;
 }
 
+:root {
+  --mon-panel-height: calc(42vh + 60px);
+  --attacker-panel-height: 34px;
+  --defender-panel-height: 34px;
+  --attacker-buttons-top: 33px;
+  --defender-buttons-bottom: 34px;
+}
+
 .App {
   text-align: center;
 }
@@ -276,11 +284,11 @@ select {
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
   left: 0px;
-  top: calc(50vh - 350px);
+  top: calc(50vh - 350px - ( var(--defender-panel-height) / 2 ) + ( var(--attacker-panel-height) / 2));
   background-color: #1a2a43;
   width: 200px;
   height: 700px;
-  transition: width 300ms;
+  transition: width 300ms, top 300ms;
   color: #fff;
   align-items: center;
   justify-content: center;
@@ -291,10 +299,10 @@ select {
 .field-buttons {
   text-align: center;
   position: fixed;
-  top: calc(50vh - 350px);
+  top: calc(50vh - 350px - ( var(--defender-panel-height) / 2 ) + ( var(--attacker-panel-height) / 2));
   width: 40px;
   height: 700px;
-  transition: left 300ms;
+  transition: left 300ms, top 300ms;
   color: #fff;
   padding-top: 10px;
   padding-bottom: 15px;
