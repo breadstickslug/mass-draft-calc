@@ -178,7 +178,7 @@ function moveGraphicData(type, teratype, teraactive) {
                               .concat("px");
     }, [itemName]);
     return (
-      <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
+      <img src="//:0" alt=" " style={{
         width: "24px",
         height: "24px",
         display: "inline-block",
@@ -329,7 +329,7 @@ function moveGraphicData(type, teratype, teraactive) {
                       .concat("px");},
     [species]);
     return (
-      <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
+      <img src="//:0" alt=" " style={{
         width: "40px",
         height: "30px",
         display: "inline-block",

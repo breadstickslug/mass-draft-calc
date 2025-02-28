@@ -176,7 +176,7 @@ function AttackerRows({ attacker, defenders, field }){
                                                                               .concat(")");
             return (
             <tr key={calc.attacker.species.name+attacker.name+calc.move.name+calc.defender.species.name+defenders[index1].name+index1+" "+index2} style={{height: "34px"}}>
-                <td style={{ textAlign: "center", paddingLeft: "5px"}}><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
+                <td style={{ textAlign: "center", paddingLeft: "5px"}}><img src="//:0" alt=" " style={{
                                 width: "40px",
                                 height: "30px",
                                 display: "inline-block",
@@ -200,7 +200,7 @@ function AttackerRows({ attacker, defenders, field }){
                                     width: "100%", borderTopLeftRadius: "8px", borderBottomLeftRadius: "8px", textAlign: "center", color: "#fff", fontWeight: "bold" }, ...{
                     textShadow: (calc.move.isStellarFirstUse || (calc.attacker.teraType && moveType === calc.attacker.teraType)) ? "1px 1px 2px #111, -1px 1px 2px #111, -1px -1px 1px #000, 1px -1px 2px #111" : "#000 0px 0px 0px"
                 }}}>{calc.move.name}</div></td>
-                <td style={{ textAlign: "center", paddingLeft: "5px"}}><img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="" style={{
+                <td style={{ textAlign: "center", paddingLeft: "5px"}}><img src="//:0" alt=" " style={{
                                 width: "40px",
                                 height: "30px",
                                 display: "inline-block",
