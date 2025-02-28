@@ -1,6 +1,7 @@
 {
   "name": "draft-helper",
   "version": "0.1.0",
+  "homepage": "https://breadstickslug.github.io/mass-draft-calc",
   "private": true,
   "dependencies": {
     "@pkmn/data": "^0.9.29",
@@ -18,6 +19,8 @@
     "zustand": "^5.0.3"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
@@ -44,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "postinstall-postinstall": "^2.1.0",
     "web-vitals": "^4.2.4"
   }
