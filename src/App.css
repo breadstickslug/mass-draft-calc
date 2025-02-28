@@ -276,7 +276,7 @@ select {
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
   left: 0px;
-  top: 20vh;
+  top: calc(50vh - 350px);
   background-color: #1a2a43;
   width: 200px;
   height: 700px;
@@ -291,7 +291,7 @@ select {
 .field-buttons {
   text-align: center;
   position: fixed;
-  top: 20vh;
+  top: calc(50vh - 350px);
   width: 40px;
   height: 700px;
   transition: left 300ms;
