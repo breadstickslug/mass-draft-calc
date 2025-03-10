@@ -2,7 +2,7 @@ import {calculate, Result, Pokemon, Generations, toID, Move} from "@smogon/calc"
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import * as img from '@pkmn/img';
 
-const gen = Generations.get(9);
+const gen = Generations.get(7);
 
 const typeColors = {
 	normal: '#9FA19F',

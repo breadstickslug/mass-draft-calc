@@ -4,7 +4,7 @@ import { MonsMini } from "./mons-mini.js";
 import {Generations, Pokemon, toID} from '@smogon/calc';
 
 
-const gen = Generations.get(9);
+const gen = Generations.get(7);
 const statList = ["hp", "atk", "def", "spa", "spd", "spe"];
 
 
@@ -183,9 +183,9 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     function addMon(event){
         //var newID = numCreated+1;
         //var nextNumCreated = numCreated+1;
-        setParty(party.concat(new Pokemon(gen, "Ababo", {
+        setParty(party.concat(new Pokemon(gen, "Abomasnow", {
             nature: "Serious",
-            ability: "Pixilate",
+            ability: "Snow Warning",
             item: "(no item)",
             moves: ["(No Move)", "(No Move)", "(No Move)", "(No Move)"],
             evs: {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0},
@@ -194,10 +194,10 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         })));
         setNotes(notes.concat(""));
         //setNumCreated(nextNumCreated);
-        setSpecies(species.concat("Ababo"));
+        setSpecies(species.concat("Abomasnow"));
         setNatures(natures.concat("Serious"));
-        setAbilities(abilities.concat("Pixilate"));
-        setTeraTypes(teraTypes.concat("Fairy"));
+        setAbilities(abilities.concat("Snow Warning"));
+        setTeraTypes(teraTypes.concat("Grass"));
         setTeraStatuses(terasActive.concat(false));
         setItems(items.concat("(no item)"));
         setMovesets(movesets.concat({

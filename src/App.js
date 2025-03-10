@@ -6,7 +6,7 @@ import { CalcTable } from "./calc-table.js";
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import {Sets, Teams} from '@pkmn/sets';
 
-const gen = Generations.get(9);
+const gen = Generations.get(7);
 const root = document.documentElement;
 
 
@@ -330,8 +330,8 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
       <div className={"field"} id={"field"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}>
         <div>Format</div>
         <select value={gameTypeMemo} onChange={changeGameType}>
-          <option value="Singles">Singles</option>
           <option value="Doubles">Doubles</option>
+          <option value="Singles">Singles</option>
         </select>
         <div>Weather</div>
         <select value={weatherMemo} onChange={changeWeather}>
@@ -405,7 +405,7 @@ function App() {
   const [attackerMons, setAttackerMons] = useState([]);
   const [defenderMons, setDefenderMons] = useState([]);
   const [field, setField] = useState(new Field());
-  const [gameType, setGameType] = useState("Singles");
+  const [gameType, setGameType] = useState("Doubles");
   const [weather, setWeather] = useState("");
   const [terrain, setTerrain] = useState("");
   const [gravity, setGravity] = useState(false);

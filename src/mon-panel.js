@@ -36,8 +36,8 @@ const typeColors = {
   stellar: 'conic-gradient(#fde144, #f7a519, #f5672b, #e34a6a, #c666ba, #8d49cb, #8362c1, #6f7ba6, #879eab, #5bb9e1, #33beea, #287ada, #345ac3, #4da2ba, #61d94c, #cbdc65, #e4e8c6, #e7cc9c, #fde144)',
 };
 
-const gen = Generations.get(9);
-const speciesDex = dex.Dex.forGen(9);
+const gen = Generations.get(7);
+const speciesDex = dex.Dex.forGen(7);
 console.log(speciesDex);
 const ev_names = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
 const statList = ["hp", "atk", "def", "spa", "spd", "spe"];
@@ -80,7 +80,8 @@ sortedMoves.sort(function(a, b) {
 
 var sortedMons = [];
 for (const id of speciesDex.species.all()) {
-    if (id.name !== "Xerneas-Neutral" && id.name !== "Eevee-Starter" && id.name !== "Pikachu-Starter" && id.name !== "MissingNo." && !id.name.includes("Pokestar") &&
+  //console.log(id);
+    if (id.gen <= 7 && id.name !== "Xerneas-Neutral" && id.name !== "Eevee-Starter" && id.name !== "Pikachu-Starter" && id.name !== "MissingNo." && !id.name.includes("Pokestar") &&
         id.name !== "Pikachu-Belle" && !id.name.includes("Rock-Star") && !id.name.includes("Pop-Star") && !id.name.includes("PhD") && !id.name.includes("Partner") &&
         !id.name.includes("Cosplay") && !id.name.includes("Libre") && !id.name.includes("Spiky-eared")){
         sortedMons.push(id.name);
