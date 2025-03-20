@@ -1,18 +1,18 @@
 {
   "files": {
     "main.css": "/mass-draft-calc/static/css/main.63881605.css",
-    "main.js": "/mass-draft-calc/static/js/main.b3bacfeb.js",
+    "main.js": "/mass-draft-calc/static/js/main.f6ea9173.js",
     "static/js/67.677ec8b4.chunk.js": "/mass-draft-calc/static/js/67.677ec8b4.chunk.js",
     "static/js/488.43967b10.chunk.js": "/mass-draft-calc/static/js/488.43967b10.chunk.js",
     "static/media/FOT-UDKakugoC80Pro-M.otf": "/mass-draft-calc/static/media/FOT-UDKakugoC80Pro-M.7f16333bc71aea747e79.otf",
     "index.html": "/mass-draft-calc/index.html",
     "main.63881605.css.map": "/mass-draft-calc/static/css/main.63881605.css.map",
-    "main.b3bacfeb.js.map": "/mass-draft-calc/static/js/main.b3bacfeb.js.map",
+    "main.f6ea9173.js.map": "/mass-draft-calc/static/js/main.f6ea9173.js.map",
     "67.677ec8b4.chunk.js.map": "/mass-draft-calc/static/js/67.677ec8b4.chunk.js.map",
     "488.43967b10.chunk.js.map": "/mass-draft-calc/static/js/488.43967b10.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.63881605.css",
-    "static/js/main.b3bacfeb.js"
+    "static/js/main.f6ea9173.js"
   ]
 }
