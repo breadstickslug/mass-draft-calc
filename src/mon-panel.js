@@ -179,7 +179,7 @@ function moveGraphicData(type, teratype, teraactive) {
                               .concat("px");
     }, [itemName]);
     return (
-      <img src="//:0" alt=" " style={{
+      <object src="//:0" alt=" " style={{
         width: "24px",
         height: "24px",
         display: "inline-block",
@@ -190,7 +190,7 @@ function moveGraphicData(type, teratype, teraactive) {
         marginBottom: "auto",
         marginLeft: "5px",
         marginRight: "5px",
-      }}></img>
+      }}></object>
     );
   }
   function ItemDropdown({ ms }) {
@@ -330,14 +330,14 @@ function moveGraphicData(type, teratype, teraactive) {
                       .concat("px");},
     [species]);
     return (
-      <img src="//:0" alt=" " style={{
+      <object src="//:0" alt=" " style={{
         width: "40px",
         height: "30px",
         display: "inline-block",
         imageRendering: "pixelated",
         border: "0",
         background: imgSrcMemo,
-      }}></img>
+      }}></object>
     );
   }
   function SpeciesDropdown({ ms }){
