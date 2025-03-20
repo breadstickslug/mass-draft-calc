@@ -176,14 +176,14 @@ function AttackerRows({ attacker, defenders, field }){
                                                                               .concat(")");
             return (
             <tr key={calc.attacker.species.name+attacker.name+calc.move.name+calc.defender.species.name+defenders[index1].name+index1+" "+index2} style={{height: "34px"}}>
-                <td style={{ textAlign: "center", paddingLeft: "5px"}}><img src="//:0" alt=" " style={{
+                <td style={{ textAlign: "center", paddingLeft: "5px"}}><object src="//:0" alt=" " style={{
                                 width: "40px",
                                 height: "30px",
                                 display: "inline-block",
                                 imageRendering: "pixelated",
                                 border: "0",
                                 background: "transparent url("+img.Icons.getPokemon(calc.attacker.species.name).url+") no-repeat scroll "+img.Icons.getPokemon(calc.attacker.species.name).left.toString()+"px "+img.Icons.getPokemon(calc.attacker.species.name).top.toString()+"px",
-                                }}></img></td>
+                                }}></object></td>
                 <td style={{ textAlign: "center", paddingRight: "5px" }}>{calc.attacker.species.name + ((attacker.name !== undefined && attacker.name !== "") ? " ("+attacker.name+")" : "")}</td>
                 <td style={{ textAlign: "center", display: "flex", lineHeight: "34px", background: gD["background"]}}>
                     <div style={{position: "relative", display: "inline-block", height: "30px", width: "45px"}}>
@@ -200,14 +200,14 @@ function AttackerRows({ attacker, defenders, field }){
                                     width: "100%", borderTopLeftRadius: "8px", borderBottomLeftRadius: "8px", textAlign: "center", color: "#fff", fontWeight: "bold" }, ...{
                     textShadow: (calc.move.isStellarFirstUse || (calc.attacker.teraType && moveType === calc.attacker.teraType)) ? "1px 1px 2px #111, -1px 1px 2px #111, -1px -1px 1px #000, 1px -1px 2px #111" : "#000 0px 0px 0px"
                 }}}>{calc.move.name}</div></td>
-                <td style={{ textAlign: "center", paddingLeft: "5px"}}><img src="//:0" alt=" " style={{
+                <td style={{ textAlign: "center", paddingLeft: "5px"}}><object src="//:0" alt=" " style={{
                                 width: "40px",
                                 height: "30px",
                                 display: "inline-block",
                                 imageRendering: "pixelated",
                                 border: "0",
                                 background: "transparent url("+img.Icons.getPokemon(calc.defender.species.name).url+") no-repeat scroll "+img.Icons.getPokemon(calc.defender.species.name).left.toString()+"px "+img.Icons.getPokemon(calc.defender.species.name).top.toString()+"px",
-                                }}></img></td>
+                                }}></object></td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.defender.species.name + ((defenders[index1].name !== undefined && defenders[index1].name !== "") ? " ("+defenders[index1].name+")" : "")}</td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.range()[0]+ " - " + calc.range()[1]}</td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px", background: dmgGradient}}>{pctLower.toString()+" - "+pctHigher.toString()+"%"}</td>
