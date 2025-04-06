@@ -11,10 +11,11 @@ const statList = ["hp", "atk", "def", "spa", "spd", "spe"];
 
 export const partyContext = React.createContext(null);
 
-export function MonsContainer({ tabActive, collapsed, sideCode, imported, updateMons }){
+export function MonsContainer({ tabActive, collapsed, sideCode, imported, updateMons, gameType }){
     const importedMemo = useMemo(() => imported, [imported]);
     const tabActiveMemo = useMemo(() => tabActive, [tabActive]);
     const collapsedMemo = useMemo(() => collapsed, [collapsed]);
+    const gameTypeMemo = useMemo(() => gameType, [gameType]);
     const updateMonsMemo = useCallback((s, p) => updateMons(s, p), [updateMons]);
     var [party, setParty] = useState([]); // party is dummy list
     var [species, setSpecies] = useState([]);
@@ -63,12 +64,13 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     function updateStats(baseStats, evs, ivs, nature, boosts){
         var raws = [];
         var boosteds = [];
+        var level = (gameType === "Doubles") ? 50 : 100;
         for (const stat of statList){
-            const statFirstStep = Math.floor((2 * baseStats[stat] + ivs[stat] + Math.floor(evs[stat]/4)) * 100 / 100) // level 100 assumed
+            const statFirstStep = Math.floor((2 * baseStats[stat] + ivs[stat] + Math.floor(evs[stat]/4)) * level / 100) // level 50 assumed
             const plus = gen.natures.get(toID(nature)).plus;
             const minus = gen.natures.get(toID(nature)).minus;
             const natureMod = (plus === stat && plus !== minus) ? 1.1 : ((minus === stat && minus !== plus) ? 0.9 : 1);
-            const statSecondStep = (stat === "hp") ? statFirstStep + 100 + 10 : (statFirstStep + 5) * natureMod; // level 100 assumed
+            const statSecondStep = (stat === "hp") ? statFirstStep + level + 10 : (statFirstStep + 5) * natureMod; // level 50 assumed
             raws.push(statSecondStep);
             var boosted = Math.floor(statSecondStep * (2+Math.max(0, boosts[stat]))/(2-Math.min(0, boosts[stat])));
             boosteds.push(boosted);
@@ -289,7 +291,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     */
 
     return (
-        <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts }}>
+        <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts, gameTypeMemo }}>
         <div style={{overflow: "hidden"}}>
             <div style={{overflow: "hidden", height: (collapsedMemo) ? "34px" : "0px"}}><MonsMini sideCode={sideCode} importedSpecies={species} visible={collapsedMemo}></MonsMini></div>
             <div style={{overflow: "hidden", display: (tabActiveMemo && !collapsedMemo) ? "inline" : "none", textAlign: "center"}}><button type="button" style={{width: "30px", height: "30px"}} onClick={addMon}>+</button><button type="button" style={{width: "30px", height: "30px"}} onClick={removeMon}>-</button></div>

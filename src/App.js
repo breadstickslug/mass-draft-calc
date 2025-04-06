@@ -70,7 +70,7 @@ function ImportContainer({ sideCode, importFunc }) {
   );
 }
 
-function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel }) {
+function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType }) {
   const [tabsActive, setTabsActive] = useState([true, false]);
   const [importedTeamStorage, setImportedTeamStorage] = useState({});
   const sideMemo = useMemo(() => sideCode, [sideCode]);
@@ -78,6 +78,7 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
   const [buttonTransition, setButtonTransition] = useState((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
   const [containerCollapsed, setContainerCollapsed] = useState(true);
   const monsPanelOpenMemo = useMemo(() => monsPanelOpen, [monsPanelOpen]);
+  const gameTypeMemo = useMemo(() => gameType, [gameType]);
 
   useEffect(() => {if (!monsPanelOpenMemo){ setContainerCollapsed(true); forceClosedContainer(); } }, [monsPanelOpenMemo]);
   
@@ -192,7 +193,7 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
 
   return (
     <div>
-      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage}></MonsContainer></div>
+      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage} gameType={gameTypeMemo}></MonsContainer></div>
       <div className={sideCode+"s"} id={sideCode+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={sideCode} importFunc={importMons}></ImportContainer></div>
       <div className={sideCode+"s-buttons"} style={{ ...buttonTransition, height: "30px", display: "flex", justifyContent: "center"}}>
           <PanelButton text={capitalize(sideCode)+"s"} sideCode={sideCode} tab={tabNames[0]} focusTab={focusTab} id={(tabsActive[0]) ? "active" : "inactive"}></PanelButton>
@@ -404,7 +405,7 @@ function App() {
   const [fieldPanelOpen, setFieldPanelOpen] = useState(false);
   const [attackerMons, setAttackerMons] = useState([]);
   const [defenderMons, setDefenderMons] = useState([]);
-  const [field, setField] = useState(new Field());
+  const [field, setField] = useState(new Field({ gameType: "Doubles" }));
   const [gameType, setGameType] = useState("Doubles");
   const [weather, setWeather] = useState("");
   const [terrain, setTerrain] = useState("");
@@ -677,13 +678,13 @@ function App() {
         <CalcTable attackers={attackerMons} defenders={defenderMons} field={field}></CalcTable>
         <div style={{height: "80px"}}></div>
       </div>
-      <TabManager sideCode="attacker" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel}></TabManager>
+      <TabManager sideCode="attacker" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType}></TabManager>
       <FieldPanel updateHelpinghand={updateHelpinghand} updateGameType={updateGameType} updateWeather={updateWeather} updateTerrain={updateTerrain} updateGravity={updateGravity} updateReflect={updateReflect}
                   updateLightscreen={updateLightscreen} updateVeil={updateVeil} updateMagicRoom={updateMagicRoom} updateWonderRoom={updateWonderRoom} updateTailwind={updateTailwind} updateTailwindDef={updateTailwindDef}
                   updateFriendguard={updateFriendguard} updateBattery={updateBattery} updatePowerspot={updatePowerspot} updateFlowergift={updateFlowergift} updateFlowergiftDef={updateFlowergiftDef} updateSteelyspirit={updateSteelyspirit}
                   updateBeadsofruin={updateBeadsofruin} updateSwordofruin={updateSwordofruin} updateTabletsofruin={updateTabletsofruin} updateVesselofruin={updateVesselofruin} updateAurabreak={updateAurabreak}
                   updateDarkaura={updateDarkaura} updateFairyaura={updateFairyaura} fieldPanelOpen={fieldPanelOpen} setFieldPanelOpen={setFieldPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel}></FieldPanel>
-      <TabManager sideCode="defender" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel}></TabManager>
+      <TabManager sideCode="defender" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType}></TabManager>
       
     </div>
   );

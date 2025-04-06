@@ -713,7 +713,7 @@ function moveGraphicData(type, teratype, teraactive) {
         </select>
     );
   }
-  function StatsTableRow({ ms, stat, statIndex }){
+  function StatsTableRow({ ms, stat, statIndex, gameType }){
     const monStateStore = useMemo(() => ms, [ms]);
     //const c = useContext(context);
     const sideCode = monStateStore(useShallow((state) => state.sideCode));
@@ -721,6 +721,7 @@ function moveGraphicData(type, teratype, teraactive) {
 
     const statMemo = useMemo(() => stat, [stat])
     const statIndexMemo = useMemo(() => statIndex, [statIndex]);
+    const gameTypeMemo = useMemo(() => gameType, [gameType]);
     
     var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown key={sideCode + id.toString() + "boost" + statMemo} ms={monStateStore} stat={statMemo}></BoostDropdown></td> : <td></td>;
 
@@ -739,25 +740,27 @@ function moveGraphicData(type, teratype, teraactive) {
     const minus = useMemo(() => gen.natures.get(toID(nature)).minus, [nature]);
 
     const statNumMemo = useMemo(() => {
-    const statFirstStep = Math.floor((2 * baseStats[statMemo] + ivs[statMemo] + Math.floor(evs[statMemo]/4)) * 100 / 100) // level 100 assumed
-    const natureMod = (plus === statMemo && plus !== minus) ? 1.1 : ((minus === statMemo && minus !== plus) ? 0.9 : 1);
-    const statSecondStep = (statMemo === "hp") ? statFirstStep + 100 + 10 : (statFirstStep + 5) * natureMod; // level 100 assumed
-    //var dummyMon = new Pokemon(gen, speciesMemo, {evs: evMemoObj, ivs: ivMemoObj, ability: abilityMemo, nature: natureMemo});
-    var statNum = Math.floor(statSecondStep * (2+Math.max(0, boosts[statMemo]))/(2-Math.min(0, boosts[statMemo])));
-    return statNum;
-    }, [baseStats, nature, ivs, evs, boosts, statMemo]);
+      var level = (gameTypeMemo === "Doubles") ? 50 : 100;
+      const statFirstStep = Math.floor((2 * baseStats[statMemo] + ivs[statMemo] + Math.floor(evs[statMemo]/4)) * level / 100) // level 50 assumed
+      const natureMod = (plus === statMemo && plus !== minus) ? 1.1 : ((minus === statMemo && minus !== plus) ? 0.9 : 1);
+      const statSecondStep = (statMemo === "hp") ? statFirstStep + level + 10 : (statFirstStep + 5) * natureMod; // level 50 assumed
+      //var dummyMon = new Pokemon(gen, speciesMemo, {evs: evMemoObj, ivs: ivMemoObj, ability: abilityMemo, nature: natureMemo});
+      var statNum = Math.floor(statSecondStep * (2+Math.max(0, boosts[statMemo]))/(2-Math.min(0, boosts[statMemo])));
+      return statNum;
+    }, [baseStats, nature, ivs, evs, boosts, statMemo, gameTypeMemo]);
 
     return (
         <tr><td style={{color: (statMemo === minus && minus !== plus) ? "#1680f6" : ((statMemo === plus && plus !== minus) ? "#ff5a84": "#ffd21f")}}>{ev_names[statIndexMemo]}: </td><td><EVInput key={sideCode + id.toString() + "EV" + statMemo} ms={monStateStore} stat={statMemo}></EVInput></td><td> IV: </td><td><IVInput key={sideCode + id.toString() + "IV" + statMemo} ms={monStateStore} stat={statMemo}></IVInput></td>{boostPickerNoHP}<td><b>{statNumMemo}</b></td></tr>
     );
   }
-  function StatsTable({ ms }){
+  function StatsTable({ ms, gameType }){
     const monStateStore = useMemo(() => ms, [ms]);
+    const gameTypeMemo = useMemo(() => gameType, [gameType]);
     const sideCode = monStateStore(useShallow((state) => state.sideCode));
     const id = monStateStore(useShallow((state) => state.id));
 
     const rows = statList.map((stat, index) =>
-        <StatsTableRow stat={stat} statIndex={index} key={sideCode + id.toString() + stat} ms={monStateStore}></StatsTableRow>
+        <StatsTableRow stat={stat} statIndex={index} key={sideCode + id.toString() + stat} ms={monStateStore} gameType={gameTypeMemo}></StatsTableRow>
     );
 
     return (
@@ -1070,7 +1073,7 @@ function moveGraphicData(type, teratype, teraactive) {
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector key={sideCode + id.toString() + "teratype"} ms={monStateStore}></TeraTypeSelector></div>
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector key={sideCode + id.toString() + "ability"} ms={monStateStore}></AbilitySelector></div>
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector key={sideCode + id.toString() + "item"} ms={monStateStore}></ItemSelector></div>
-          <StatsTable key={sideCode + id.toString() + "stats"} ms={monStateStore}></StatsTable>
+          <StatsTable key={sideCode + id.toString() + "stats"} ms={monStateStore} gameType={pC.gameTypeMemo}></StatsTable>
           <NotesInput key={sideCode + id.toString() + "notes"} ms={monStateStore}></NotesInput>
           { (sideCode === "attacker") && (
           <div>
