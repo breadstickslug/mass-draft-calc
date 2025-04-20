@@ -25,6 +25,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     const [terasActive, setTeraStatuses] = useState([]);
     const [items, setItems] = useState([]);
     const [movesets, setMovesets] = useState([]);
+    const [zs, setZsParty] = useState([]);
     const [evsets, setEVsets] = useState([]);
     const [ivsets, setIVsets] = useState([]);
     const [boostsets, setBoostSets] = useState([]);
@@ -50,6 +51,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
             setAbilities(importedMemo.abilities);   
             setItems(importedMemo.items);
             setMovesets(importedMemo.moves);
+            setZsParty(new Array(importedMemo.species.length).fill({ 1: false, 2: false, 3: false, 4: false }));
             setEVsets(importedMemo.evs);
             setIVsets(importedMemo.ivs);
             setBoostSets(new Array(importedMemo.species.length).fill({hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0}));
@@ -150,6 +152,13 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         setMovesets([...movesets.slice(0, index), moves, ...movesets.slice(index+1)]);
     }
 
+    function setZs(zs_mon, index){
+        const replaced = party[index];
+        replaced.Zs = Object.values(zs_mon);
+        setParty([...party.slice(0, index), replaced, ...party.slice(index+1)]);
+        setZsParty([...zs.slice(0, index), zs_mon, ...zs.slice(index+1)]);
+    }
+
     function setEVs(evs, index){
         const replaced = party[index];
         replaced.evs = evs;
@@ -208,6 +217,12 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
             3: "(No Move)",
             4: "(No Move)",
         }));
+        setZsParty(zs.concat({
+            1: false,
+            2: false,
+            3: false,
+            4: false,
+        }));
         setEVsets(evsets.concat({hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0}));
         setIVsets(ivsets.concat({hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31}));
         setBoostSets(boostsets.concat({hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0}));
@@ -225,6 +240,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         setTeraStatuses(terasActive.slice(0, -1));
         setItems(items.slice(0, -1));
         setMovesets(movesets.slice(0, -1));
+        setZsParty(zs.slice(0, -1));
         setEVsets(evsets.slice(0, -1));
         setIVsets(ivsets.slice(0, -1));
         setBoostSets(boostsets.slice(0, -1));
@@ -246,6 +262,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         const terasActiveS = terasActive.toSpliced(event.target.id, 1);
         const itemsS = items.toSpliced(event.target.id, 1);
         const movesetsS = movesets.toSpliced(event.target.id, 1);
+        const ZsS = zs.toSpliced(event.target.id, 1);
         const evsetsS = evsets.toSpliced(event.target.id, 1);
         const ivsetsS = ivsets.toSpliced(event.target.id, 1);
         const boostsetsS = boostsets.toSpliced(event.target.id, 1);
@@ -260,6 +277,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         setTeraStatuses([...terasActiveS]);
         setItems([...itemsS]);
         setMovesets([...movesetsS]);
+        setZsParty([...ZsS]);
         setEVsets([...evsetsS]);
         setIVsets([...ivsetsS]);
         setBoostSets([...boostsetsS]);
@@ -291,7 +309,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     */
 
     return (
-        <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts, gameTypeMemo }}>
+        <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setZs, setEVs, setIVs, setBoosts, gameTypeMemo }}>
         <div style={{overflow: "hidden"}}>
             <div style={{overflow: "hidden", height: (collapsedMemo) ? "34px" : "0px"}}><MonsMini sideCode={sideCode} importedSpecies={species} visible={collapsedMemo}></MonsMini></div>
             <div style={{overflow: "hidden", display: (tabActiveMemo && !collapsedMemo) ? "inline" : "none", textAlign: "center"}}><button type="button" style={{width: "30px", height: "30px"}} onClick={addMon}>+</button><button type="button" style={{width: "30px", height: "30px"}} onClick={removeMon}>-</button></div>
@@ -313,6 +331,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
                                                 pTeraType={teraTypes[index]} 
                                                 pTeraActive={terasActive[index]} 
                                                 pMoves={movesets[index]} 
+                                                pZs={zs[index]}
                                                 pEVs={evsets[index]} 
                                                 pIVs={ivsets[index]} 
                                                 pBoosts={boostsets[index]} 

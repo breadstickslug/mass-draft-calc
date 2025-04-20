@@ -301,6 +301,30 @@ function moveGraphicData(type, teratype, teraactive) {
       </select>
     );
   }
+  function ZMoveCheckbox({ ms, moveNum }){
+    const monStateStore = useMemo(() => ms, [ms]);
+    //const c = useContext(context);
+    const moveNumMemo = useMemo(() => moveNum, [moveNum]);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
+    const zs = monStateStore(useShallow((state) => state.zs));
+    const setZs = monStateStore(useShallow((state) => state.setZs));
+
+    function setZ(active, moveNum){
+      var zsCopy = {
+        1: zs["1"],
+        2: zs["2"],
+        3: zs["3"],
+        4: zs["4"],
+      }
+      zsCopy[moveNum.toString()] = active;
+      setZs(zsCopy);
+    }
+
+    return (
+      <div className="Z-button-div"><input type="checkbox" className="btn-check"  id={sideCode+id.toString()+"Z"+moveNumMemo.toString()} onChange={(e) => { setZ(e.target.checked, moveNumMemo); }} checked={zs[moveNumMemo]}></input><label id={sideCode+id.toString()+"Z-btn-"+moveNumMemo.toString()} style={{ border: "1px solid #fff", bottom: "2px", position: "relative" }} className="btn btn-primary" htmlFor={sideCode + id.toString() + "Z" + moveNumMemo.toString()}>Z</label></div>
+    );
+  }
   function MoveSelector({ ms, moveNum }) {
     const monStateStore = useMemo(() => ms, [ms]);
     //const c = useContext(context);
@@ -309,7 +333,7 @@ function moveGraphicData(type, teratype, teraactive) {
     const id = monStateStore(useShallow((state) => state.id));
   
     return (
-        <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={sideCode + id.toString() + "moveicon" + moveNumMemo.toString()} ms={monStateStore} moveNum={moveNumMemo}></MoveIcon><MoveDropdown key={sideCode + id.toString() + "movepicker" + moveNumMemo.toString()} ms={monStateStore} moveNum={moveNumMemo}></MoveDropdown></div>
+        <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={sideCode + id.toString() + "moveicon" + moveNumMemo.toString()} ms={monStateStore} moveNum={moveNumMemo}></MoveIcon><MoveDropdown key={sideCode + id.toString() + "movepicker" + moveNumMemo.toString()} ms={monStateStore} moveNum={moveNumMemo}></MoveDropdown><ZMoveCheckbox key={sideCode + id.toString() + "zbox" + moveNumMemo.toString()} ms={monStateStore} moveNum={moveNumMemo}></ZMoveCheckbox></div>
     );
   }
   
@@ -794,7 +818,7 @@ function moveGraphicData(type, teratype, teraactive) {
   }
 
   // MAIN PANEL
-  export function PokemonPanel({ passedNotes, monID, monSide, pSpecies, pNature, pTeraType, pAbility, pTeraActive, pItem, pMoves, pEVs, pIVs, pBoosts }) {
+  export function PokemonPanel({ passedNotes, monID, monSide, pSpecies, pNature, pTeraType, pAbility, pTeraActive, pItem, pMoves, pZs, pEVs, pIVs, pBoosts }) {
     //var [mon, setMon] = useState(passedMon);
     var pC = useContext(partyContext);
 
@@ -822,6 +846,13 @@ function moveGraphicData(type, teratype, teraactive) {
         3: (pMoves["3"] !== undefined) ? pMoves["3"] : "(No Move)",
         4: (pMoves["4"] !== undefined) ? pMoves["4"] : "(No Move)"},
       setMoves: (m) => set({ moves: m }),
+      zs: {
+        1: (pZs["1"] !== undefined) ? pZs["1"] : false,
+        2: (pZs["2"] !== undefined) ? pZs["2"] : false,
+        3: (pZs["3"] !== undefined) ? pZs["3"] : false,
+        4: (pZs["4"] !== undefined) ? pZs["4"] : false,
+      },
+      setZs: (z) => set({ zs: z }),
       evs: { hp: pEVs["hp"], atk: pEVs["atk"], def: pEVs["def"], spa: pEVs["spa"], spd: pEVs["spd"], spe: pEVs["spe"] },
       setEVs: (e) => set({ evs: e }),
       ivs: { hp: pIVs["hp"], atk: pIVs["atk"], def: pIVs["def"], spa: pIVs["spa"], spd: pIVs["spd"], spe: pIVs["spe"] },
@@ -864,6 +895,8 @@ function moveGraphicData(type, teratype, teraactive) {
     //    4: (pMoves["4"] !== undefined) ? pMoves["4"] : "(No Move)"});
     const moves = monStateStore(useShallow((state) => state.moves));
     const setMoves = monStateStore(useShallow((state) => state.setMoves));
+    const zs = monStateStore(useShallow((state) => state.zs));
+    const setZs = monStateStore(useShallow((state) => state.setZs));
     //var [evs, setEVs] = useState({ hp: pEVs["hp"], atk: pEVs["atk"], def: pEVs["def"], spa: pEVs["spa"], spd: pEVs["spd"], spe: pEVs["spe"] });
     const evs = monStateStore(useShallow((state) => state.evs));
     const setEVs = monStateStore(useShallow((state) => state.setEVs));
@@ -984,6 +1017,10 @@ function moveGraphicData(type, teratype, teraactive) {
       pC.setMoveset(moves, id);
     }, [moves]);
 
+    useEffect( () => {
+      pC.setZs(zs, id);
+    }, [zs]);
+
     function setEV(ev, stat){
         var statsCopy = {
             hp: evs["hp"],
@@ -1069,8 +1106,7 @@ function moveGraphicData(type, teratype, teraactive) {
       <div style={{display: "flex"}}>
         <div>
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector key={sideCode + id.toString() + "species"} ms={monStateStore}></SpeciesSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={sideCode + id.toString() + "nature"} ms={monStateStore}></NatureSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector key={sideCode + id.toString() + "teratype"} ms={monStateStore}></TeraTypeSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={sideCode + id.toString() + "nature"} ms={monStateStore}></NatureSelector></div>       
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector key={sideCode + id.toString() + "ability"} ms={monStateStore}></AbilitySelector></div>
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector key={sideCode + id.toString() + "item"} ms={monStateStore}></ItemSelector></div>
           <StatsTable key={sideCode + id.toString() + "stats"} ms={monStateStore} gameType={pC.gameTypeMemo}></StatsTable>
@@ -1087,6 +1123,8 @@ function moveGraphicData(type, teratype, teraactive) {
         </div>
       </div>
     );
+
+    // <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector key={sideCode + id.toString() + "teratype"} ms={monStateStore}></TeraTypeSelector></div>
 
     //</context.Provider>
   }

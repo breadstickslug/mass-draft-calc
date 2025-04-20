@@ -128,6 +128,7 @@ function AttackerRows({ attacker, defenders, field }){
 
     //const movesFiltered = useMemo(() => attacker.moves.filter((move) => gen.moves.get(toID(move)).category !== "Status"), [attacker]);
     const movesFiltered = attacker.moves.filter((move) => gen.moves.get(toID(move)).category !== "Status");
+    const ZsFiltered = attacker.Zs.filter((z, id) => gen.moves.get(toID(attacker.moves[id])).category !== "Status");
 
     // calcs is a list corresponding to moves producing lists of calcs vs defenders
     const calcs = useMemo(() => defenders.map((defender) => {
@@ -138,8 +139,11 @@ function AttackerRows({ attacker, defenders, field }){
         var tempAttacker = attacker.clone();
         tempAttacker.name = tempAttacker.species.name;
         if (field.gameType === "Doubles") { tempAttacker.level = 50; tempDefender.level = 50; } else { tempAttacker.level = 100; tempDefender.level = 100; }
-        return Object.values(movesFiltered).map((move) => {
-            const m = new Move(gen, move, {isStellarFirstUse: (attacker.teraType && attacker.teraType === "Stellar")});
+        return Object.values(movesFiltered).map((move, moveNum) => {
+            //console.log(attacker.Zs);
+            //console.log(attacker.Zs[moveNum]);
+            const m = new Move(gen, move, {isStellarFirstUse: (attacker.teraType && attacker.teraType === "Stellar"), useZ: ZsFiltered[moveNum]});
+            //console.log(m);
             //console.log("attacker ",attacker," defender ",tempDefender," move ",m);
             //console.log(calculate(gen, attacker, tempDefender, m));
             return calculate(gen, tempAttacker, tempDefender, m, field);
