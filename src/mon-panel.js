@@ -565,6 +565,39 @@ function moveGraphicData(type, teratype, teraactive) {
   }
 
 
+  function StatusDropdown({ ms }){
+    const monStateStore = useMemo(() => ms, [ms]);
+    
+    const options = useMemo(() => [{disp: "(none)", value: ""},
+                                    {disp: "Burned", value: "brn"},
+                                    {disp: "Poisoned", value: "psn"},
+                                    {disp: "Badly Poisoned", value: "tox"},
+                                    {disp: "Paralyzed", value: "par"},
+                                    {disp: "Asleep", value: "slp"},
+                                    {disp: "Frozen", value: "frz"}].map((s, index) =>
+      <option value={s.value} key={index}>{s.disp}</option>
+    ), []);
+
+    const status = monStateStore(useShallow((state) => state.status));
+    const setStatus = monStateStore(useShallow((state) => state.setStatus));
+
+    return (
+      <select value={status} style={{marginLeft: "10px", marginRight: "auto"}} onChange={(e) => {setStatus(e.target.value); }}>
+        {options}
+      </select>
+    )
+  }
+  function StatusSelector({ ms }){
+    const monStateStore = useMemo(() => ms, [ms]);
+    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const id = monStateStore(useShallow((state) => state.id));
+
+    return (
+      <div style={{display: "flex"}}>Status: <StatusDropdown key={sideCode + id.toString() + "statuspicker"} ms={monStateStore}></StatusDropdown></div>
+    );
+  }
+
+
 
   // TERA TYPE SELECTOR
   function TeraIcon({ ms }){
@@ -818,7 +851,7 @@ function moveGraphicData(type, teratype, teraactive) {
   }
 
   // MAIN PANEL
-  export function PokemonPanel({ passedNotes, monID, monSide, pSpecies, pNature, pTeraType, pAbility, pTeraActive, pItem, pMoves, pZs, pEVs, pIVs, pBoosts }) {
+  export function PokemonPanel({ passedNotes, monID, monSide, pSpecies, pNature, pTeraType, pAbility, pTeraActive, pItem, pMoves, pZs, pEVs, pIVs, pBoosts, pStatus }) {
     //var [mon, setMon] = useState(passedMon);
     var pC = useContext(partyContext);
 
@@ -859,6 +892,8 @@ function moveGraphicData(type, teratype, teraactive) {
       setIVs: (i) => set({ ivs: i }),
       boosts: { hp: pBoosts["hp"], atk: pBoosts["atk"], def: pBoosts["def"], spa: pBoosts["spa"], spd: pBoosts["spd"], spe: pBoosts["spe"] },
       setBoosts: (b) => set({ boosts: b }),
+      status: pStatus,
+      setStatus: (s) => set({ status: s }),
       notes: passedNotes,
       setNotes: (n) => set({ notes: n }),
     })));
@@ -907,6 +942,8 @@ function moveGraphicData(type, teratype, teraactive) {
     const boosts = monStateStore(useShallow((state) => state.boosts));
     const setBoosts = monStateStore(useShallow((state) => state.setBoosts));
     //var [notes, setNotes] = useState(passedNotes);
+    const status = monStateStore(useShallow((state) => state.status));
+    const setStatus = monStateStore(useShallow((state) => state.setStatus));
     const notes = monStateStore(useShallow((state) => state.notes));
     const setNotes = monStateStore(useShallow((state) => state.setNotes));
 
@@ -1075,6 +1112,10 @@ function moveGraphicData(type, teratype, teraactive) {
       pC.setBoosts(boosts, id);
     }, [boosts]);
 
+    useEffect( () => {
+      pC.setStatus(status, id);
+    }, [status]);
+
     function updateNotes(info){
       setNotes(info);
     }
@@ -1106,10 +1147,11 @@ function moveGraphicData(type, teratype, teraactive) {
       <div style={{display: "flex"}}>
         <div>
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector key={sideCode + id.toString() + "species"} ms={monStateStore}></SpeciesSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={sideCode + id.toString() + "nature"} ms={monStateStore}></NatureSelector></div>       
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={sideCode + id.toString() + "nature"} ms={monStateStore}></NatureSelector></div>    
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector key={sideCode + id.toString() + "ability"} ms={monStateStore}></AbilitySelector></div>
           <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector key={sideCode + id.toString() + "item"} ms={monStateStore}></ItemSelector></div>
           <StatsTable key={sideCode + id.toString() + "stats"} ms={monStateStore} gameType={pC.gameTypeMemo}></StatsTable>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><StatusSelector key={sideCode + id.toString() + "status"} ms={monStateStore}></StatusSelector></div>
           <NotesInput key={sideCode + id.toString() + "notes"} ms={monStateStore}></NotesInput>
           { (sideCode === "attacker") && (
           <div>

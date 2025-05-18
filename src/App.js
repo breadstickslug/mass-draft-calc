@@ -144,6 +144,7 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
       var moves = [];
       var evs = [];
       var ivs = [];
+      //var statuses = [];
       var notes = [];
       for (const mon of importedTeam) {
         if (gen.species.get((toID(mon.species)))){ // valid mon
@@ -174,6 +175,7 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
             spd: (mon.ivs && mon.ivs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? Math.max(Math.min(mon.ivs["spd"], 31), 0) : 31,
             spe: (mon.ivs && mon.ivs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? Math.max(Math.min(mon.ivs["spe"], 31), 0) : 31,
           });
+          //statuses.push("(none)");
           notes.push((mon.name) ? mon.name : "");
         }
       }
@@ -186,6 +188,7 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
         moves: moves,
         evs: evs,
         ivs: ivs,
+        //statuses: statuses,
         notes: notes,
       });
     }

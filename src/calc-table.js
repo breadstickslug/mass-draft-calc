@@ -147,7 +147,7 @@ function AttackerRows({ attacker, defenders, field }){
             //console.log(m);
             //console.log("attacker ",attacker," defender ",tempDefender," move ",m);
             //console.log(calculate(gen, attacker, tempDefender, m));
-            //console.log(tempAttacker);
+            console.log(tempAttacker);
             //console.log(tempDefender);
             //console.log(m);
             return calculate(gen, tempAttacker, tempDefender, m, field);
