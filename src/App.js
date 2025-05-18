@@ -148,31 +148,31 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
       for (const mon of importedTeam) {
         if (gen.species.get((toID(mon.species)))){ // valid mon
           species.push(mon.species);
-          natures.push((mon.nature) ? mon.nature : "Serious");
-          abilities.push((mon.ability) ? mon.ability : gen.species.get((toID(mon.species))).abilities[0]);
-          items.push((mon.item) ? mon.item : "(no item)");
+          natures.push((mon.nature && gen.natures.get((toID(mon.nature)))) ? mon.nature : "Serious");
+          abilities.push((mon.ability && gen.abilities.get((toID(mon.ability)))) ? mon.ability : gen.species.get((toID(mon.species))).abilities[0]);
+          items.push((mon.item && gen.items.get((toID(mon.item)))) ? mon.item : "(no item)");
           teraTypes.push((mon.teraType) ? mon.teraType : undefined);
           moves.push({
-            1: (mon.moves && mon.moves[0]) ? mon.moves[0] : "(No Move)",
-            2: (mon.moves && mon.moves[1]) ? mon.moves[1] : "(No Move)",
-            3: (mon.moves && mon.moves[2]) ? mon.moves[2] : "(No Move)",
-            4: (mon.moves && mon.moves[3]) ? mon.moves[3] : "(No Move)",
+            1: (mon.moves && mon.moves[0] && gen.moves.get((toID(mon.moves[0])))) ? mon.moves[0] : "(No Move)",
+            2: (mon.moves && mon.moves[1] && gen.moves.get((toID(mon.moves[1])))) ? mon.moves[1] : "(No Move)",
+            3: (mon.moves && mon.moves[2] && gen.moves.get((toID(mon.moves[2])))) ? mon.moves[2] : "(No Move)",
+            4: (mon.moves && mon.moves[3] && gen.moves.get((toID(mon.moves[3])))) ? mon.moves[3] : "(No Move)",
           });
           evs.push({
-            hp: (mon.evs && mon.evs["hp"]) ? mon.evs["hp"] : 0,
-            atk: (mon.evs && mon.evs["atk"]) ? mon.evs["atk"] : 0,
-            def: (mon.evs && mon.evs["def"]) ? mon.evs["def"] : 0,
-            spa: (mon.evs && mon.evs["spa"]) ? mon.evs["spa"] : 0,
-            spd: (mon.evs && mon.evs["spd"]) ? mon.evs["spd"] : 0,
-            spe: (mon.evs && mon.evs["spe"]) ? mon.evs["spe"] : 0,
+            hp: (mon.evs && mon.evs["hp"] !== undefined && Number.isInteger(mon.evs["hp"])) ? Math.max(Math.min(mon.evs["hp"], 252), 0) : 0,
+            atk: (mon.evs && mon.evs["atk"] !== undefined && Number.isInteger(mon.evs["atk"])) ? Math.max(Math.min(mon.evs["atk"], 252), 0) : 0,
+            def: (mon.evs && mon.evs["def"] !== undefined && Number.isInteger(mon.evs["def"])) ? Math.max(Math.min(mon.evs["def"], 252), 0) : 0,
+            spa: (mon.evs && mon.evs["spa"] !== undefined && Number.isInteger(mon.evs["spa"])) ? Math.max(Math.min(mon.evs["spa"], 252), 0) : 0,
+            spd: (mon.evs && mon.evs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? Math.max(Math.min(mon.evs["spd"], 252), 0) : 0,
+            spe: (mon.evs && mon.evs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? Math.max(Math.min(mon.evs["spe"], 252), 0) : 0,
           });
           ivs.push({
-            hp: (mon.ivs && mon.ivs["hp"]) ? mon.ivs["hp"] : 31,
-            atk: (mon.ivs && mon.ivs["atk"]) ? mon.ivs["atk"] : 31,
-            def: (mon.ivs && mon.ivs["def"]) ? mon.ivs["def"] : 31,
-            spa: (mon.ivs && mon.ivs["spa"]) ? mon.ivs["spa"] : 31,
-            spd: (mon.ivs && mon.ivs["spd"]) ? mon.ivs["spd"] : 31,
-            spe: (mon.ivs && mon.ivs["spe"]) ? mon.ivs["spe"] : 31,
+            hp: (mon.ivs && mon.ivs["hp"] !== undefined && Number.isInteger(mon.evs["hp"])) ? Math.max(Math.min(mon.ivs["hp"], 31), 0) : 31,
+            atk: (mon.ivs && mon.ivs["atk"] !== undefined && Number.isInteger(mon.evs["atk"])) ? Math.max(Math.min(mon.ivs["atk"], 31), 0) : 31,
+            def: (mon.ivs && mon.ivs["def"] !== undefined && Number.isInteger(mon.evs["def"])) ? Math.max(Math.min(mon.ivs["def"], 31), 0) : 31,
+            spa: (mon.ivs && mon.ivs["spa"] !== undefined && Number.isInteger(mon.evs["spa"])) ? Math.max(Math.min(mon.ivs["spa"], 31), 0) : 31,
+            spd: (mon.ivs && mon.ivs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? Math.max(Math.min(mon.ivs["spd"], 31), 0) : 31,
+            spe: (mon.ivs && mon.ivs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? Math.max(Math.min(mon.ivs["spe"], 31), 0) : 31,
           });
           notes.push((mon.name) ? mon.name : "");
         }
