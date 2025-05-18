@@ -7,11 +7,40 @@ import {Generations, Pokemon, toID} from '@smogon/calc';
 const gen = Generations.get(7);
 const statList = ["hp", "atk", "def", "spa", "spd", "spe"];
 
-
-
 export const partyContext = React.createContext(null);
 
-export function MonsContainer({ tabActive, collapsed, sideCode, imported, updateMons, gameType }){
+function monToExportSet(mon, gameType) {
+    console.log(mon);
+    const exportString = mon.name + ((mon.name) ? " (" : "") + mon.species.name + ((mon.name) ? ")" : "") + ((mon.item && mon.item !== "(no item)") ? " @ " + mon.item : "") + "\n" +
+                 "Ability: " + mon.ability + "\n" +
+                 "Level: " + (gameType === "Doubles" ? "50" : "100") + "\n" +
+                 ((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0 || mon.evs["spa"] > 0 || mon.evs["spd"] > 0 || mon.evs["spe"] > 0) ? "EVs: " : "") +
+                 ((mon.evs["hp"] > 0) ? mon.evs["hp"] + " HP" : "") +
+                 (((mon.evs["hp"] > 0) && mon.evs["atk"] > 0) ? " / " : "") + ((mon.evs["atk"] > 0) ? mon.evs["atk"] + " Atk" : "") +
+                 (((mon.evs["hp"] > 0 || mon.evs["atk"] > 0) && mon.evs["def"] > 0) ? " / " : "") + ((mon.evs["def"] > 0) ? mon.evs["def"] + " Def" : "") +
+                 (((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0) && mon.evs["spa"] > 0) ? " / " : "") + ((mon.evs["spa"] > 0) ? mon.evs["spa"] + " SpA" : "") +
+                 (((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0 || mon.evs["spa"] > 0) && mon.evs["spd"] > 0) ? " / " : "") + ((mon.evs["spd"] > 0) ? mon.evs["spd"] + " SpD" : "") +
+                 (((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0 || mon.evs["spa"] > 0 || mon.evs["spd"] > 0) && mon.evs["spe"] > 0) ? " / " : "") +  ((mon.evs["spe"] > 0) ? mon.evs["spe"] + " Spe" : "") +
+                 ((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0 || mon.evs["spa"] > 0 || mon.evs["spd"] > 0 || mon.evs["spe"] > 0) ? "\n" : "") +
+                 mon.nature + " Nature" +
+                 ((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31 || mon.ivs["def"] < 31 || mon.ivs["spa"] < 31 || mon.ivs["spd"] < 31 || mon.ivs["spe"] < 31) ? "\nIVs: " : "") +
+                 ((mon.ivs["hp"] < 31) ? mon.ivs["hp"] + " HP" : "") +
+                 (((mon.ivs["hp"] < 31) && mon.ivs["atk"] < 31) ? " / " : "") + ((mon.ivs["atk"] < 31) ? mon.ivs["atk"] + " Atk" : "") +
+                 (((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31) && mon.ivs["def"] < 31) ? " / " : "") + ((mon.ivs["def"] < 31) ? mon.ivs["def"] + " Def" : "") +
+                 (((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31 || mon.ivs["def"] < 31) && mon.ivs["spa"] < 31) ? " / " : "") + ((mon.ivs["spa"] < 31) ? mon.ivs["spa"] + " SpA" : "") +
+                 (((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31 || mon.ivs["def"] < 31 || mon.ivs["spa"] < 31) && mon.ivs["spd"] < 31) ? " / " : "") + ((mon.ivs["spd"] < 31) ? mon.ivs["spd"] + " SpD" : "") +
+                 (((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31 || mon.ivs["def"] < 31 || mon.ivs["spa"] < 31 || mon.ivs["spd"] < 31) && mon.ivs["spe"] < 31) ? " / " : "") +  ((mon.ivs["spe"] < 31) ? mon.ivs["spe"] + " Spe" : "") +
+                 //(((mon.moves[0] !== undefined && mon.moves[0] !== "(No Move)") || (mon.moves[1] !== undefined && mon.moves[1] !== "(No Move)") || (mon.moves[2] !== undefined && mon.moves[2] !== "(No Move)") || (mon.moves[3] !== undefined && mon.moves[3] !== "(No Move)")) ? "\n" : "") +
+                 "\n" +
+                 ((mon.moves[0] !== undefined && mon.moves[0] !== "(No Move)") ? "- " + mon.moves[0] + "\n" : "") +
+                 ((mon.moves[1] !== undefined && mon.moves[1] !== "(No Move)") ? "- " + mon.moves[1] + "\n" : "") +
+                 ((mon.moves[2] !== undefined && mon.moves[2] !== "(No Move)") ? "- " + mon.moves[2] + "\n" : "") +
+                 ((mon.moves[3] !== undefined && mon.moves[3] !== "(No Move)") ? "- " + mon.moves[3] + "\n" : "");
+
+    return exportString;
+}
+
+export function MonsContainer({ tabActive, collapsed, sideCode, imported, updateMons, gameType, setExportString }){
     const importedMemo = useMemo(() => imported, [imported]);
     const tabActiveMemo = useMemo(() => tabActive, [tabActive]);
     const collapsedMemo = useMemo(() => collapsed, [collapsed]);
@@ -59,6 +88,14 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
             setStatusSets(new Array(importedMemo.species.length).fill("(none)"));
             setNotes(importedMemo.notes); // list of mon notes
         }
+
+        //var exportString = "";
+        //for (const mon of party) {
+        //    console.log("new mon");
+        //    exportString = exportString + monToExportSet(mon) + "\n";
+        //}
+        //console.log(exportString);
+
     }, [importedMemo]);
 
     useEffect(() => {
@@ -298,7 +335,12 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
 
     useEffect(() => {
         updateMonsMemo(side, party);
-    }, [party, side, updateMonsMemo]);
+        var exportString = "";
+        for (const mon of party) {
+            exportString = exportString + monToExportSet(mon, gameTypeMemo) + "\n";
+        }
+        setExportString(exportString);
+    }, [party, side, updateMonsMemo, gameTypeMemo, setExportString]);
 
 
     /*

@@ -699,7 +699,7 @@ function moveGraphicData(type, teratype, teraactive) {
     }, [evs]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="252" step="1" type="number" placeholder="0" onBlur={(e) => { setEV(e.target.value, statMemo); }} defaultValue={evs[statMemo]}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="252" step="4" type="number" placeholder="0" onBlur={(e) => { setEV(e.target.value, statMemo); }} defaultValue={evs[statMemo]}></input>
     );
   }
   function IVInput({ ms, stat }){

@@ -10,7 +10,7 @@ const gen = Generations.get(7);
 const root = document.documentElement;
 
 
-const tabNames = ["Mons", "Import"];
+const tabNames = ["Mons", "Import", "Export"];
 
 function capitalize(val) {
   return val.charAt(0).toUpperCase()+val.slice(1);
@@ -70,8 +70,27 @@ function ImportContainer({ sideCode, importFunc }) {
   );
 }
 
+function ExportContainer({ sideCode, exportString }) {
+  //const [exportText, setExportText] = useState("");
+  const sideMemo = useMemo(() => sideCode, [sideCode]);
+  const exportStringMemo = useMemo(() => exportString, [exportString]);
+  
+  //const exportFuncMemo = useCallback(() => { exportFunc(exportText) }, [exportText, exportFunc]);
+
+  //const updateExported = useCallback((event) => { setExportText(event.target.value); }, [setExportText]);
+
+
+  return (
+    <div style={{ display: "flex", height: "100%"}}>
+      <div style={{ marginTop: "auto", marginBottom: "auto", marginLeft: "auto", marginRight: "auto"}}>
+        <textarea readOnly id={sideMemo} cols="75" rows="20" value={exportStringMemo}></textarea>
+      </div>
+    </div>
+  );
+}
+
 function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType }) {
-  const [tabsActive, setTabsActive] = useState([true, false]);
+  const [tabsActive, setTabsActive] = useState([true, false, false]);
   const [importedTeamStorage, setImportedTeamStorage] = useState({});
   const sideMemo = useMemo(() => sideCode, [sideCode]);
   const [containerTransition, setContainerTransition] = useState({ height: "34px"});
@@ -79,6 +98,7 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
   const [containerCollapsed, setContainerCollapsed] = useState(true);
   const monsPanelOpenMemo = useMemo(() => monsPanelOpen, [monsPanelOpen]);
   const gameTypeMemo = useMemo(() => gameType, [gameType]);
+  const [exportString, setExportString] = useState("");
 
   useEffect(() => {if (!monsPanelOpenMemo){ setContainerCollapsed(true); forceClosedContainer(); } }, [monsPanelOpenMemo]);
   
@@ -194,13 +214,19 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
     }
   }
 
+  function exportMons(){
+
+  }
+
   return (
     <div>
-      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage} gameType={gameTypeMemo}></MonsContainer></div>
+      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString}></MonsContainer></div>
       <div className={sideCode+"s"} id={sideCode+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={sideCode} importFunc={importMons}></ImportContainer></div>
+      <div className={sideCode+"s"} id={sideCode+"Export"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[2] && !containerCollapsed) ? {} : {display: "none"})}}><ExportContainer sideCode={sideCode} exportString={exportString}></ExportContainer></div>
       <div className={sideCode+"s-buttons"} style={{ ...buttonTransition, height: "30px", display: "flex", justifyContent: "center"}}>
           <PanelButton text={capitalize(sideCode)+"s"} sideCode={sideCode} tab={tabNames[0]} focusTab={focusTab} id={(tabsActive[0]) ? "active" : "inactive"}></PanelButton>
           <PanelButton text="Import" sideCode={sideCode} tab={tabNames[1]} focusTab={focusTab} id={(tabsActive[1]) ? "active" : "inactive"}></PanelButton>
+          <PanelButton text="Export" sideCode={sideCode} tab={tabNames[2]} focusTab={focusTab} id={(tabsActive[2]) ? "active" : "inactive"}></PanelButton>
           <div style={{width: "5px", height: "0px"}}></div>
           <PanelButton text="Collapse/Expand" sideCode={sideCode} tab={tabNames[0]} focusTab={collapseContainer} id={"inactive"}></PanelButton>
       </div>
