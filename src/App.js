@@ -10,7 +10,7 @@ const gen = Generations.get(9);
 const root = document.documentElement;
 
 
-const tabNames = ["Mons", "Import"];
+const tabNames = ["Mons", "Import", "Export"];
 
 function capitalize(val) {
   return val.charAt(0).toUpperCase()+val.slice(1);
@@ -70,14 +70,34 @@ function ImportContainer({ sideCode, importFunc }) {
   );
 }
 
-function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel }) {
-  const [tabsActive, setTabsActive] = useState([true, false]);
+function ExportContainer({ sideCode, exportString }) {
+  // const [exportText, setExportText] = useState("");
+  const sideMemo = useMemo(() => sideCode, [sideCode]);
+  const exportStringMemo = useMemo(() => exportString, [exportString]);
+
+  //const exportFuncMemo = useCallback(() => { exportFunc(exportText) }, [exportText, exportFunc]);
+
+  //const updateExported = useCallback((event) => { setExportText(event.target.value); }, [setExportText]);
+
+  return (
+    <div style={{ display: "flex", height: "100%"}}>
+      <div style={{ marginTop: "auto", marginBottom: "auto", marginLeft: "auto", marginRight: "auto"}}>
+        <textarea readOnly id={sideMemo} cols="75" rows="20" value={exportStringMemo}></textarea>
+      </div>
+    </div>
+  );
+}
+
+function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType }) {
+  const [tabsActive, setTabsActive] = useState([true, false, false]);
   const [importedTeamStorage, setImportedTeamStorage] = useState({});
   const sideMemo = useMemo(() => sideCode, [sideCode]);
   const [containerTransition, setContainerTransition] = useState({ height: "34px"});
   const [buttonTransition, setButtonTransition] = useState((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
   const [containerCollapsed, setContainerCollapsed] = useState(true);
   const monsPanelOpenMemo = useMemo(() => monsPanelOpen, [monsPanelOpen]);
+  const gameTypeMemo = useMemo(() => gameType, [gameType]);
+  const [exportString, setExportString] = useState("");
 
   useEffect(() => {if (!monsPanelOpenMemo){ setContainerCollapsed(true); forceClosedContainer(); } }, [monsPanelOpenMemo]);
   
@@ -93,20 +113,20 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
     }
   }
   function forceOpenContainer(){
-    setContainerTransition({ height: ((sideCode === "attacker") ? "552" : "421")+"px" });
-    root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", ((sideCode === "attacker") ? "552" : "421") + "px");
-    setButtonTransition((sideCode === "attacker") ? { top: "551px" } : { bottom: "421px" });
-    root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "551" : "421") + "px");
+    setContainerTransition({ height: ((sideCode === "attacker") ? "573" : "442")+"px" }); // 552 and 421 pre-status, 573 and 442 after
+    root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", ((sideCode === "attacker") ? "573" : "442") + "px");
+    setButtonTransition((sideCode === "attacker") ? { top: "572px" } : { bottom: "442px" });
+    root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "572" : "442") + "px");
     setContainerCollapsed(false);
     setMonsPanelOpen(true);
   }
   function collapseContainer(tab) {
     console.log("collapsing");
     if (containerCollapsed){
-      setContainerTransition({ height: ((sideCode === "attacker") ? "552" : "421")+"px" });
-      root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", ((sideCode === "attacker") ? "552" : "421") + "px");
-      setButtonTransition((sideCode === "attacker") ? { top: "551px" } : { bottom: "421px" });
-      root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "551" : "421") + "px");
+      setContainerTransition({ height: ((sideCode === "attacker") ? "573" : "442")+"px" });
+      root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", ((sideCode === "attacker") ? "573" : "442") + "px");
+      setButtonTransition((sideCode === "attacker") ? { top: "572px" } : { bottom: "442px" });
+      root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "572" : "442") + "px");
       setContainerCollapsed(false);
       setMonsPanelOpen(true);
       closeFieldPanel();
@@ -147,31 +167,31 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
       for (const mon of importedTeam) {
         if (gen.species.get((toID(mon.species)))){ // valid mon
           species.push(mon.species);
-          natures.push((mon.nature) ? mon.nature : "Serious");
-          abilities.push((mon.ability) ? mon.ability : gen.species.get((toID(mon.species))).abilities[0]);
-          items.push((mon.item) ? mon.item : "(no item)");
+          natures.push((mon.nature && gen.natures.get((toID(mon.nature)))) ? mon.nature : "Serious");
+          abilities.push((mon.ability && gen.abilities.get((toID(mon.ability)))) ? mon.ability : gen.species.get((toID(mon.species))).abilities[0]);
+          items.push((mon.item && gen.items.get((toID(mon.item)))) ? mon.item : "(no item)");
           teraTypes.push((mon.teraType) ? mon.teraType : undefined);
           moves.push({
-            1: (mon.moves && mon.moves[0]) ? mon.moves[0] : "(No Move)",
-            2: (mon.moves && mon.moves[1]) ? mon.moves[1] : "(No Move)",
-            3: (mon.moves && mon.moves[2]) ? mon.moves[2] : "(No Move)",
-            4: (mon.moves && mon.moves[3]) ? mon.moves[3] : "(No Move)",
+            1: (mon.moves && mon.moves[0] && gen.moves.get((toID(mon.moves[0])))) ? mon.moves[0] : "(No Move)",
+            2: (mon.moves && mon.moves[1] && gen.moves.get((toID(mon.moves[1])))) ? mon.moves[1] : "(No Move)",
+            3: (mon.moves && mon.moves[2] && gen.moves.get((toID(mon.moves[2])))) ? mon.moves[2] : "(No Move)",
+            4: (mon.moves && mon.moves[3] && gen.moves.get((toID(mon.moves[3])))) ? mon.moves[3] : "(No Move)",
           });
           evs.push({
-            hp: (mon.evs && mon.evs["hp"]) ? mon.evs["hp"] : 0,
-            atk: (mon.evs && mon.evs["atk"]) ? mon.evs["atk"] : 0,
-            def: (mon.evs && mon.evs["def"]) ? mon.evs["def"] : 0,
-            spa: (mon.evs && mon.evs["spa"]) ? mon.evs["spa"] : 0,
-            spd: (mon.evs && mon.evs["spd"]) ? mon.evs["spd"] : 0,
-            spe: (mon.evs && mon.evs["spe"]) ? mon.evs["spe"] : 0,
+            hp: (mon.evs && mon.evs["hp"] !== undefined && Number.isInteger(mon.evs["hp"])) ? mon.evs["hp"] : 0,
+            atk: (mon.evs && mon.evs["atk"] !== undefined && Number.isInteger(mon.evs["atk"])) ? mon.evs["atk"] : 0,
+            def: (mon.evs && mon.evs["def"] !== undefined && Number.isInteger(mon.evs["def"])) ? mon.evs["def"] : 0,
+            spa: (mon.evs && mon.evs["spa"] !== undefined && Number.isInteger(mon.evs["spa"])) ? mon.evs["spa"] : 0,
+            spd: (mon.evs && mon.evs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? mon.evs["spd"] : 0,
+            spe: (mon.evs && mon.evs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? mon.evs["spe"] : 0,
           });
           ivs.push({
-            hp: (mon.ivs && mon.ivs["hp"]) ? mon.ivs["hp"] : 31,
-            atk: (mon.ivs && mon.ivs["atk"]) ? mon.ivs["atk"] : 31,
-            def: (mon.ivs && mon.ivs["def"]) ? mon.ivs["def"] : 31,
-            spa: (mon.ivs && mon.ivs["spa"]) ? mon.ivs["spa"] : 31,
-            spd: (mon.ivs && mon.ivs["spd"]) ? mon.ivs["spd"] : 31,
-            spe: (mon.ivs && mon.ivs["spe"]) ? mon.ivs["spe"] : 31,
+            hp: (mon.ivs && mon.ivs["hp"] !== undefined && Number.isInteger(mon.ivs["hp"])) ? mon.ivs["hp"] : 31,
+            atk: (mon.ivs && mon.ivs["atk"] !== undefined && Number.isInteger(mon.ivs["atk"])) ? mon.ivs["atk"] : 31,
+            def: (mon.ivs && mon.ivs["def"] !== undefined && Number.isInteger(mon.ivs["def"])) ? mon.ivs["def"] : 31,
+            spa: (mon.ivs && mon.ivs["spa"] !== undefined && Number.isInteger(mon.ivs["spa"])) ? mon.ivs["spa"] : 31,
+            spd: (mon.ivs && mon.ivs["spd"] !== undefined && Number.isInteger(mon.ivs["spd"])) ? mon.ivs["spd"] : 31,
+            spe: (mon.ivs && mon.ivs["spe"] !== undefined && Number.isInteger(mon.ivs["spe"])) ? mon.ivs["spe"] : 31,
           });
           notes.push((mon.name) ? mon.name : "");
         }
@@ -192,11 +212,13 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
 
   return (
     <div>
-      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage}></MonsContainer></div>
+      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString}></MonsContainer></div>
       <div className={sideCode+"s"} id={sideCode+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={sideCode} importFunc={importMons}></ImportContainer></div>
+      <div className={sideCode+"s"} id={sideCode+"Export"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[2] && !containerCollapsed) ? {} : {display: "none"})}}><ExportContainer sideCode={sideCode} exportString={exportString}></ExportContainer></div>
       <div className={sideCode+"s-buttons"} style={{ ...buttonTransition, height: "30px", display: "flex", justifyContent: "center"}}>
           <PanelButton text={capitalize(sideCode)+"s"} sideCode={sideCode} tab={tabNames[0]} focusTab={focusTab} id={(tabsActive[0]) ? "active" : "inactive"}></PanelButton>
           <PanelButton text="Import" sideCode={sideCode} tab={tabNames[1]} focusTab={focusTab} id={(tabsActive[1]) ? "active" : "inactive"}></PanelButton>
+          <PanelButton text="Export" sideCode={sideCode} tab={tabNames[2]} focusTab={focusTab} id={(tabsActive[2]) ? "active" : "inactive"}></PanelButton>
           <div style={{width: "5px", height: "0px"}}></div>
           <PanelButton text="Collapse/Expand" sideCode={sideCode} tab={tabNames[0]} focusTab={collapseContainer} id={"inactive"}></PanelButton>
       </div>
@@ -330,8 +352,8 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
       <div className={"field"} id={"field"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}>
         <div>Format</div>
         <select value={gameTypeMemo} onChange={changeGameType}>
-          <option value="Singles">Singles</option>
           <option value="Doubles">Doubles</option>
+          <option value="Singles">Singles</option>
         </select>
         <div>Weather</div>
         <select value={weatherMemo} onChange={changeWeather}>
@@ -404,8 +426,8 @@ function App() {
   const [fieldPanelOpen, setFieldPanelOpen] = useState(false);
   const [attackerMons, setAttackerMons] = useState([]);
   const [defenderMons, setDefenderMons] = useState([]);
-  const [field, setField] = useState(new Field());
-  const [gameType, setGameType] = useState("Singles");
+  const [field, setField] = useState(new Field({ gameType: "Doubles" }));
+  const [gameType, setGameType] = useState("Doubles");
   const [weather, setWeather] = useState("");
   const [terrain, setTerrain] = useState("");
   const [gravity, setGravity] = useState(false);
@@ -677,7 +699,7 @@ function App() {
         <CalcTable attackers={attackerMons} defenders={defenderMons} field={field}></CalcTable>
         <div style={{height: "80px"}}></div>
       </div>
-      <TabManager sideCode="attacker" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel}></TabManager>
+      <TabManager sideCode="attacker" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType}></TabManager>
       <FieldPanel updateHelpinghand={updateHelpinghand} updateGameType={updateGameType} updateWeather={updateWeather} updateTerrain={updateTerrain} updateGravity={updateGravity} updateReflect={updateReflect}
                   updateLightscreen={updateLightscreen} updateVeil={updateVeil} updateMagicRoom={updateMagicRoom} updateWonderRoom={updateWonderRoom} updateTailwind={updateTailwind} updateTailwindDef={updateTailwindDef}
                   updateFriendguard={updateFriendguard} updateBattery={updateBattery} updatePowerspot={updatePowerspot} updateFlowergift={updateFlowergift} updateFlowergiftDef={updateFlowergiftDef} updateSteelyspirit={updateSteelyspirit}

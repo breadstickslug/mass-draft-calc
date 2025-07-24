@@ -136,7 +136,9 @@ function AttackerRows({ attacker, defenders, field }){
         if (defender.item === "(no item)") { tempDefender.item = undefined; }
         tempDefender.name = tempDefender.species.name;
         var tempAttacker = attacker.clone();
+        if (attacker.item === "(no item)") { tempAttacker.item = undefined; }
         tempAttacker.name = tempAttacker.species.name;
+        if (field.gameType === "Doubles") { tempAttacker.level = 50; tempDefender.level = 50; } else { tempAttacker.level = 100; tempDefender.level = 100; }
         return Object.values(movesFiltered).map((move) => {
             const m = new Move(gen, move, {isStellarFirstUse: (attacker.teraType && attacker.teraType === "Stellar")});
             //console.log("attacker ",attacker," defender ",tempDefender," move ",m);
