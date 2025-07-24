@@ -188,12 +188,12 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
             spe: (mon.evs && mon.evs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? Math.max(Math.min(mon.evs["spe"], 252), 0) : 0,
           });
           ivs.push({
-            hp: (mon.ivs && mon.ivs["hp"] !== undefined && Number.isInteger(mon.evs["hp"])) ? Math.max(Math.min(mon.ivs["hp"], 31), 0) : 31,
-            atk: (mon.ivs && mon.ivs["atk"] !== undefined && Number.isInteger(mon.evs["atk"])) ? Math.max(Math.min(mon.ivs["atk"], 31), 0) : 31,
-            def: (mon.ivs && mon.ivs["def"] !== undefined && Number.isInteger(mon.evs["def"])) ? Math.max(Math.min(mon.ivs["def"], 31), 0) : 31,
-            spa: (mon.ivs && mon.ivs["spa"] !== undefined && Number.isInteger(mon.evs["spa"])) ? Math.max(Math.min(mon.ivs["spa"], 31), 0) : 31,
-            spd: (mon.ivs && mon.ivs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? Math.max(Math.min(mon.ivs["spd"], 31), 0) : 31,
-            spe: (mon.ivs && mon.ivs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? Math.max(Math.min(mon.ivs["spe"], 31), 0) : 31,
+            hp: (mon.ivs && mon.ivs["hp"] !== undefined && Number.isInteger(mon.ivs["hp"])) ? Math.max(Math.min(mon.ivs["hp"], 31), 0) : 31,
+            atk: (mon.ivs && mon.ivs["atk"] !== undefined && Number.isInteger(mon.ivs["atk"])) ? Math.max(Math.min(mon.ivs["atk"], 31), 0) : 31,
+            def: (mon.ivs && mon.ivs["def"] !== undefined && Number.isInteger(mon.ivs["def"])) ? Math.max(Math.min(mon.ivs["def"], 31), 0) : 31,
+            spa: (mon.ivs && mon.ivs["spa"] !== undefined && Number.isInteger(mon.ivs["spa"])) ? Math.max(Math.min(mon.ivs["spa"], 31), 0) : 31,
+            spd: (mon.ivs && mon.ivs["spd"] !== undefined && Number.isInteger(mon.ivs["spd"])) ? Math.max(Math.min(mon.ivs["spd"], 31), 0) : 31,
+            spe: (mon.ivs && mon.ivs["spe"] !== undefined && Number.isInteger(mon.ivs["spe"])) ? Math.max(Math.min(mon.ivs["spe"], 31), 0) : 31,
           });
           //statuses.push("(none)");
           notes.push((mon.name) ? mon.name : "");
