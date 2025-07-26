@@ -673,7 +673,7 @@ function moveGraphicData(type, teratype, teraactive) {
     }, [evs]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="252" step="1" type="number" placeholder="0" onBlur={(e) => { setEV(e.target.value, statMemo); }} defaultValue={evs[statMemo]}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="252" step="4" type="number" placeholder="0" onBlur={(e) => { setEV(e.target.value, statMemo); }} defaultValue={evs[statMemo]}></input>
     );
   }
   function IVInput({ ms, stat }){
@@ -708,7 +708,7 @@ function moveGraphicData(type, teratype, teraactive) {
     }, [ivs]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="31" step="4" type="number" placeholder="31" onBlur={(e) => { setIV(e.target.value, statMemo);}} defaultValue={ivs[statMemo]}></input>
+        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onBlur={(e) => { setIV(e.target.value, statMemo);}} defaultValue={ivs[statMemo]}></input>
     );
   }
   function BoostDropdown({ ms, stat }){
