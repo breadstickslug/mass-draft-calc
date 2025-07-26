@@ -540,9 +540,9 @@ function moveGraphicData(type, teratype, teraactive) {
   }
 
   function StatusDropdown({ ms }){
-    const monStateStore = useMemo(() => ms, {ms});
+    const monStateStore = useMemo(() => ms, [ms]);
 
-    const options = useMemo(() => [{disp: "(none)", value: ""},
+    const options = useMemo((() => [{disp: "(none)", value: ""},
                                     {disp: "Burned", value: "brn"},
                                     {disp: "Poisoned", value: "psn"},
                                     {disp: "Badly Poisoned", value: "tox"},
@@ -550,7 +550,7 @@ function moveGraphicData(type, teratype, teraactive) {
                                     {disp: "Asleep", value: "slp"},
                                     {disp: "Frozen", value: "frz"}].map((s, index) =>
       <option value={s.value} key={index}>{s.disp}</option>
-    ), []);
+    )), []);
     
     const status = monStateStore(useShallow((state) => state.status));
     const setStatus = monStateStore(useShallow((state) => state.setStatus));

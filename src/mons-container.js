@@ -94,7 +94,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     function updateStats(baseStats, evs, ivs, nature, boosts){
         var raws = [];
         var boosteds = [];
-        var level = (gameType === "Doubles") ? 50 : 100;
+        var level = (gameTypeMemo === "Doubles") ? 50 : 100;
         for (const stat of statList){
             const statFirstStep = Math.floor((2 * baseStats[stat] + ivs[stat] + Math.floor(evs[stat]/4)) * level / 100)
             const plus = gen.natures.get(toID(nature)).plus;

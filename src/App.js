@@ -705,7 +705,7 @@ function App() {
                   updateFriendguard={updateFriendguard} updateBattery={updateBattery} updatePowerspot={updatePowerspot} updateFlowergift={updateFlowergift} updateFlowergiftDef={updateFlowergiftDef} updateSteelyspirit={updateSteelyspirit}
                   updateBeadsofruin={updateBeadsofruin} updateSwordofruin={updateSwordofruin} updateTabletsofruin={updateTabletsofruin} updateVesselofruin={updateVesselofruin} updateAurabreak={updateAurabreak}
                   updateDarkaura={updateDarkaura} updateFairyaura={updateFairyaura} fieldPanelOpen={fieldPanelOpen} setFieldPanelOpen={setFieldPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel}></FieldPanel>
-      <TabManager sideCode="defender" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel}></TabManager>
+      <TabManager sideCode="defender" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType}></TabManager>
       
     </div>
   );
