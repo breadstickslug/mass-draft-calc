@@ -342,6 +342,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
             <div style={{overflow: "hidden", height: (collapsedMemo) ? "34px" : "0px"}}><MonsMini sideCode={sideCode} importedSpecies={species} visible={collapsedMemo}></MonsMini></div>
             <div style={{overflow: "hidden", display: (tabActiveMemo && !collapsedMemo) ? "inline" : "none", textAlign: "center"}}><button type="button" style={{width: "30px", height: "30px"}} onClick={addMon}>+</button><button type="button" style={{width: "30px", height: "30px"}} onClick={removeMon}>-</button></div>
             <div style={{overflow: "auto", paddingTop: "5px", paddingBottom: "5px", display: (tabActiveMemo && !collapsedMemo) ? "flex" : "none"}}>
+                <div style={{marginLeft: "auto", marginRight: "auto", display: "flex"}}>
                 {party.map((entry, index) => {
                     return (<div key={species[index]+natures[index]+abilities[index]+items[index]+teraTypes[index]+terasActive[index]+movesets[index]["1"]+movesets[index]["2"]+movesets[index]["3"]+movesets[index]["4"]+
                         "hpev"+evsets[index]["hp"]+"atkev"+evsets[index]["atk"]+"defev"+evsets[index]["def"]+"spaev"+evsets[index]["spa"]+"spdev"+evsets[index]["spd"]+"speev"+evsets[index]["spe"]+
@@ -364,6 +365,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
                                                 pBoosts={boostsets[index]}
                                                 pStatus={statussets[index]} 
                                                 passedNotes={notes[index]}></PokemonPanel>}</div>)})}
+                </div>
             </div>
         </div>
         </partyContext.Provider>
