@@ -866,7 +866,8 @@ function moveGraphicData(type, teratype, teraactive) {
     })));
 
     //const [sideCode] = useState(monSide);
-    const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    //const sideCode = monStateStore(useShallow((state) => state.sideCode));
+    const sideCode = useMemo(() => monSide, [monSide]);
     //const [id] = useState(monID);
     const id = monStateStore(useShallow((state) => state.id));
     //const [species, setSpeciesName] = useState(pSpecies);
@@ -938,6 +939,10 @@ function moveGraphicData(type, teratype, teraactive) {
         //pC.setMon(newMon, id);
     }
     */
+
+    useEffect( () => {
+      pC.monSide = monSide;
+    }, [monSide]);
 
     function setItem(item){
         setItemName(item);

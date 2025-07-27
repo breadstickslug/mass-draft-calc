@@ -58,7 +58,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     const [boostsets, setBoostSets] = useState([]);
     const [statussets, setStatusSets] = useState([]);
     var [notes, setNotes] = useState([]); // list of mon notes
-    const [side] = useState(sideCode);
+    const sideCodeMemo = useMemo(() => sideCode, [sideCode]);
 
     const importTeam = useCallback(() => {
         if (Object.keys(importedMemo).length > 0 && Object.keys(importedMemo).includes("species")){
@@ -307,13 +307,13 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     }
 
     useEffect(() => {
-        updateMonsMemo(side, party);
+        updateMonsMemo(sideCodeMemo, party);
         var exportString = "";
         for (const mon of party) {
             exportString = exportString + monToExportSet(mon, gameTypeMemo) + "\n";
         }
         setExportString(exportString);
-    }, [party, side, updateMonsMemo, gameTypeMemo, setExportString]);
+    }, [party, sideCodeMemo, updateMonsMemo, gameTypeMemo, setExportString]);
 
 
     /*
@@ -351,7 +351,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
                         className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel 
                                                 style={{ textAlign: "center" }} 
                                                 monID={index} 
-                                                monSide={side} 
+                                                monSide={sideCodeMemo} 
                                                 pSpecies={species[index]} 
                                                 pNature={natures[index]} 
                                                 pAbility={abilities[index]} 

@@ -88,15 +88,20 @@ function ExportContainer({ sideCode, exportString }) {
   );
 }
 
-function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType }) {
+function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType, swapped, openFeedback, panelOpen }) {
   const [tabsActive, setTabsActive] = useState([true, false, false]);
   const [importedTeamStorage, setImportedTeamStorage] = useState({});
   const sideMemo = useMemo(() => sideCode, [sideCode]);
-  const [containerTransition, setContainerTransition] = useState({ height: "34px"});
-  const [buttonTransition, setButtonTransition] = useState((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
-  const [containerCollapsed, setContainerCollapsed] = useState(true);
+  const [containerTransition, setContainerTransition] = useState((panelOpen) ? {height: "573px"} : { height: "34px"});
+  const [buttonTransition, setButtonTransition] = useState((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? ((panelOpen) ? { top: "572px" } : { top: "33px" }) : ((panelOpen) ? { bottom: "442px" } : { bottom: "34px" }));
+  const [heightValue, setHeightValue] = useState(((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped)) ? { height: "42vh" } : { height: "32vh" });
+  const [containerCollapsed, setContainerCollapsed] = useState(panelOpen);
   const monsPanelOpenMemo = useMemo(() => monsPanelOpen, [monsPanelOpen]);
   const gameTypeMemo = useMemo(() => gameType, [gameType]);
+  const swappedMemo = useMemo(() => swapped, [swapped]);
+  //const feedbackMemo = useMemo((b) => openFeedback(b), [openFeedback]);
+  //const attackerMonsMemo = useMemo(() => attackerMons, [attackerMons]);
+  //const defenderMonsMemo = useMemo(() => defenderMons, [defenderMons]);
   const [exportString, setExportString] = useState("");
 
   useEffect(() => {if (!monsPanelOpenMemo){ setContainerCollapsed(true); forceClosedContainer(); } }, [monsPanelOpenMemo]);
@@ -113,30 +118,33 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
     }
   }
   function forceOpenContainer(){
-    setContainerTransition({ height: ((sideCode === "attacker") ? "573" : "442")+"px" }); // 552 and 421 pre-status, 573 and 442 after
-    root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", ((sideCode === "attacker") ? "573" : "442") + "px");
-    setButtonTransition((sideCode === "attacker") ? { top: "572px" } : { bottom: "442px" });
-    root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "572" : "442") + "px");
+    setContainerTransition({ height: ((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "573" : "442")+"px" }); // 552 and 421 pre-status, 573 and 442 after
+    root.style.setProperty((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "--attacker-panel-height" : "--defender-panel-height", ((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "573" : "442") + "px");
+    setButtonTransition((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? { top: "572px" } : { bottom: "442px" });
+    root.style.setProperty((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "572" : "442") + "px");
     setContainerCollapsed(false);
+    openFeedback(true);
     setMonsPanelOpen(true);
   }
   function collapseContainer(tab) {
     console.log("collapsing");
     if (containerCollapsed){
-      setContainerTransition({ height: ((sideCode === "attacker") ? "573" : "442")+"px" });
-      root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", ((sideCode === "attacker") ? "573" : "442") + "px");
-      setButtonTransition((sideCode === "attacker") ? { top: "572px" } : { bottom: "442px" });
-      root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "572" : "442") + "px");
+      setContainerTransition({ height: ((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "573" : "442")+"px" });
+      root.style.setProperty((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "--attacker-panel-height" : "--defender-panel-height", ((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "573" : "442") + "px");
+      setButtonTransition((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? { top: "572px" } : { bottom: "442px" });
+      root.style.setProperty((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "572" : "442") + "px");
       setContainerCollapsed(false);
+      openFeedback(true);
       setMonsPanelOpen(true);
       closeFieldPanel();
     }
     else {
       setContainerTransition({ height: "34px" });
-      root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", "34px");
-      setButtonTransition((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
-      root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "33" : "34") + "px");
+      root.style.setProperty((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "--attacker-panel-height" : "--defender-panel-height", "34px");
+      setButtonTransition((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? { top: "33px" } : { bottom: "34px" });
+      root.style.setProperty((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "33" : "34") + "px");
       setContainerCollapsed(true);
+      openFeedback(false);
       //setMonsPanelOpen(false);
       //closeMonsPanels();
     }
@@ -144,10 +152,11 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
   function forceClosedContainer(){
     console.log("closing");
     setContainerTransition({ height: "34px" });
-    root.style.setProperty((sideCode === "attacker") ? "--attacker-panel-height" : "--defender-panel-height", "34px");
-    setButtonTransition((sideCode === "attacker") ? { top: "33px" } : { bottom: "34px" });
-    root.style.setProperty((sideCode === "attacker") ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((sideCode === "attacker") ? "33" : "34") + "px");
+    root.style.setProperty((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "--attacker-panel-height" : "--defender-panel-height", "34px");
+    setButtonTransition((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? { top: "33px" } : { bottom: "34px" });
+    root.style.setProperty((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "--attacker-buttons-top" : "--defender-buttons-bottom", ((((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped))) ? "33" : "34") + "px");
     setContainerCollapsed(true);
+    openFeedback(false);
     setMonsPanelOpen(false);
   }
 
@@ -210,17 +219,21 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
     }
   }
 
+  var altSideCode = (sideCode === "attacker") ? "defender" : "attacker";
+
   return (
     <div>
-      <div className={sideCode+"s"} id={sideCode+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={sideCode} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString}></MonsContainer></div>
-      <div className={sideCode+"s"} id={sideCode+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={sideCode} importFunc={importMons}></ImportContainer></div>
-      <div className={sideCode+"s"} id={sideCode+"Export"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[2] && !containerCollapsed) ? {} : {display: "none"})}}><ExportContainer sideCode={sideCode} exportString={exportString}></ExportContainer></div>
-      <div className={sideCode+"s-buttons"} style={{ ...buttonTransition, height: "30px", display: "flex", justifyContent: "center"}}>
-          <PanelButton text={capitalize(sideCode)+"s"} sideCode={sideCode} tab={tabNames[0]} focusTab={focusTab} id={(tabsActive[0]) ? "active" : "inactive"}></PanelButton>
-          <PanelButton text="Import" sideCode={sideCode} tab={tabNames[1]} focusTab={focusTab} id={(tabsActive[1]) ? "active" : "inactive"}></PanelButton>
-          <PanelButton text="Export" sideCode={sideCode} tab={tabNames[2]} focusTab={focusTab} id={(tabsActive[2]) ? "active" : "inactive"}></PanelButton>
+      <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...(((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped)) ? { height: "var(--attacker-panel-height)" } : { height: "var(--defender-panel-height)" }), ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={(!swapped ? sideCode : altSideCode)} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString}></MonsContainer></div>
+      <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={(!swapped ? sideCode : altSideCode)} importFunc={importMons}></ImportContainer></div>
+      <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Export"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[2] && !containerCollapsed) ? {} : {display: "none"})}}><ExportContainer sideCode={(!swapped ? sideCode : altSideCode)} exportString={exportString}></ExportContainer></div>
+      <div className={(!swapped ? sideCode : altSideCode)+"s-buttons"} style={{ ...buttonTransition, height: "30px", display: "flex", justifyContent: "center", ...(((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped)) ? { top: "var(--attacker-panel-height)", bottom: "" } : { bottom: "var(--defender-panel-height)", top: "" })}}>
+          <PanelButton text={capitalize((!swapped ? sideCode : altSideCode))+"s"} sideCode={(!swapped ? sideCode : altSideCode)} tab={tabNames[0]} focusTab={focusTab} id={(tabsActive[0]) ? "active" : "inactive"}></PanelButton>
+          <PanelButton text="Import" sideCode={(!swapped ? sideCode : altSideCode)} tab={tabNames[1]} focusTab={focusTab} id={(tabsActive[1]) ? "active" : "inactive"}></PanelButton>
+          <PanelButton text="Export" sideCode={(!swapped ? sideCode : altSideCode)} tab={tabNames[2]} focusTab={focusTab} id={(tabsActive[2]) ? "active" : "inactive"}></PanelButton>
           <div style={{width: "5px", height: "0px"}}></div>
-          <PanelButton text="Collapse/Expand" sideCode={sideCode} tab={tabNames[0]} focusTab={collapseContainer} id={"inactive"}></PanelButton>
+          <PanelButton text="Collapse/Expand" sideCode={(!swapped ? sideCode : altSideCode)} tab={tabNames[0]} focusTab={collapseContainer} id={"inactive"}></PanelButton>
+          { // <PanelButton text="Swap Attackers/Defenders" sideCode={sideCode} focusTab={swapSides} id={"inactive"}></PanelButton>
+          }
       </div>
     </div>
   );
@@ -229,7 +242,7 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
 function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTerrain, terrain, updateGravity, gravity, updateReflect, reflectAttacker, reflectDefender, updateLightscreen, lightscreenAttacker, lightscreenDefender, updateVeil, veilAttacker, veilDefender, updateMagicRoom, magicroom, updateWonderRoom, wonderroom,
                       updateHelpinghand, helpinghand, updateTailwind, tailwind, updateTailwindDef, tailwindDef, updateFriendguard, friendguard, updateBattery, battery, updatePowerspot, powerspot, updateFlowergift, flowergift, updateFlowergiftDef, flowergiftDef,
                       updateSteelyspirit, steelyspirit, updateBeadsofruin, beadsofruin, updateSwordofruin, swordofruin, updateTabletsofruin, tabletsofruin, updateVesselofruin, vesselofruin, updateAurabreak, aurabreak, updateDarkaura, darkaura, updateFairyaura, fairyaura,
-                      fieldPanelOpen, setFieldPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel
+                      fieldPanelOpen, setFieldPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, swapSides
  }) {
   //const [tabsActive, setTabsActive] = useState([true]);
   const [containerTransition, setContainerTransition] = useState({ width: "0px" });
@@ -402,6 +415,7 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
       
       <div className={"field-buttons"} style={{ ...buttonTransition }}>
         <PanelButton text="Field" sideCode="field" tab="Field" focusTab={focusTab} id={(fieldPanelOpenMemo) ? "active" : "inactive"}></PanelButton>
+        <PanelButton text="Swap Sides" sideCode="swap" tab="Field" focusTab={swapSides}></PanelButton>
       </div>
     </div>
   );
@@ -423,11 +437,14 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
 function App() {
 
   const [monsPanelOpen, setMonsPanelOpen] = useState(false);
+  const [topPanelOpen, setTopPanelOpen] = useState(false);
+  const [bottomPanelOpen, setBottomPanelOpen] = useState(false);
   const [fieldPanelOpen, setFieldPanelOpen] = useState(false);
   const [attackerMons, setAttackerMons] = useState([]);
   const [defenderMons, setDefenderMons] = useState([]);
   const [field, setField] = useState(new Field({ gameType: "Doubles" }));
   const [gameType, setGameType] = useState("Doubles");
+  const [swapped, setSwapped] = useState(false);
   const [weather, setWeather] = useState("");
   const [terrain, setTerrain] = useState("");
   const [gravity, setGravity] = useState(false);
@@ -480,6 +497,17 @@ function App() {
       setDefenderMons(packaged);
     }
   }
+
+  
+  function swapSides(){
+    setSwapped(!swapped);
+    var temp_bottom = bottomPanelOpen;
+    setBottomPanelOpen(topPanelOpen);
+    setTopPanelOpen(temp_bottom);
+    setMonsPanelOpen(true);
+    setFieldPanelOpen(false);
+  }
+  
 
   function updateGameType(t){
     setGameType(t);
@@ -699,13 +727,15 @@ function App() {
         <CalcTable attackers={attackerMons} defenders={defenderMons} field={field}></CalcTable>
         <div style={{height: "80px"}}></div>
       </div>
-      <TabManager sideCode="attacker" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType}></TabManager>
+      <TabManager sideCode="attacker" updateMons={updateMons} monsPanelOpen={monsPanelOpen&&topPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setTopPanelOpen} panelOpen={topPanelOpen}></TabManager>
+      
       <FieldPanel updateHelpinghand={updateHelpinghand} updateGameType={updateGameType} updateWeather={updateWeather} updateTerrain={updateTerrain} updateGravity={updateGravity} updateReflect={updateReflect}
                   updateLightscreen={updateLightscreen} updateVeil={updateVeil} updateMagicRoom={updateMagicRoom} updateWonderRoom={updateWonderRoom} updateTailwind={updateTailwind} updateTailwindDef={updateTailwindDef}
                   updateFriendguard={updateFriendguard} updateBattery={updateBattery} updatePowerspot={updatePowerspot} updateFlowergift={updateFlowergift} updateFlowergiftDef={updateFlowergiftDef} updateSteelyspirit={updateSteelyspirit}
                   updateBeadsofruin={updateBeadsofruin} updateSwordofruin={updateSwordofruin} updateTabletsofruin={updateTabletsofruin} updateVesselofruin={updateVesselofruin} updateAurabreak={updateAurabreak}
-                  updateDarkaura={updateDarkaura} updateFairyaura={updateFairyaura} fieldPanelOpen={fieldPanelOpen} setFieldPanelOpen={setFieldPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel}></FieldPanel>
-      <TabManager sideCode="defender" updateMons={updateMons} monsPanelOpen={monsPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType}></TabManager>
+                  updateDarkaura={updateDarkaura} updateFairyaura={updateFairyaura} fieldPanelOpen={fieldPanelOpen} setFieldPanelOpen={setFieldPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} swapSides={swapSides}></FieldPanel>
+      
+      <TabManager sideCode="defender" updateMons={updateMons} monsPanelOpen={monsPanelOpen&&bottomPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setBottomPanelOpen} panelOpen={bottomPanelOpen}></TabManager>
       
     </div>
   );

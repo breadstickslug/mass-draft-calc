@@ -258,3 +258,5 @@ export function CalcTable({ attackers, defenders, field }) {
         </table>
     );
 }
+
+// top: calc(50vh - 350px - ( var(--defender-panel-height) / 2 ) + ( var(--attacker-panel-height) / 2));
