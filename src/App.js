@@ -255,9 +255,6 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
   const weatherMemo = useMemo(() => weather, [weather]);
   const terrainMemo = useMemo(() => terrain, [terrain]);
   const gravityMemo = useMemo(() => gravity, [gravity]);
-  //const reflectAttackerMemo = useMemo(() => reflectAttacker, [reflectAttacker]);
-  //const lightscreenAttackerMemo = useMemo(() => lightscreenAttacker, [lightscreenAttacker]);
-  //const veilAttackerMemo = useMemo(() => veilAttacker, [veilAttacker]);
   const reflectDefenderMemo = useMemo(() => reflectDefender, [reflectDefender]);
   const lightscreenDefenderMemo = useMemo(() => lightscreenDefender, [lightscreenDefender]);
   const veilDefenderMemo = useMemo(() => veilDefender, [veilDefender]);
@@ -283,12 +280,6 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
   var changeWeather = useCallback((event) => updateWeather(event.target.value), [updateWeather]);
   var changeTerrain = useCallback((event) => updateTerrain(event.target.value), [updateTerrain]);
   var changeGravity = useCallback((event) => updateGravity(event.target.checked), [updateGravity]);
-  //var changeReflectAttacker = useCallback((event) => updateReflect(event.target.checked, "attacker"), [updateReflect]);
-  //var changeLightscreenAttacker = useCallback((event) => updateLightscreen(event.target.checked, "attacker"), [updateLightscreen]);
-  //var changeVeilAttacker = useCallback((event) => updateVeil(event.target.checked, "attacker"), [updateVeil]);
-  //var changeReflectDefender = useCallback((event) => {updateReflect(event.target.checked, "defender"); updateVeil(veilDefenderMemo && !event.target.checked, "defender");}, [updateReflect, veilDefenderMemo, updateVeil]);
-  //var changeLightscreenDefender = useCallback((event) => {updateLightscreen(event.target.checked, "defender"); updateVeil(veilDefenderMemo && !event.target.checked, "defender")}, [updateLightscreen, veilDefenderMemo, updateVeil]);
-  //var changeVeilDefender = useCallback((event) => {updateVeil(event.target.checked, "defender"); updateReflect(reflectDefenderMemo && !event.target.checked, "defender"); updateLightscreen(lightscreenDefenderMemo && !event.target.checked, "defender");}, [updateVeil, reflectDefenderMemo, updateReflect, lightscreenDefenderMemo, updateLightscreen]);
   var changeReflectDefender = useCallback((event) => updateReflect(event.target.checked, "defender"), [updateReflect]);
   var changeLightscreenDefender = useCallback((event) => updateLightscreen(event.target.checked, "defender"), [updateLightscreen]);
   var changeVeilDefender = useCallback((event) => updateVeil(event.target.checked, "defender"), [updateVeil]);
@@ -442,38 +433,42 @@ function App() {
   const [fieldPanelOpen, setFieldPanelOpen] = useState(false);
   const [attackerMons, setAttackerMons] = useState([]);
   const [defenderMons, setDefenderMons] = useState([]);
-  const [field, setField] = useState(new Field({ gameType: "Doubles" }));
+  const [field, setField] = useState({ 
+                                        gameType: "Doubles",
+                                        weather: "",
+                                        terrain: "",
+                                        isGravity: false,
+                                        isMagicRoom: false,
+                                        isWonderRoom: false,
+                                        isBeadsOfRuin: false,
+                                        isSwordOfRuin: false,
+                                        isTabletsOfRuin: false,
+                                        isVesselOfRuin: false,
+                                        isFairyAura: false,
+                                        isDarkAura: false,
+                                        isAuraBreak: false,
+                                        attackerSide: {
+                                          isHelpingHand: false,
+                                          isTailwind: false,
+                                          isBattery: false,
+                                          isPowerSpot: false,
+                                          isFlowerGift: false,
+                                          isSteelySpirit: false,
+                                          isReflect: false,
+                                          isLightScreen: false,
+                                          isAuroraVeil: false,
+                                        },
+                                        defenderSide: {
+                                          isTailwind: false,
+                                          isFriendGuard: false,
+                                          isFlowerGift: false,
+                                          isReflect: false,
+                                          isLightScreen: false,
+                                          isAuroraVeil: false
+                                        },
+                                        });
   const [gameType, setGameType] = useState("Doubles");
   const [swapped, setSwapped] = useState(false);
-  const [weather, setWeather] = useState("");
-  const [terrain, setTerrain] = useState("");
-  const [gravity, setGravity] = useState(false);
-  const [magicroom, setMagicRoom] = useState(false);
-  const [wonderroom, setWonderRoom] = useState(false);
-  const [helpinghand, setHelpinghand] = useState(false);
-  const [tailwind, setTailwind] = useState(false);
-  const [tailwindDef, setTailwindDef] = useState(false);
-  const [friendguard, setFriendguard] = useState(false);
-  const [battery, setBattery] = useState(false);
-  const [powerspot, setPowerspot] = useState(false);
-  const [flowergift, setFlowergift] = useState(false);
-  const [flowergiftDef, setFlowergiftDef] = useState(false);
-  const [steelyspirit, setSteelyspirit] = useState(false);
-  const [beadsofruin, setBeadsofruin] = useState(false);
-  const [swordofruin, setSwordofruin] = useState(false);
-  const [tabletsofruin, setTabletsofruin] = useState(false);
-  const [vesselofruin, setVesselofruin] = useState(false);
-  const [aurabreak, setAurabreak] = useState(false);
-  const [darkaura, setDarkaura] = useState(false);
-  const [fairyaura, setFairyaura] = useState(false);
-  const [attackerReflect, setAttackerReflect] = useState(false);
-  const [attackerLightscreen, setAttackerLightscreen] = useState(false);
-  const [attackerVeil, setAttackerVeil] = useState(false);
-  const [attackerField, setAttackerField] = useState(new Side());
-  const [defenderReflect, setDefenderReflect] = useState(false);
-  const [defenderLightscreen, setDefenderLightscreen] = useState(false);
-  const [defenderVeil, setDefenderVeil] = useState(false);
-  const [defenderField, setDefenderField] = useState(new Side());
 
   function updateMons(sideCode, packaged){
     /*
@@ -510,189 +505,119 @@ function App() {
   
 
   function updateGameType(t){
+    setField({...field, gameType: t});
     setGameType(t);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: t, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
   }
 
   function updateWeather(w){
-    setWeather(w);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: w, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, weather: w});
   }
 
   function updateTerrain(t){
-    setTerrain(t);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: t, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, terrain: t});
   }
 
   function updateGravity(g){
-    setGravity(g);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: g, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField})
+    setField({...field, isGravity: g});
   }
 
   function updateMagicRoom(m){
-    setMagicRoom(m);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: m, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isMagicRoom: m});
   }
 
   function updateWonderRoom(w){
-    setWonderRoom(w);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: w, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isWonderRoom: w});
   }
 
   function updateHelpinghand(h){
-    setHelpinghand(h);
-    setAttackerField({isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: h, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot})
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: h, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot}, defenderSide: defenderField});
+    setField({...field, attackerSide: {...field.attackerSide, isHelpingHand: h}});
   }
 
   function updateTailwind(t){
-    setTailwind(t);
-    setAttackerField({isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: t, isBattery: battery, isPowerSpot: powerspot});
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: t, isBattery: battery, isPowerSpot: powerspot}, defenderSide: defenderField});
+    setField({...field, attackerSide: {...field.attackerSide, isTailwind: t}});
   }
 
   function updateTailwindDef(t){
-    setTailwindDef(t);
-    setDefenderField({isFriendGuard: friendguard, isReflect: defenderReflect, isLightScreen: defenderLightscreen, isAuroraVeil: defenderVeil, isTailwind: t});
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: {isFlowerGift: flowergiftDef, isTailwind: t, isFriendGuard: friendguard, isReflect: defenderReflect, isLightScreen: defenderLightscreen, isAuroraVeil: defenderVeil}});
+    setField({...field, defenderSide: {...field.defenderSide, isTailwind: t}});
   }
 
   function updateFriendguard(f){
-    setFriendguard(f);
-    setDefenderField({isFriendGuard: f, isReflect: defenderReflect, isLightScreen: defenderLightscreen, isAuroraVeil: defenderVeil, isTailwind: tailwindDef});
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: {isTailwind: tailwindDef, isFlowerGift: flowergiftDef, isFriendGuard: f, isReflect: defenderReflect, isLightScreen: defenderLightscreen, isAuroraVeil: defenderVeil}});
+    setField({...field, defenderSide: {...field.defenderSide, isFriendGuard: f}});
   }
 
   function updateBattery(b){
-    setBattery(b);
-    setAttackerField({isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: b, isPowerSpot: powerspot});
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: b, isPowerSpot: powerspot}, defenderSide: defenderField});
+    setField({...field, attackerSide: {...field.attackerSide, isBattery: b}});
   }
 
   function updatePowerspot(p){
-    setPowerspot(p);
-    setAttackerField({isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: p});
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: p}, defenderSide: defenderField});
+    setField({...field, attackerSide: {...field.attackerSide, isPowerSpot: p}});
   }
 
   function updateFlowergift(f){
-    setFlowergift(f);
-    setAttackerField({isSteelySpirit: steelyspirit, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot, isFlowerGift: f});
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: steelyspirit, isFlowerGift: f, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot}, defenderSide: defenderField});
+    setField({...field, attackerSide: {...field.attackerSide, isFlowerGift: f}});
   }
 
   function updateFlowergiftDef(f){
-    setFlowergiftDef(f);
-    setDefenderField({isFlowerGift: f, isFriendGuard: friendguard, isReflect: defenderReflect, isLightScreen: defenderLightscreen, isAuroraVeil: defenderVeil, isTailwind: tailwindDef});
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: {isTailwind: tailwindDef, isFlowerGift: f, isFriendGuard: friendguard, isReflect: defenderReflect, isLightScreen: defenderLightscreen, isAuroraVeil: defenderVeil}});
+    setField({...field, defenderSide: {...field.defenderSide, isFlowerGift: f}});
   }
 
   function updateSteelyspirit(s){
-    setSteelyspirit(s);
-    setAttackerField({isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot, isFlowerGift: flowergift, isSteelySpirit: s});
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: s, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot}, defenderSide: defenderField});
+    setField({...field, attackerSide: {...field.attackerSide, isSteelySpirit: s}});
   }
 
   function updateBeadsofruin(b){
-    setBeadsofruin(b);
-    updateField({isBeadsOfRuin: b, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isBeadsOfRuin: b});
   }
 
   function updateSwordofruin(s){
-    setSwordofruin(s);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: s, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isSwordOfRuin: s});
   }
 
   function updateTabletsofruin(t){
-    setTabletsofruin(t);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: t, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isTabletsOfRuin: t});
   }
 
   function updateVesselofruin(v){
-    setVesselofruin(v);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: v, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isVesselOfRuin: v});
   }
 
   function updateAurabreak(a){
-    setAurabreak(a);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: a, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isAuraBreak: a});
   }
 
   function updateDarkaura(d){
-    setDarkaura(d);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: d, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isDarkAura: d});
   }
 
   function updateFairyaura(f){
-    setFairyaura(f);
-    updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: f, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: defenderField});
+    setField({...field, isFairyAura: f});
   }
 
   function updateReflect(r, sideCode){
     if (sideCode === "attacker"){
-      setAttackerReflect(r);
-      if (attackerVeil && r){
-        setAttackerVeil(false);
-      }
-      setAttackerField({isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot, isReflect: r, isLightScreen: attackerLightscreen, isAuroraVeil: attackerVeil && !r});
-      updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot, isReflect: r, isLightScreen: attackerLightscreen, isAuroraVeil: attackerVeil && !r}, defenderSide: defenderField});
+      setField({...field, attackerSide: {...field.attackerSide, isReflect: r}});
     }
     else if (sideCode === "defender"){
-      setDefenderReflect(r);
-      //if (defenderVeil && r){
-      //  setDefenderVeil(false);
-      //}
-      setDefenderField({isFlowerGift: flowergiftDef, isTailwind: tailwindDef, isFriendGuard: friendguard, isReflect: r, isLightScreen: defenderLightscreen, isAuroraVeil: defenderVeil});
-      updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: {isFlowerGift: flowergiftDef, isTailwind: tailwindDef, isFriendGuard: friendguard, isReflect: r, isLightScreen: defenderLightscreen, isAuroraVeil: defenderVeil}});
+      setField({...field, defenderSide: {...field.defenderSide, isReflect: r}});
     }
   }
 
   function updateLightscreen(l, sideCode){
     if (sideCode === "attacker"){
-      setAttackerLightscreen(l);
-      if (attackerVeil && l){
-        setAttackerVeil(false);
-      }
-      setAttackerField({isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot, isReflect: attackerReflect, isLightScreen: l, isAuroraVeil: attackerVeil && !l});
-      updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot, isReflect: attackerReflect, isLightScreen: l, isAuroraVeil: attackerVeil && !l}, defenderSide: defenderField});
+      setField({...field, attackerSide: {...field.attackerSide, isLightScreen: l}});
     }
     else if (sideCode === "defender"){
-      setDefenderLightscreen(l);
-      //if (defenderVeil && l){
-      //  setDefenderVeil(false);
-      //}
-      setDefenderField({isFlowerGift: flowergiftDef, isTailwind: tailwindDef, isFriendGuard: friendguard, isReflect: defenderReflect, isLightScreen: l, isAuroraVeil: defenderVeil});
-      updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: {isFlowerGift: flowergiftDef, isTailwind: tailwindDef, isFriendGuard: friendguard, isReflect: defenderReflect, isLightScreen: l, isAuroraVeil: defenderVeil}});
+      setField({...field, defenderSide: {...field.defenderSide, isLightScreen: l}});
     }
   }
 
   function updateVeil(v, sideCode){
     if (sideCode === "attacker"){
-      setAttackerVeil(v);
-      //if (attackerReflect && v){
-      //  setAttackerReflect(false);
-      //}
-      //if (attackerLightscreen && v){
-      //  setAttackerLightscreen(false);
-      //}
-      setAttackerField({isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot, isReflect: attackerReflect, isLightScreen: attackerLightscreen, isAuroraVeil: v});
-      updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: {isSteelySpirit: steelyspirit, isFlowerGift: flowergift, isHelpingHand: helpinghand, isTailwind: tailwind, isBattery: battery, isPowerSpot: powerspot, isReflect: attackerReflect, isLightScreen: attackerLightscreen, isAuroraVeil: v}, defenderSide: defenderField});
+      setField({...field, attackerSide: {...field.attackerSide, isAuroraVeil: v}});
     }
     if (sideCode === "defender"){
-      setDefenderVeil(v);
-      //if (defenderReflect && v){
-      //  setDefenderReflect(false);
-      //}
-      //if (defenderLightscreen && v){
-      //  setDefenderLightscreen(false);
-      //}
-      setDefenderField({isFlowerGift: flowergiftDef, isTailwind: tailwindDef, isFriendGuard: friendguard, isReflect: defenderReflect, isLightScreen: defenderLightscreen, isAuroraVeil: v});
-      updateField({isBeadsOfRuin: beadsofruin, isSwordOfRuin: swordofruin, isTabletsOfRuin: tabletsofruin, isVesselOfRuin: vesselofruin, isAuraBreak: aurabreak, isDarkAura: darkaura, isFairyAura: fairyaura, gameType: gameType, weather: weather, terrain: terrain, isGravity: gravity, isMagicRoom: magicroom, isWonderRoom: wonderroom, attackerSide: attackerField, defenderSide: {isFlowerGift: flowergiftDef, isTailwind: tailwindDef, isFriendGuard: friendguard, isReflect: defenderReflect, isLightScreen: defenderLightscreen, isAuroraVeil: v}});
+      setField({...field, defenderSide: {...field.defenderSide, isAuroraVeil: v}});
     }
-  }
-
-  function updateField(packaged){
-    setField(new Field(packaged));
   }
 
   function closeFieldPanel(){

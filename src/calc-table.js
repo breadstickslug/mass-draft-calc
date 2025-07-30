@@ -1,4 +1,4 @@
-import {calculate, Result, Pokemon, Generations, toID, Move} from "@smogon/calc";
+import {calculate, Result, Pokemon, Generations, toID, Move, Field} from "@smogon/calc";
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import * as img from '@pkmn/img';
 
@@ -119,7 +119,8 @@ function colorMap(colors, pct)
     return resultColor;
 }
 
-function AttackerRows({ attacker, defenders, field }){
+function AttackerRows({ attacker, defenders, fieldObject }){
+    const field = new Field(fieldObject);
     //const [calcs, setCalcs] = useState([]);
     //const attackerMemo = useMemo(() => attacker, [attacker]);
     //const defendersMemo = useMemo(() => defenders, [defenders]);
@@ -252,7 +253,7 @@ export function CalcTable({ attackers, defenders, field }) {
             </thead>
             <tbody>
                 {a.map((attacker, index) =>
-                    <AttackerRows key={attacker.species+index} attacker={attacker} defenders={d} field={f}></AttackerRows>
+                    <AttackerRows key={attacker.species+index} attacker={attacker} defenders={d} fieldObject={f}></AttackerRows>
                 )}
             </tbody>
         </table>
