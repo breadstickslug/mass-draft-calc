@@ -1,7 +1,8 @@
 import { PokemonPanel } from "./mon-panel.js";
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useMemo, useEffect, useCallback } from 'react';
 import { MonsMini } from "./mons-mini.js";
 import {Generations, Pokemon, toID} from '@smogon/calc';
+import { monDispatchContext } from "./App.js";
 
 
 const gen = Generations.get(9);
@@ -11,35 +12,36 @@ export const partyContext = React.createContext(null);
 
 function monToExportSet(mon, gameType) {
     console.log(mon);
-    const exportString = mon.name + ((mon.name) ? " (" : "") + mon.species.name + ((mon.name) ? ")" : "") + ((mon.item && mon.item !== "(no item)") ? " @ " + mon.item : "") + "\n" +
+    const exportString = ((mon.notes) ? mon.notes+" (" : "") + mon.species + ((mon.notes) ? ")" : "") + ((mon.item && mon.item !== "(no item)") ? " @ " + mon.item : "") + "\n" +
                  "Ability: " + mon.ability + "\n" +
                  "Level: " + (gameType === "Doubles" ? "50" : "100") + "\n" +
-                 ((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0 || mon.evs["spa"] > 0 || mon.evs["spd"] > 0 || mon.evs["spe"] > 0) ? "EVs: " : "") +
-                 ((mon.evs["hp"] > 0) ? mon.evs["hp"] + " HP" : "") +
-                 (((mon.evs["hp"] > 0) && mon.evs["atk"] > 0) ? " / " : "") + ((mon.evs["atk"] > 0) ? mon.evs["atk"] + " Atk" : "") +
-                 (((mon.evs["hp"] > 0 || mon.evs["atk"] > 0) && mon.evs["def"] > 0) ? " / " : "") + ((mon.evs["def"] > 0) ? mon.evs["def"] + " Def" : "") +
-                 (((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0) && mon.evs["spa"] > 0) ? " / " : "") + ((mon.evs["spa"] > 0) ? mon.evs["spa"] + " SpA" : "") +
-                 (((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0 || mon.evs["spa"] > 0) && mon.evs["spd"] > 0) ? " / " : "") + ((mon.evs["spd"] > 0) ? mon.evs["spd"] + " SpD" : "") +
-                 (((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0 || mon.evs["spa"] > 0 || mon.evs["spd"] > 0) && mon.evs["spe"] > 0) ? " / " : "") +  ((mon.evs["spe"] > 0) ? mon.evs["spe"] + " Spe" : "") +
-                 ((mon.evs["hp"] > 0 || mon.evs["atk"] > 0 || mon.evs["def"] > 0 || mon.evs["spa"] > 0 || mon.evs["spd"] > 0 || mon.evs["spe"] > 0) ? "\n" : "") +
+                 "Tera Type: " + mon.teraType + "\n" +
+                 ((mon.EVs["hp"] > 0 || mon.EVs["atk"] > 0 || mon.EVs["def"] > 0 || mon.EVs["spa"] > 0 || mon.EVs["spd"] > 0 || mon.EVs["spe"] > 0) ? "EVs: " : "") +
+                 ((mon.EVs["hp"] > 0) ? mon.EVs["hp"] + " HP" : "") +
+                 (((mon.EVs["hp"] > 0) && mon.EVs["atk"] > 0) ? " / " : "") + ((mon.EVs["atk"] > 0) ? mon.EVs["atk"] + " Atk" : "") +
+                 (((mon.EVs["hp"] > 0 || mon.EVs["atk"] > 0) && mon.EVs["def"] > 0) ? " / " : "") + ((mon.EVs["def"] > 0) ? mon.EVs["def"] + " Def" : "") +
+                 (((mon.EVs["hp"] > 0 || mon.EVs["atk"] > 0 || mon.EVs["def"] > 0) && mon.EVs["spa"] > 0) ? " / " : "") + ((mon.EVs["spa"] > 0) ? mon.EVs["spa"] + " SpA" : "") +
+                 (((mon.EVs["hp"] > 0 || mon.EVs["atk"] > 0 || mon.EVs["def"] > 0 || mon.EVs["spa"] > 0) && mon.EVs["spd"] > 0) ? " / " : "") + ((mon.EVs["spd"] > 0) ? mon.EVs["spd"] + " SpD" : "") +
+                 (((mon.EVs["hp"] > 0 || mon.EVs["atk"] > 0 || mon.EVs["def"] > 0 || mon.EVs["spa"] > 0 || mon.EVs["spd"] > 0) && mon.EVs["spe"] > 0) ? " / " : "") +  ((mon.EVs["spe"] > 0) ? mon.EVs["spe"] + " Spe" : "") +
+                 ((mon.EVs["hp"] > 0 || mon.EVs["atk"] > 0 || mon.EVs["def"] > 0 || mon.EVs["spa"] > 0 || mon.EVs["spd"] > 0 || mon.EVs["spe"] > 0) ? "\n" : "") +
                  mon.nature + " Nature" +
-                 ((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31 || mon.ivs["def"] < 31 || mon.ivs["spa"] < 31 || mon.ivs["spd"] < 31 || mon.ivs["spe"] < 31) ? "\nIVs: " : "") +
-                 ((mon.ivs["hp"] < 31) ? mon.ivs["hp"] + " HP" : "") +
-                 (((mon.ivs["hp"] < 31) && mon.ivs["atk"] < 31) ? " / " : "") + ((mon.ivs["atk"] < 31) ? mon.ivs["atk"] + " Atk" : "") +
-                 (((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31) && mon.ivs["def"] < 31) ? " / " : "") + ((mon.ivs["def"] < 31) ? mon.ivs["def"] + " Def" : "") +
-                 (((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31 || mon.ivs["def"] < 31) && mon.ivs["spa"] < 31) ? " / " : "") + ((mon.ivs["spa"] < 31) ? mon.ivs["spa"] + " SpA" : "") +
-                 (((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31 || mon.ivs["def"] < 31 || mon.ivs["spa"] < 31) && mon.ivs["spd"] < 31) ? " / " : "") + ((mon.ivs["spd"] < 31) ? mon.ivs["spd"] + " SpD" : "") +
-                 (((mon.ivs["hp"] < 31 || mon.ivs["atk"] < 31 || mon.ivs["def"] < 31 || mon.ivs["spa"] < 31 || mon.ivs["spd"] < 31) && mon.ivs["spe"] < 31) ? " / " : "") +  ((mon.ivs["spe"] < 31) ? mon.ivs["spe"] + " Spe" : "") +
+                 ((mon.IVs["hp"] < 31 || mon.IVs["atk"] < 31 || mon.IVs["def"] < 31 || mon.IVs["spa"] < 31 || mon.IVs["spd"] < 31 || mon.IVs["spe"] < 31) ? "\nIVs: " : "") +
+                 ((mon.IVs["hp"] < 31) ? mon.IVs["hp"] + " HP" : "") +
+                 (((mon.IVs["hp"] < 31) && mon.IVs["atk"] < 31) ? " / " : "") + ((mon.IVs["atk"] < 31) ? mon.IVs["atk"] + " Atk" : "") +
+                 (((mon.IVs["hp"] < 31 || mon.IVs["atk"] < 31) && mon.IVs["def"] < 31) ? " / " : "") + ((mon.IVs["def"] < 31) ? mon.IVs["def"] + " Def" : "") +
+                 (((mon.IVs["hp"] < 31 || mon.IVs["atk"] < 31 || mon.IVs["def"] < 31) && mon.IVs["spa"] < 31) ? " / " : "") + ((mon.IVs["spa"] < 31) ? mon.IVs["spa"] + " SpA" : "") +
+                 (((mon.IVs["hp"] < 31 || mon.IVs["atk"] < 31 || mon.IVs["def"] < 31 || mon.IVs["spa"] < 31) && mon.IVs["spd"] < 31) ? " / " : "") + ((mon.IVs["spd"] < 31) ? mon.IVs["spd"] + " SpD" : "") +
+                 (((mon.IVs["hp"] < 31 || mon.IVs["atk"] < 31 || mon.IVs["def"] < 31 || mon.IVs["spa"] < 31 || mon.IVs["spd"] < 31) && mon.IVs["spe"] < 31) ? " / " : "") +  ((mon.IVs["spe"] < 31) ? mon.IVs["spe"] + " Spe" : "") +
                  //(((mon.moves[0] !== undefined && mon.moves[0] !== "(No Move)") || (mon.moves[1] !== undefined && mon.moves[1] !== "(No Move)") || (mon.moves[2] !== undefined && mon.moves[2] !== "(No Move)") || (mon.moves[3] !== undefined && mon.moves[3] !== "(No Move)")) ? "\n" : "") +
                  "\n" +
-                 ((mon.moves[0] !== undefined && mon.moves[0] !== "(No Move)") ? "- " + mon.moves[0] + "\n" : "") +
                  ((mon.moves[1] !== undefined && mon.moves[1] !== "(No Move)") ? "- " + mon.moves[1] + "\n" : "") +
                  ((mon.moves[2] !== undefined && mon.moves[2] !== "(No Move)") ? "- " + mon.moves[2] + "\n" : "") +
-                 ((mon.moves[3] !== undefined && mon.moves[3] !== "(No Move)") ? "- " + mon.moves[3] + "\n" : "");
+                 ((mon.moves[3] !== undefined && mon.moves[3] !== "(No Move)") ? "- " + mon.moves[3] + "\n" : "") +
+                 ((mon.moves[4] !== undefined && mon.moves[4] !== "(No Move)") ? "- " + mon.moves[4] + "\n" : "");
     return exportString;
 }
 
-export function MonsContainer({ tabActive, collapsed, sideCode, imported, updateMons, gameType, setExportString }){
+export function MonsContainer({ tabActive, collapsed, sideCode, imported, updateMons, gameType, setExportString, containerIndex }){
     const importedMemo = useMemo(() => imported, [imported]);
     const tabActiveMemo = useMemo(() => tabActive, [tabActive]);
     const collapsedMemo = useMemo(() => collapsed, [collapsed]);
@@ -59,6 +61,8 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     const [statussets, setStatusSets] = useState([]);
     var [notes, setNotes] = useState([]); // list of mon notes
     const sideCodeMemo = useMemo(() => sideCode, [sideCode]);
+    const mons = useContext(monDispatchContext).totalMons;
+    const setTotalMons = useContext(monDispatchContext).setTotalMons;
 
     const importTeam = useCallback(() => {
         if (Object.keys(importedMemo).length > 0 && Object.keys(importedMemo).includes("species")){
@@ -112,6 +116,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         };
     }
 
+    
     function setSpecie(specie, index){
         const replaced = party[index];
         replaced.species = gen.species.get(toID(specie));
@@ -127,6 +132,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         setAbilities([...abilities.slice(0, index), gen.species.get(toID(specie)).abilities[0], ...abilities.slice(index+1)]);
         setTeraTypes([...teraTypes.slice(0, index), gen.species.get(toID(specie)).types[0], ...teraTypes.slice(index+1)]);
     }
+    
 
     function setNature(nature, index){
         const replaced = party[index];
@@ -219,6 +225,8 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         setNotes([...notes.slice(0, index), blurb.toString(), ...notes.slice(index+1)]);
     }
 
+    /*
+
     function addMon(event){
         //var newID = numCreated+1;
         //var nextNumCreated = numCreated+1;
@@ -253,6 +261,13 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         //console.log(party);
     }
 
+    */
+
+    function addMon(event){
+        setTotalMons({ containerIndex: containerIndex, type: "addEnd" });
+    }
+
+    /*
     function removeMon(event){
         setParty(party.slice(0, -1));
         setNotes(notes.slice(0, -1));
@@ -270,7 +285,12 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         //forceUpdate();
         
     }
+    */
+   function removeMon(event){
+        setTotalMons({ containerIndex: containerIndex, type: "removeEnd" });
+   }
 
+   /*
     function removeSpecificMon(event){
         //forceUpdate();
         //console.log(event.target.id);
@@ -305,15 +325,23 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         setBoostSets([...boostsetsS]);
         setStatusSets([...statussetsS]);
     }
+        */
+    function removeSpecificMon(event){
+        setTotalMons({ containerIndex: containerIndex, type: "removeIndex", index: parseInt(event.target.id) });
+    }
+
+    function duplicateSpecificMon(event){
+        setTotalMons({ containerIndex: containerIndex, type: "duplicateIndex", index: parseInt(event.target.id) });
+    }
 
     useEffect(() => {
-        updateMonsMemo(sideCodeMemo, party);
+        //updateMonsMemo(sideCodeMemo, party);
         var exportString = "";
-        for (const mon of party) {
+        for (const mon of mons[containerIndex]) {
             exportString = exportString + monToExportSet(mon, gameTypeMemo) + "\n";
         }
         setExportString(exportString);
-    }, [party, sideCodeMemo, updateMonsMemo, gameTypeMemo, setExportString]);
+    }, [mons, sideCodeMemo, gameTypeMemo, setExportString]);
 
 
     /*
@@ -337,34 +365,34 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     */
 
     return (
-        <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts, setStatus, gameTypeMemo }}>
+        <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts, setStatus, gameTypeMemo, containerIndex, sideCodeMemo }}>
         <div style={{overflow: "hidden"}}>
-            <div style={{overflow: "hidden", height: (collapsedMemo) ? "34px" : "0px"}}><MonsMini sideCode={sideCode} importedSpecies={species} visible={collapsedMemo}></MonsMini></div>
+            <div style={{overflow: "hidden", height: (collapsedMemo) ? "34px" : "0px"}}><MonsMini sideCode={sideCode} importedSpecies={species} visible={collapsedMemo} containerIndex={containerIndex}></MonsMini></div>
             <div style={{overflow: "hidden", display: (tabActiveMemo && !collapsedMemo) ? "inline" : "none", textAlign: "center"}}><button type="button" style={{width: "30px", height: "30px"}} onClick={addMon}>+</button><button type="button" style={{width: "30px", height: "30px"}} onClick={removeMon}>-</button></div>
             <div style={{overflow: "auto", paddingTop: "5px", paddingBottom: "5px", display: (tabActiveMemo && !collapsedMemo) ? "flex" : "none"}}>
                 <div style={{marginLeft: "auto", marginRight: "auto", display: "flex"}}>
-                {party.map((entry, index) => {
-                    return (<div key={species[index]+natures[index]+abilities[index]+items[index]+teraTypes[index]+terasActive[index]+movesets[index]["1"]+movesets[index]["2"]+movesets[index]["3"]+movesets[index]["4"]+
-                        "hpev"+evsets[index]["hp"]+"atkev"+evsets[index]["atk"]+"defev"+evsets[index]["def"]+"spaev"+evsets[index]["spa"]+"spdev"+evsets[index]["spd"]+"speev"+evsets[index]["spe"]+
-                        "hpiv"+ivsets[index]["hp"]+"atkiv"+ivsets[index]["atk"]+"defiv"+ivsets[index]["def"]+"spaiv"+ivsets[index]["spa"]+"spdiv"+ivsets[index]["spd"]+"speiv"+ivsets[index]["spe"]+
-                        "hpboost"+boostsets[index]["hp"]+"atkboost"+boostsets[index]["atk"]+"defboost"+boostsets[index]["def"]+"spaboost"+boostsets[index]["spa"]+"spdboost"+boostsets[index]["spd"]+"speboost"+boostsets[index]["spe"]+
-                        "status"+statussets[index]+notes[index]+index} 
-                        className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel 
+                {mons[containerIndex].map((entry, index) => {
+                    return (<div key={entry.species+entry.nature+entry.ability+entry.item+entry.teraType+entry.teraActive+entry.moves["1"]+entry.moves["2"]+entry.moves["3"]+entry.moves["4"]+
+                        "hpev"+entry.EVs["hp"]+"atkev"+entry.EVs["atk"]+"defev"+entry.EVs["def"]+"spaev"+entry.EVs["spa"]+"spdev"+entry.EVs["spd"]+"speev"+entry.EVs["spe"]+
+                        "hpiv"+entry.IVs["hp"]+"atkiv"+entry.IVs["atk"]+"defiv"+entry.IVs["def"]+"spaiv"+entry.IVs["spa"]+"spdiv"+entry.IVs["spd"]+"speiv"+entry.IVs["spe"]+
+                        "hpboost"+entry.boosts["hp"]+"atkboost"+entry.boosts["atk"]+"defboost"+entry.boosts["def"]+"spaboost"+entry.boosts["spa"]+"spdboost"+entry.boosts["spd"]+"speboost"+entry.boosts["spe"]+
+                        "status"+entry.status+entry.notes+index} 
+                        className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><button type="button" style={{width: "20px", height: "20px", textAlign: "center"}} id={index} onClick={duplicateSpecificMon}>⧉</button><div className="index-num">{index+1}</div>{<PokemonPanel 
                                                 style={{ textAlign: "center" }} 
                                                 monID={index} 
                                                 monSide={sideCodeMemo} 
-                                                pSpecies={species[index]} 
-                                                pNature={natures[index]} 
-                                                pAbility={abilities[index]} 
-                                                pItem={items[index]} 
-                                                pTeraType={teraTypes[index]} 
-                                                pTeraActive={terasActive[index]} 
-                                                pMoves={movesets[index]} 
-                                                pEVs={evsets[index]} 
-                                                pIVs={ivsets[index]} 
-                                                pBoosts={boostsets[index]}
-                                                pStatus={statussets[index]} 
-                                                passedNotes={notes[index]}></PokemonPanel>}</div>)})}
+                                                pSpecies={entry.species} 
+                                                pNature={entry.nature} 
+                                                pAbility={entry.ability} 
+                                                pItem={entry.item} 
+                                                pTeraType={entry.teraType} 
+                                                pTeraActive={entry.teraActive} 
+                                                pMoves={entry.moves} 
+                                                pEVs={entry.EVs} 
+                                                pIVs={entry.IVs} 
+                                                pBoosts={entry.boosts}
+                                                pStatus={entry.status} 
+                                                passedNotes={entry.notes}></PokemonPanel>}</div>)})}
                 </div>
             </div>
         </div>

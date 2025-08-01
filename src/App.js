@@ -3,11 +3,12 @@ import {Generations, toID, Field, Side} from '@smogon/calc';
 import './App.css';
 import { MonsContainer } from "./mons-container.js";
 import { CalcTable } from "./calc-table.js";
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect, useReducer } from 'react';
 import {Sets, Teams} from '@pkmn/sets';
 
 const gen = Generations.get(9);
 const root = document.documentElement;
+export const monDispatchContext = React.createContext(null);
 
 
 const tabNames = ["Mons", "Import", "Export"];
@@ -88,7 +89,7 @@ function ExportContainer({ sideCode, exportString }) {
   );
 }
 
-function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType, swapped, openFeedback, panelOpen }) {
+function TabManager({ sideCode, containerIndex, updateMons, mons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType, swapped, openFeedback, panelOpen, setTotalMons }) {
   const [tabsActive, setTabsActive] = useState([true, false, false]);
   const [importedTeamStorage, setImportedTeamStorage] = useState({});
   const sideMemo = useMemo(() => sideCode, [sideCode]);
@@ -173,8 +174,50 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
       var evs = [];
       var ivs = [];
       var notes = [];
+      if (importedTeam.length > 0) { setTotalMons({ containerIndex: containerIndex, type: "wipe" }); }
       for (const mon of importedTeam) {
         if (gen.species.get((toID(mon.species)))){ // valid mon
+          console.log(mon.species);
+          setTotalMons({ containerIndex: containerIndex, type: "import", mon: {
+            species: mon.species,
+            nature: (mon.nature && gen.natures.get((toID(mon.nature)))) ? mon.nature : "Serious",
+            ability: (mon.ability && gen.abilities.get((toID(mon.ability)))) ? mon.ability : gen.species.get((toID(mon.species))).abilities[0],
+            item: (mon.item && gen.items.get((toID(mon.item)))) ? mon.item : "(no item)",
+            moves: {
+              1: (mon.moves && mon.moves[0] && gen.moves.get((toID(mon.moves[0])))) ? mon.moves[0] : "(No Move)",
+              2: (mon.moves && mon.moves[1] && gen.moves.get((toID(mon.moves[1])))) ? mon.moves[1] : "(No Move)",
+              3: (mon.moves && mon.moves[2] && gen.moves.get((toID(mon.moves[2])))) ? mon.moves[2] : "(No Move)",
+              4: (mon.moves && mon.moves[3] && gen.moves.get((toID(mon.moves[3])))) ? mon.moves[3] : "(No Move)",
+            },
+            teraType: (mon.teraType) ? mon.teraType : gen.species.get((toID(mon.species))).types[0],
+            EVs: {
+              hp: (mon.evs && mon.evs["hp"] !== undefined && Number.isInteger(mon.evs["hp"])) ? mon.evs["hp"] : 0,
+              atk: (mon.evs && mon.evs["atk"] !== undefined && Number.isInteger(mon.evs["atk"])) ? mon.evs["atk"] : 0,
+              def: (mon.evs && mon.evs["def"] !== undefined && Number.isInteger(mon.evs["def"])) ? mon.evs["def"] : 0,
+              spa: (mon.evs && mon.evs["spa"] !== undefined && Number.isInteger(mon.evs["spa"])) ? mon.evs["spa"] : 0,
+              spd: (mon.evs && mon.evs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? mon.evs["spd"] : 0,
+              spe: (mon.evs && mon.evs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? mon.evs["spe"] : 0,
+            },
+            IVs: {
+              hp: (mon.ivs && mon.ivs["hp"] !== undefined && Number.isInteger(mon.ivs["hp"])) ? mon.ivs["hp"] : 31,
+              atk: (mon.ivs && mon.ivs["atk"] !== undefined && Number.isInteger(mon.ivs["atk"])) ? mon.ivs["atk"] : 31,
+              def: (mon.ivs && mon.ivs["def"] !== undefined && Number.isInteger(mon.ivs["def"])) ? mon.ivs["def"] : 31,
+              spa: (mon.ivs && mon.ivs["spa"] !== undefined && Number.isInteger(mon.ivs["spa"])) ? mon.ivs["spa"] : 31,
+              spd: (mon.ivs && mon.ivs["spd"] !== undefined && Number.isInteger(mon.ivs["spd"])) ? mon.ivs["spd"] : 31,
+              spe: (mon.ivs && mon.ivs["spe"] !== undefined && Number.isInteger(mon.ivs["spe"])) ? mon.ivs["spe"] : 31,
+            },
+            boosts: {
+              hp: 0,
+              atk: 0,
+              def: 0,
+              spa: 0,
+              spd: 0,
+              spe: 0,
+            },
+            notes: (mon.name) ? mon.name : "",
+            status: "(none)",
+          }});
+          /*
           species.push(mon.species);
           natures.push((mon.nature && gen.natures.get((toID(mon.nature)))) ? mon.nature : "Serious");
           abilities.push((mon.ability && gen.abilities.get((toID(mon.ability)))) ? mon.ability : gen.species.get((toID(mon.species))).abilities[0]);
@@ -203,6 +246,7 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
             spe: (mon.ivs && mon.ivs["spe"] !== undefined && Number.isInteger(mon.ivs["spe"])) ? mon.ivs["spe"] : 31,
           });
           notes.push((mon.name) ? mon.name : "");
+          */
         }
       }
       setImportedTeamStorage({
@@ -223,7 +267,9 @@ function TabManager({ sideCode, updateMons, monsPanelOpen, setMonsPanelOpen, clo
 
   return (
     <div>
-      <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...(((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped)) ? { height: "var(--attacker-panel-height)" } : { height: "var(--defender-panel-height)" }), ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}><MonsContainer updateMons={updateMons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={(!swapped ? sideCode : altSideCode)} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString}></MonsContainer></div>
+      <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...(((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped)) ? { height: "var(--attacker-panel-height)" } : { height: "var(--defender-panel-height)" }), ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}>
+        <MonsContainer updateMons={updateMons} containerIndex={containerIndex} mons={mons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={(!swapped ? sideCode : altSideCode)} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString} setTotalMons={setTotalMons}></MonsContainer>
+      </div>
       <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={(!swapped ? sideCode : altSideCode)} importFunc={importMons}></ImportContainer></div>
       <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Export"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[2] && !containerCollapsed) ? {} : {display: "none"})}}><ExportContainer sideCode={(!swapped ? sideCode : altSideCode)} exportString={exportString}></ExportContainer></div>
       <div className={(!swapped ? sideCode : altSideCode)+"s-buttons"} style={{ ...buttonTransition, height: "30px", display: "flex", justifyContent: "center", ...(((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped)) ? { top: "var(--attacker-panel-height)", bottom: "" } : { bottom: "var(--defender-panel-height)", top: "" })}}>
@@ -424,6 +470,175 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
 
 */
 
+function monSideReducer(mons, action){ // all actions must contain containerIndex
+  console.log(action);
+  //console.log(mons);
+  var subMons;
+  switch (action.containerIndex) {
+    case 0: { subMons = mons[0]; break; }
+    case 1: { subMons = mons[1]; break; }
+  }
+  var resultMons;
+  switch (action.type){
+    // add/reduce: index cases require an index number
+    case 'addEnd': {
+      console.log("ADDING!");
+      resultMons = [...subMons, {
+        notes: "",
+        species: "Ababo",
+        nature: "Serious",
+        ability: "Pixilate",
+        teraType: "Fairy",
+        teraActive: false,
+        item: "(no item)",
+        moves: {
+            1: "(No Move)",
+            2: "(No Move)",
+            3: "(No Move)",
+            4: "(No Move)",
+        },
+        EVs: {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0},
+        IVs: {hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31},
+        boosts: {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0},
+        status: "(none)"
+      }];
+      break;
+    }
+    case 'addIndex': {
+      resultMons = [...subMons.slice(0, action.index), {
+        notes: "",
+        species: "Ababo",
+        nature: "Serious",
+        ability: "Pixilate",
+        teraType: "Fairy",
+        teraActive: false,
+        item: "(no item)",
+        moves: {
+            1: "(No Move)",
+            2: "(No Move)",
+            3: "(No Move)",
+            4: "(No Move)",
+        },
+        EVs: {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0},
+        IVs: {hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31},
+        boosts: {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0},
+        status: "(none)"
+      }, subMons.slice(action.index+1)];
+      break;
+    }
+    case 'removeEnd': {
+      resultMons = [...subMons.slice(0, -1)];
+      break;
+    }
+    case 'removeIndex': {
+      console.log("removing index");
+      resultMons = [...subMons.slice(0, action.index), ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'duplicateIndex': {
+      console.log("duplicating at index "+action.index);
+      resultMons = [...subMons.slice(0, action.index+1), subMons[action.index], ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'wipe': {
+      resultMons = [];
+      break;
+    }
+    case 'import': {
+      console.log("importing mon");
+      resultMons = [...subMons, action.mon];
+      break;
+    }
+    case 'updateSpecies': {
+      console.log("species updating!");
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        species: action.species,
+        ability: gen.species.get(toID(action.species)).abilities[0],
+        teraType: gen.species.get(toID(action.species)).types[0],
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateNature': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        nature: action.nature,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateTeraType': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        teraType: action.teraType,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateAbility': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        ability: action.ability,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateTeraActive': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        teraActive: action.teraActive,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateItem': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        item: action.item,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateNature': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        nature: action.nature,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateMoves': { 
+      console.log("updating moves!");
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        moves: action.moves,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateEVs': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        EVs: action.EVs,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateIVs': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        IVs: action.IVs,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateBoosts': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        boosts: action.boosts,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateStatus': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        status: action.status,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+    case 'updateNotes': {
+      resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
+        notes: action.notes,
+      }, ...subMons.slice(action.index+1)];
+      break;
+    }
+  }
+  console.log(resultMons);
+  switch (action.containerIndex){
+    case 0: { return [[...resultMons], [...mons[1]]]; }
+    case 1: { return [[...mons[0]], [...resultMons]]; }
+  }
+}
+
 
 function App() {
 
@@ -431,7 +646,9 @@ function App() {
   const [topPanelOpen, setTopPanelOpen] = useState(false);
   const [bottomPanelOpen, setBottomPanelOpen] = useState(false);
   const [fieldPanelOpen, setFieldPanelOpen] = useState(false);
+  const [totalMons, setTotalMons] = useReducer(monSideReducer, [[], []]);
   const [attackerMons, setAttackerMons] = useState([]);
+  const [attackerIndex] = useState([]);
   const [defenderMons, setDefenderMons] = useState([]);
   const [field, setField] = useState({ 
                                         gameType: "Doubles",
@@ -492,6 +709,25 @@ function App() {
       setDefenderMons(packaged);
     }
   }
+
+  /*
+  function monSideReducer(mons, action){
+    console.log(action);
+    if (action){
+      switch (action.containerIndex){
+        case 0: {
+          var result = [monsReducer(totalMons[0], action), totalMons[1]];
+          console.log("result:");
+          console.log(result);
+          setTotalMons(result);
+        }
+        case 1: {
+          setTotalMons([totalMons[0], monsReducer(totalMons[1], action)]);
+        }
+      }  
+    }
+  }
+    */
 
   
   function swapSides(){
@@ -632,27 +868,12 @@ function App() {
 
   return (
     <div className="App" >
-      {/*
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-      */}
+      <monDispatchContext.Provider value={{totalMons, setTotalMons}}>
       <div className="calcTable" style={{position: "absolute", width: "100%", top: "calc(var(--attacker-panel-height) + 80px)", transition: "top 300ms"}}>
-        <CalcTable attackers={attackerMons} defenders={defenderMons} field={field}></CalcTable>
+        <CalcTable field={field} attackerIndex={(swapped) ? 1 : 0} mons={totalMons}></CalcTable>
         <div style={{height: "80px"}}></div>
       </div>
-      <TabManager sideCode="attacker" updateMons={updateMons} monsPanelOpen={monsPanelOpen&&topPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setTopPanelOpen} panelOpen={topPanelOpen}></TabManager>
+      <TabManager sideCode="attacker" updateMons={updateMons} containerIndex={0} monsPanelOpen={monsPanelOpen&&topPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setTopPanelOpen} panelOpen={topPanelOpen}></TabManager>
       
       <FieldPanel updateHelpinghand={updateHelpinghand} updateGameType={updateGameType} updateWeather={updateWeather} updateTerrain={updateTerrain} updateGravity={updateGravity} updateReflect={updateReflect}
                   updateLightscreen={updateLightscreen} updateVeil={updateVeil} updateMagicRoom={updateMagicRoom} updateWonderRoom={updateWonderRoom} updateTailwind={updateTailwind} updateTailwindDef={updateTailwindDef}
@@ -660,8 +881,8 @@ function App() {
                   updateBeadsofruin={updateBeadsofruin} updateSwordofruin={updateSwordofruin} updateTabletsofruin={updateTabletsofruin} updateVesselofruin={updateVesselofruin} updateAurabreak={updateAurabreak}
                   updateDarkaura={updateDarkaura} updateFairyaura={updateFairyaura} fieldPanelOpen={fieldPanelOpen} setFieldPanelOpen={setFieldPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} swapSides={swapSides}></FieldPanel>
       
-      <TabManager sideCode="defender" updateMons={updateMons} monsPanelOpen={monsPanelOpen&&bottomPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setBottomPanelOpen} panelOpen={bottomPanelOpen}></TabManager>
-      
+      <TabManager sideCode="defender" updateMons={updateMons} containerIndex={1} monsPanelOpen={monsPanelOpen&&bottomPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setBottomPanelOpen} panelOpen={bottomPanelOpen}></TabManager>
+      </monDispatchContext.Provider>
     </div>
   );
 }

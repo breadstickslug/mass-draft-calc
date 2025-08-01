@@ -1,10 +1,12 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useContext, useMemo, useEffect } from 'react';
 import * as img from '@pkmn/img';
+import { monDispatchContext } from './App';
 
-export function MonsMini({ sideCode, importedSpecies, visible }) {
+export function MonsMini({ sideCode, importedSpecies, visible, containerIndex }) {
     const importedMemo = useMemo(() => importedSpecies, [importedSpecies]);
     const visibleMemo = useMemo(() => visible, [visible]);
-    const [species, setSpecies] = useState((importedMemo) ? importedMemo : []);
+    const mons = useContext(monDispatchContext).totalMons;
+    //const [species, setSpecies] = useState((importedMemo) ? importedMemo : []);
 
     /*
     const importTeam = useCallback(() => {
@@ -14,20 +16,20 @@ export function MonsMini({ sideCode, importedSpecies, visible }) {
     }, [importedMemo]);
     */
 
-    useEffect(() => {
-        setSpecies(importedMemo);
-    }, [importedMemo]);
+    //useEffect(() => {
+    //    setSpecies(importedMemo);
+    //}, [importedMemo]);
 
     return (
         <div className="minified" style={{ position: "relative", top: "2px", display: (visibleMemo) ? "inline-block" : "none", minWidth: "100px", height: "30px"}}>
-            <div style={{...{ display: "flex", justifyContent: "center", alignItems: "center" }, ...(species.length < 1) ? { height: "100%" } : {}}}>{(species.length < 1) ? "(no "+sideCode+"s)" : ""}</div>
-            {species.map((s, index) => <object key={s+index} src="//:0" alt="" style={{
+            <div style={{...{ display: "flex", justifyContent: "center", alignItems: "center" }, ...(mons[containerIndex].length < 1) ? { height: "100%" } : {}}}>{(mons[containerIndex].length < 1) ? "(no "+sideCode+"s)" : ""}</div>
+            {mons[containerIndex].map((s, index) => <object key={s.species+index} src="//:0" alt="" style={{
                 width: "40px",
                 height: "30px",
                 display: "inline-block",
                 imageRendering: "pixelated",
                 border: "0",
-                background: "transparent url("+img.Icons.getPokemon(s).url+") no-repeat scroll "+img.Icons.getPokemon(s).left.toString()+"px "+img.Icons.getPokemon(s).top.toString()+"px",
+                background: "transparent url("+img.Icons.getPokemon(s.species).url+") no-repeat scroll "+img.Icons.getPokemon(s.species).left.toString()+"px "+img.Icons.getPokemon(s.species).top.toString()+"px",
                 }}></object>)}
         </div>
     );

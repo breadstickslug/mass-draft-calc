@@ -119,8 +119,37 @@ function colorMap(colors, pct)
     return resultColor;
 }
 
-function AttackerRows({ attacker, defenders, fieldObject }){
+function AttackerRows({ objAttacker, objDefenders, fieldObject }){
     const field = new Field(fieldObject);
+    const attacker = new Pokemon(gen, objAttacker.species, {
+                  nature: objAttacker.nature,
+                  ability: objAttacker.ability,
+                  item: objAttacker.item,
+                  moves: Object.values(objAttacker.moves),
+                  evs: objAttacker.EVs,
+                  ivs: objAttacker.IVs,
+                  boosts: objAttacker.boosts,
+                  name: objAttacker.notes,
+                  teraType: (objAttacker.teraActive) ? objAttacker.teraType : undefined,
+                  teraactive: objAttacker.teraActive,
+                  status: objAttacker.status,
+                });
+    console.log(attacker);
+    const defenders = objDefenders.map((d, index) => { return new Pokemon(gen, d.species, {
+                  nature: d.nature,
+                  ability: d.ability,
+                  item: d.item,
+                  moves: Object.values(d.moves),
+                  evs: d.EVs,
+                  ivs: d.IVs,
+                  boosts: d.boosts,
+                  name: d.notes,
+                  teraType: (d.teraActive) ? d.teraType : undefined,
+                  teraactive: d.teraActive,
+                  status: d.status,
+                }); });
+    console.log(objDefenders);
+    console.log(defenders);
     //const [calcs, setCalcs] = useState([]);
     //const attackerMemo = useMemo(() => attacker, [attacker]);
     //const defendersMemo = useMemo(() => defenders, [defenders]);
@@ -131,7 +160,7 @@ function AttackerRows({ attacker, defenders, fieldObject }){
     const movesFiltered = attacker.moves.filter((move) => gen.moves.get(toID(move)).category !== "Status");
 
     // calcs is a list corresponding to moves producing lists of calcs vs defenders
-    const calcs = useMemo(() => defenders.map((defender) => {
+    const calcs = defenders.map((defender) => {
         console.log(field);
         var tempDefender = defender.clone();
         if (defender.item === "(no item)") { tempDefender.item = undefined; }
@@ -146,7 +175,7 @@ function AttackerRows({ attacker, defenders, fieldObject }){
             //console.log(calculate(gen, attacker, tempDefender, m));
             return calculate(gen, tempAttacker, tempDefender, m, field);
         });
-    }), [attacker, defenders, movesFiltered, field]);
+    });
 
 
     const rows = useMemo(() => calcs.map((defs, index1) => { // over defenders
@@ -187,7 +216,7 @@ function AttackerRows({ attacker, defenders, fieldObject }){
                                 border: "0",
                                 background: "transparent url("+img.Icons.getPokemon(calc.attacker.species.name).url+") no-repeat scroll "+img.Icons.getPokemon(calc.attacker.species.name).left.toString()+"px "+img.Icons.getPokemon(calc.attacker.species.name).top.toString()+"px",
                                 }}></object></td>
-                <td style={{ textAlign: "center", paddingRight: "5px" }}>{calc.attacker.species.name + ((attacker.name !== undefined && attacker.name !== "") ? " ("+attacker.name+")" : "")}</td>
+                <td style={{ textAlign: "center", paddingRight: "5px" }}>{calc.attacker.species.name + ((attacker.name !== undefined && attacker.name !== "" && attacker.name !== calc.attacker.species.name) ? " ("+attacker.name+")" : "")}</td>
                 <td style={{ textAlign: "center", display: "flex", lineHeight: "34px", background: gD["background"]}}>
                     <div style={{position: "relative", display: "inline-block", height: "30px", width: "45px"}}>
                         <img src={gD["imgSrc"]} alt="" style={{
@@ -211,7 +240,7 @@ function AttackerRows({ attacker, defenders, fieldObject }){
                                 border: "0",
                                 background: "transparent url("+img.Icons.getPokemon(calc.defender.species.name).url+") no-repeat scroll "+img.Icons.getPokemon(calc.defender.species.name).left.toString()+"px "+img.Icons.getPokemon(calc.defender.species.name).top.toString()+"px",
                                 }}></object></td>
-                <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.defender.species.name + ((defenders[index1].name !== undefined && defenders[index1].name !== "") ? " ("+defenders[index1].name+")" : "")}</td>
+                <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.defender.species.name + ((defenders[index1].name !== undefined && defenders[index1].name !== "" && defenders[index1].name !== calc.defender.species.name) ? " ("+defenders[index1].name+")" : "")}</td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.range()[0]+ " - " + calc.range()[1]}</td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px", background: dmgGradient}}>{pctLower.toString()+" - "+pctHigher.toString()+"%"}</td>
             </tr>
@@ -224,14 +253,11 @@ function AttackerRows({ attacker, defenders, fieldObject }){
     return rows.map((r, index) => r);
 }
 
-export function CalcTable({ attackers, defenders, field }) {
-    const a = useMemo(() => attackers, [attackers]);
-    const d = useMemo(() => defenders, [defenders]);
+export function CalcTable({ field, attackerIndex, mons }) {
+    console.log(attackerIndex);
+    const a = useMemo(() => {if (attackerIndex === 1) { return mons[1]; } else { return mons[0]; }}, [mons, attackerIndex]);
+    const d = useMemo(() => {if (attackerIndex === 1) { return mons[0]; } else { return mons[1]; }}, [mons, attackerIndex]);
     const f = useMemo(() => field, [field]);
-
-    useEffect(() => {
-        console.log("DEFENDERS UPDATED", d);
-    }, [d]);
 
     //useEffect(() => {
     //    console.log("table is getting new attackers");
@@ -253,7 +279,7 @@ export function CalcTable({ attackers, defenders, field }) {
             </thead>
             <tbody>
                 {a.map((attacker, index) =>
-                    <AttackerRows key={attacker.species+index} attacker={attacker} defenders={d} fieldObject={f}></AttackerRows>
+                    <AttackerRows key={attacker.species+index} objAttacker={attacker} objDefenders={d} fieldObject={f}></AttackerRows>
                 )}
             </tbody>
         </table>
