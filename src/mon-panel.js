@@ -163,16 +163,10 @@ function moveGraphicData(type, teratype, teraactive) {
 
 // ITEM SELECTOR
   function ItemIcon({ monID }) {
-    //const c = useContext(context);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
 
-    //const monStateStore = useMemo(() => ms, [ms]);
-    //const itemName = monStateStore(useShallow((state) => state.itemName));
     const itemName = mons[pC.containerIndex][monID].item;
-
-    //const itemMemo = useMemo(() => contextC.itemName, [contextC.itemName]);
     
     const imgSrcMemo = useMemo(() => {
       return "transparent url(".concat(img.Icons.getItem(itemName).url)
@@ -199,19 +193,12 @@ function moveGraphicData(type, teratype, teraactive) {
   }
   function ItemDropdown({ monID }) {
     const pC = useContext(partyContext);
-    //const monStateStore = useMemo(() => ms, [ms]);
-    //const itemName = monStateStore(useShallow((state) => state.itemName));
-    //const setItemName = monStateStore(useShallow((state) => state.setItemName));
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
   
     const options = useMemo(() => sortedItems.map((item, index) =>
       <option value={item} key={index}>{item}</option>
     ), []);
-  
-    //const itemMemo = useMemo(() => contextC.itemName, [contextC.itemName]);
-
-    //var changeItem = useCallback((event) => contextC.setItem(event.target.value), [contextC]);
 
     return (
       <select value={mons[pC.containerIndex][monID].item} onChange={(e) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateItem", item: e.target.value, index: monID }); }}>
@@ -220,10 +207,7 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function ItemSelector({ monID }) {
-    //const monStateStore = useMemo(() => ms, [ms]);
-    //const c = useContext(context);
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
 
     return (
       <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon key={sideCode + monID.toString() + "itemicon"}   monID={monID}></ItemIcon><ItemDropdown key={sideCode + monID.toString() + "itempicker"}  monID={monID} ></ItemDropdown></div>
@@ -234,23 +218,13 @@ function moveGraphicData(type, teratype, teraactive) {
 
   // MOVE SELECTORS
   function MoveIcon({ moveNum, monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
     // COME BACK AND ADD THE FIELD
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
-    //const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
-    //const moves = monStateStore(useShallow((state) => state.moves));
     const moves = mons[pC.containerIndex][monID].moves;
-    //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
-    //const species = monStateStore(useShallow((state) => state.species));
     const species = mons[pC.containerIndex][monID].species;
-    //const teraTypeMemo = useMemo(() => contextC.teraType, [contextC.teraType]);
-    //const teraType = monStateStore(useShallow((state) => state.teraType));
     const teraType = mons[pC.containerIndex][monID].teraType;
-    //const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
-    //const teraActive = monStateStore(useShallow((state) => state.teraActive));
     const teraActive = mons[pC.containerIndex][monID].teraActive;
     const moveGraphicDataMemo = useCallback((type, teratype, teraactive) => moveGraphicData(type, teratype, teraactive), []);
     const moveTypeGetMemo = useCallback((move) => gen.moves.get(toID(move)).type, []);
@@ -287,7 +261,6 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function MoveDropdown({ moveNum, monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -295,22 +268,6 @@ function moveGraphicData(type, teratype, teraactive) {
       <option value={move} key={index}>{move}</option>
     ), []);
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
-    //const movesMemo = useMemo(() => contextC.moves, [contextC.moves]);
-    //const moves = monStateStore(useShallow((state) => state.moves));
-    //const setMoves = monStateStore(useShallow((state) => state.setMoves));
-
-    //var changeMove = useCallback((event) => contextC.setMove(event.target.value, moveNumMemo), [movesMemo, moveNumMemo, contextC]);
-
-    //function setMove(move, moveNum){
-    //  var movesCopy = {
-    //      1: moves["1"],
-    //      2: moves["2"],
-    //      3: moves["3"],
-    //      4: moves["4"],
-    //  }
-    //  movesCopy[moveNum.toString()] = move;
-    //  setMoves(movesCopy);
-  //  }
 
     return (
       <select value={mons[pC.containerIndex][monID].moves[moveNumMemo]} style={{ marginRight: "auto", position: "relative" }} onChange={(e) => { var movesTemp = {
@@ -324,13 +281,8 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function MoveSelector({ moveNum, monID }) {
-    //const monStateStore = useMemo(() => ms, [ms]);
-    //const c = useContext(context);
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
     const sideCode = useContext(partyContext).sideCodeMemo;
-    const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const id = monStateStore(useShallow((state) => state.id));
   
     return (
         <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={sideCode + monID.toString() + "moveicon" + moveNumMemo.toString()}  moveNum={moveNumMemo} monID={monID} ></MoveIcon><MoveDropdown key={sideCode + monID.toString() + "movepicker" + moveNumMemo.toString()}  moveNum={moveNumMemo} monID={monID} ></MoveDropdown></div>
@@ -343,10 +295,7 @@ function moveGraphicData(type, teratype, teraactive) {
     //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
 
-    //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
-    //const species = monStateStore(useShallow((state) => state.species));
     const species = mons[pC.containerIndex][monID].species;
 
     const imgSrcMemo = useMemo(() => {
@@ -369,7 +318,6 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function SpeciesDropdown({ monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -381,23 +329,7 @@ function moveGraphicData(type, teratype, teraactive) {
         key: index,
       })
     ), []);
-    //const speciesMemo = useMemo(() => contextC.species, [contextC.species]);
-    //const species = monStateStore(useShallow((state) => state.species));
-    //const species = pC.mons[pC.containerIndex][monID].species;
-    //const setSpeciesName = monStateStore(useShallow((state) => state.setSpeciesName));
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
-
-    /*
-    var changeSpecies = useCallback((option, reason) => {
-      if (reason.action === "set-value" ||
-        reason.action === "input-blur" ||
-        reason.action === "menu-close") {
-          return;
-      }
-      contextC.setSpecies(option.value)}, [contextC]);
-
-    */
 
     return (
       <Select key={sideCode + monID.toString() + "speciesselect"} menuPosition="fixed" options={options} classNamePrefix="species" value={options.find(x => x.value === mons[pC.containerIndex][monID].species)} onChange={(o) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateSpecies", species: o.value, index: monID }); }} onSelectResetsInput={false} menuPortalTarget={document.body}
@@ -495,13 +427,7 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function SpeciesSelector({ monID }) {
-    //const monStateStore = useMemo(() => ms, [ms]);
-    const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const c = useContext(context);
-
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
 
     return (
       <div style={{display: "flex", "lineHeight": "34px"}}><SpeciesIcon key={sideCode + monID.toString() + "speciesicon"}  monID={monID} ></SpeciesIcon><SpeciesDropdown key={sideCode + monID.toString() + "speciespicker"}  monID={monID} ></SpeciesDropdown></div>
@@ -512,21 +438,13 @@ function moveGraphicData(type, teratype, teraactive) {
 
   // ABILITY SELECTOR
   function AbilityDropdown({ monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
 
-    //const ability = monStateStore(useShallow((state) => state.ability));
-    //const setAbility = monStateStore(useShallow((state) => state.setAbility));
-
     const options = useMemo(() => sortedAbilities.map((abil, index) =>
         <option value={abil} key={index}>{abil}</option>
     ), []);
-
-    //const abilityMemo = useMemo(() => contextC.ability, [contextC.ability]);
-
-    //var changeAbility = useCallback((event) => contextC.updateAbility(event.target.value), [contextC]);
 
     return (
         <select value={mons[pC.containerIndex][monID].ability} style={{marginLeft: "10px", marginRight: "auto"}} onChange={(e) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateAbility", ability: e.target.value, index: monID }); }}>
@@ -535,12 +453,7 @@ function moveGraphicData(type, teratype, teraactive) {
     )
   }
   function AbilitySelector({ monID }) {
-    const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const monStateStore = useMemo(() => ms, [ms]);
-    //const c = useContext(context);
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
 
     return (
         <div style={{display: "flex"}}>Ability: <AbilityDropdown key={sideCode + monID.toString() + "abilitypicker"}  monID={monID} ></AbilityDropdown></div>
@@ -550,7 +463,6 @@ function moveGraphicData(type, teratype, teraactive) {
 
   // NATURE SELECTOR
   function NatureDropdown({ monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -559,12 +471,6 @@ function moveGraphicData(type, teratype, teraactive) {
         <option value={nat.name} key={index}>{nat.name}</option>
     ), []);
 
-    //const natureMemo = useMemo(() => contextC.nature, [contextC.nature]);
-    //const nature = monStateStore(useShallow((state) => state.nature));
-    //const setNature = monStateStore(useShallow((state) => state.setNature));
-
-    //var updateNature = useCallback((event) => contextC.changeNature(event.target.value), [contextC]);
-
     return (
         <select value={mons[pC.containerIndex][monID].nature} style={{marginLeft: "10px", marginRight: "auto"}} onChange={(e) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateNature", nature: e.target.value, index: monID }); }}>
             {options}
@@ -572,12 +478,7 @@ function moveGraphicData(type, teratype, teraactive) {
     )
   }
   function NatureSelector({ monID }) {
-    const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const monStateStore = useMemo(() => ms, [ms]);
-    //const c = useContext(context);
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
 
     return (
         <div style={{display: "flex"}}>Nature: <NatureDropdown key={sideCode + monID.toString() + "naturepicker"}  monID={monID} ></NatureDropdown></div>
@@ -585,7 +486,6 @@ function moveGraphicData(type, teratype, teraactive) {
   }
 
   function StatusDropdown({ monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -599,9 +499,6 @@ function moveGraphicData(type, teratype, teraactive) {
                                     {disp: "Frozen", value: "frz"}].map((s, index) =>
       <option value={s.value} key={index}>{s.disp}</option>
     )), []);
-    
-    //const status = monStateStore(useShallow((state) => state.status));
-    //const setStatus = monStateStore(useShallow((state) => state.setStatus));
 
     return (
       <select value={mons[pC.containerIndex][monID].status} style={{marginLeft: "10px", marginRight: "auto"}} onChange={(e) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateStatus", status: e.target.value, index: monID }); }}>
@@ -610,11 +507,7 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function StatusSelector({ monID }){
-    const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const monStateStore = useMemo(() => ms, [ms]);
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
 
     return (
       <div style={{display: "flex"}}>Status: <StatusDropdown key={sideCode + monID.toString() + "statuspicker"}  monID={monID} ></StatusDropdown></div>
@@ -625,14 +518,8 @@ function moveGraphicData(type, teratype, teraactive) {
 
   // TERA TYPE SELECTOR
   function TeraIcon({ monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-
-    //const contextMemo = useMemo(() => contextC, [contextC]);
-    //const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
-    //const teraType = monStateStore(useShallow((state) => state.teraType));
     const teraType = mons[pC.containerIndex][monID].teraType;
     const imgSrcMemo = useMemo(() => process.env.PUBLIC_URL + "/img/tera_" + teraType.toLowerCase() + "_gem.png", [teraType]);
     
@@ -646,7 +533,6 @@ function moveGraphicData(type, teratype, teraactive) {
       );
   }
   function TeraDropdown({ monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -655,13 +541,6 @@ function moveGraphicData(type, teratype, teraactive) {
         <option value={t} key={index}>{t}</option>
     );
 
-    //const contextMemo = useMemo(() => contextC, [contextC]);
-    //const teraTypeMemo = useMemo(() => contextMemo.teraType, [contextMemo.teraType]);
-    //const teraType = monStateStore(useShallow((state) => state.teraType));
-    //const setTeraType = monStateStore(useShallow((state) => state.setTeraType));
-
-    //var updateTeraType = useCallback((event) => contextMemo.changeTeraType(event.target.value), [contextMemo]);
-
     return (
         <select value={mons[pC.containerIndex][monID].teraType} onChange={(e) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateTeraType", teraType: e.target.value, index: monID }); }}>
             {options}
@@ -669,27 +548,16 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function TeraToggle({ monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
-
-    //const teraActiveMemo = useMemo(() => contextC.teraActive, [contextC.teraActive]);
-    //const teraActive = monStateStore(useShallow((state) => state.teraActive));
-    //const setTeraStatus = monStateStore(useShallow((state) => state.setTeraStatus));
-    //var updateTeraStatus = useCallback((event) => contextC.toggleTera(event.target.checked), [contextC]);
 
     return (
         <input type="checkbox" onChange={(e) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateTeraActive", teraActive: e.target.checked, index: monID }); }} checked={mons[pC.containerIndex][monID].teraActive}></input>
     );
   }
   function TeraTypeSelector({ monID }){
-    const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const monStateStore = useMemo(() => ms, [ms]);
-    //const c = useContext(context);
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
 
     return (
         <div style={{display: "flex", "lineHeight": "30px"}}>Tera Type: <TeraIcon key={sideCode + monID.toString() + "teraicon"}  monID={monID} ></TeraIcon><TeraDropdown key={sideCode + monID.toString() + "terapicker"}  monID={monID} ></TeraDropdown><TeraToggle key={sideCode + monID.toString() + "teratoggle"}  monID={monID} ></TeraToggle></div>
@@ -708,40 +576,6 @@ function moveGraphicData(type, teratype, teraactive) {
     const monIDMemo = useMemo(() => monID, [monID]);
     const statMemo = useMemo(() => stat, [stat]);
 
-    //const statMemo = useMemo(() => stat, [stat]);
-    //const evsMemo = useMemo(() => contextC.evs, [contextC]);
-    //const evs = monStateStore(useShallow((state) => state.evs));
-    //const setEVs = monStateStore(useShallow((state) => state.setEVs));
-
-    //var updateEV = useCallback((event) => contextC.setEV(event.target.value, statMemo), [evsMemo, statMemo, contextC]);
-
-    //function updateEVLocal(event){
-    //  contextC.setEV(event.target.value, statMemo);
-    //}
-    /*
-
-    function setEV(ev, stat){
-      var statsCopy = {
-          hp: evs["hp"],
-          atk: evs["atk"],
-          def: evs["def"],
-          spa: evs["spa"],
-          spd: evs["spd"],
-          spe: evs["spe"],
-      }
-      statsCopy[stat] = Math.min(Math.max(ev, 0), 252);
-      setEVs(statsCopy);
-      //updateMon();
-  }
-
-    useEffect(() => {
-      const delayDebounceFn = setTimeout(() => {
-      }, 5000)
-  
-      return () => clearTimeout(delayDebounceFn)
-    }, [evs]);
-    */
-
     return (
         <input default="0" pattern="[0-9]*" min="0" max="252" step="4" type="number" placeholder="0" onBlur={(e) => { var evsTemp = {
           hp: mons[pC.containerIndex][monIDMemo].EVs["hp"],
@@ -754,39 +588,12 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function IVInput({ stat, monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
 
     const statMemo = useMemo(() => stat, [stat]);
     const monIDMemo = useMemo(() => monID, [monID]);
-    //const ivsMemo = useMemo(() => contextC.ivs, [contextC]);
-    //const ivs = monStateStore(useShallow((state) => state.ivs));
-    //const setIVs = monStateStore(useShallow((state) => state.setIVs));
-
-    //var updateIV = useCallback((event) => contextC.setIV(event.target.value, statMemo), [ivsMemo, statMemo, contextC]);
-
-    //function setIV(iv, stat){
-    //  var statsCopy = {
-    //      hp: ivs["hp"],
-    //      atk: ivs["atk"],
-    //      def: ivs["def"],
-    //      spa: ivs["spa"],
-    //      spd: ivs["spd"],
-    //      spe: ivs["spe"],
-    //  }
-    //  statsCopy[stat] = Math.min(Math.max(iv, 0), 31);
-    //  setIVs(statsCopy);
-      //updateMon();
-  //}
-
-    //useEffect(() => {
-    //  const delayDebounceFn = setTimeout(() => {
-    //  }, 5000)
-  
-    //  return () => clearTimeout(delayDebounceFn)
-    //}, [ivs]);
 
     return (
         <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onBlur={(e) => { var ivsTemp = {
@@ -800,7 +607,6 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function BoostDropdown({ stat, monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -810,26 +616,6 @@ function moveGraphicData(type, teratype, teraactive) {
 
     const statMemo = useMemo(() => stat, [stat]);
     const monIDMemo = useMemo(() => monID, [monID]);
-    //const boostsMemo = useMemo(() => contextC.boosts, [contextC.boosts]);
-    //const boosts = monStateStore(useShallow((state) => state.boosts));
-    //const boosts = pC.mons[pC.containerIndex][monID].boosts;
-    //const setBoosts = monStateStore(useShallow((state) => state.setBoosts));
-
-    //function setBoost(boost, stat){
-    //  var statsCopy = {
-    //      hp: parseInt(boosts["hp"]),
-    //      atk: parseInt(boosts["atk"]),
-    //      def: parseInt(boosts["def"]),
-    //      spa: parseInt(boosts["spa"]),
-    //      spd: parseInt(boosts["spd"]),
-    //      spe: parseInt(boosts["spe"]),
-    //  }
-    //  statsCopy[stat] = boost;
-    //  setBoosts(statsCopy);
-      //updateMon();
-  //}
-
-    //var updateBoost = useCallback((event) => contextC.setBoost(event.target.value, statMemo), [boostsMemo, statMemo, contextC]);
 
     return (
         <select value={mons[pC.containerIndex][monIDMemo].boosts[statMemo]} onChange={(e) => { var boostsTemp = {
@@ -845,13 +631,9 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function StatsTableRow({ stat, statIndex, gameType, monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const c = useContext(context);
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
 
     const statMemo = useMemo(() => stat, [stat])
     const statIndexMemo = useMemo(() => statIndex, [statIndex]);
@@ -860,21 +642,10 @@ function moveGraphicData(type, teratype, teraactive) {
     
     var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown key={sideCode + monIDMemo.toString() + "boost" + statMemo}  stat={statMemo} monID={monIDMemo} ></BoostDropdown></td> : <td></td>;
 
-    //const speciesMemo = useMemo(() => c.species, [c.species]);
-    //const evsMemo = useMemo(() => c.evs, [c.evs]);
-    //const evs = monStateStore(useShallow((state) => state.evs));
     const evs = mons[pC.containerIndex][monIDMemo].EVs;
-    //const ivsMemo = useMemo(() => c.ivs, [c.ivs]);
-    //const ivs = monStateStore(useShallow((state) => state.ivs));
     const ivs = mons[pC.containerIndex][monIDMemo].IVs;
-    //const natureMemo = useMemo(() => c.nature, [c.nature]);
-    //const nature = monStateStore(useShallow((state) => state.nature));
     const nature = mons[pC.containerIndex][monIDMemo].nature;
-    //const boostsMemo = useMemo(() => c.boosts, [c.boosts]);
-    //const boosts = monStateStore(useShallow((state) => state.boosts));
     const boosts = mons[pC.containerIndex][monIDMemo].boosts;
-    //const baseStatsMemo = useMemo(() => c.baseStats, [c.baseStats]);
-    //const baseStats = monStateStore(useShallow((state) => state.baseStats));
     const baseStats = gen.species.get(toID(mons[pC.containerIndex][monIDMemo].species)).baseStats;
     const plus = useMemo(() => gen.natures.get(toID(nature)).plus, [nature]);
     const minus = useMemo(() => gen.natures.get(toID(nature)).minus, [nature]);
@@ -894,13 +665,9 @@ function moveGraphicData(type, teratype, teraactive) {
     );
   }
   function StatsTable({ gameType, monID }){
-    const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const monStateStore = useMemo(() => ms, [ms]);
     const gameTypeMemo = useMemo(() => gameType, [gameType]);
     const monIDMemo = useMemo(() => monID, [monID]);
     const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
 
     //const rows = statList.map((stat, index) =>
     //    <StatsTableRow stat={stat} statIndex={index} key={sideCode + monID.toString() + stat}  gameType={gameTypeMemo} monID={monID} ></StatsTableRow>
@@ -922,22 +689,9 @@ function moveGraphicData(type, teratype, teraactive) {
 
   // NOTES INPUT
   function NotesInput({ monID }){
-    //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
-    //const c = useContext(context);
-    const sideCode = useContext(partyContext).sideCodeMemo;
-    //const id = monStateStore(useShallow((state) => state.id));
-
-    //const notes = monStateStore(useShallow((state) => state.notes));
-    //const setNotes = monStateStore(useShallow((state) => state.setNotes));
-
-    //function reviseNotes(event){
-    //    c.updateNotes(event.target.value);
-    //}
-
-    //var reviseNotes = useCallback((event) => c.updateNotes(event.target.value), [c]);
     
     return (
         <div style={{display: "flex"}}>Notes: <input style={{ marginLeft: "10px" }} onBlur={(e) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateNotes", notes: e.target.value, index: monID }); }} defaultValue={mons[pC.containerIndex][monID].notes}></input></div>
@@ -945,295 +699,11 @@ function moveGraphicData(type, teratype, teraactive) {
   }
 
   // MAIN PANEL
-  export function PokemonPanel({ passedNotes, monID, monSide, pSpecies, pNature, pTeraType, pAbility, pTeraActive, pItem, pMoves, pEVs, pIVs, pBoosts, pStatus }) {
-    //var [mon, setMon] = useState(passedMon);
+  export function PokemonPanel({ monID, monSide}) {
     var pC = useContext(partyContext);
-    const mons = useContext(monDispatchContext).totalMons;
-    const setTotalMons = useContext(monDispatchContext).setTotalMons;
 
-    
-    //const [monStateStore] = useState(() => create((set) => ({
-    //  sideCode: monSide,
-    //  id: monID,
-      //species: pSpecies,
-      //setSpeciesName: (s) => set({ species: s }),
-      //baseStats: gen.species.get(toID(pSpecies)).baseStats,
-      //setBaseStats: (bs) => set({ baseStats: bs }),
-      //nature: pNature,
-      //setNature: (n) => set({ nature: n }),
-      //teraType: (pTeraType) ? pTeraType : ((!pSpecies.includes("Terapagos")) ? ((!pSpecies.includes("Ogerpon-")) ?  gen.species.get(toID(pSpecies)).types[0] : ((pSpecies.includes("Teal")) ? "Grass" : gen.species.get(toID(pSpecies)).types[1])) : "Stellar"),
-      //setTeraType: (tt) => set({ teraType: tt }),
-      //ability: pAbility,
-      //setAbility: (a) => set({ ability: a }),
-      //teraActive: pTeraActive,
-      //setTeraStatus: (ta) => set({ teraActive: ta }),
-      //itemName: pItem,
-      //setItemName: (i) => set({ itemName: i }),
-      //changeItem: (event) => set({ itemName: event.target.value }),
-      //moves: { 
-      //  1: (pMoves["1"] !== undefined) ? pMoves["1"] : "(No Move)",
-      //  2: (pMoves["2"] !== undefined) ? pMoves["2"] : "(No Move)",
-      //  3: (pMoves["3"] !== undefined) ? pMoves["3"] : "(No Move)",
-      //  4: (pMoves["4"] !== undefined) ? pMoves["4"] : "(No Move)"},
-      //setMoves: (m) => set({ moves: m }),
-      //evs: { hp: pEVs["hp"], atk: pEVs["atk"], def: pEVs["def"], spa: pEVs["spa"], spd: pEVs["spd"], spe: pEVs["spe"] },
-      //setEVs: (e) => set({ evs: e }),
-      //ivs: { hp: pIVs["hp"], atk: pIVs["atk"], def: pIVs["def"], spa: pIVs["spa"], spd: pIVs["spd"], spe: pIVs["spe"] },
-      //setIVs: (i) => set({ ivs: i }),
-      //boosts: { hp: pBoosts["hp"], atk: pBoosts["atk"], def: pBoosts["def"], spa: pBoosts["spa"], spd: pBoosts["spd"], spe: pBoosts["spe"] },
-      //setBoosts: (b) => set({ boosts: b }),
-      //status: pStatus,
-      //setStatus: (s) => set({ status: s }),
-      //notes: passedNotes,
-      //setNotes: (n) => set({ notes: n }),
-    //})));
-    
-
-    //const [sideCode] = useState(monSide);
-    //const sideCode = useContext(partyContext).sideCodeMemo;
     const sideCode = useMemo(() => monSide, [monSide]);
-    //const [id] = useState(monID);
-    //const id = monStateStore(useShallow((state) => state.id));
-    //const id = useMemo(() => monID, [monID]);
-    //const [species, setSpeciesName] = useState(pSpecies);
-    //const species = monStateStore(useShallow((state) => state.species));
-    //const setSpeciesName = monStateStore(useShallow((state) => state.setSpeciesName));
-    //const [baseStats, setBaseStats] = useState(gen.species.get(toID(pSpecies)).baseStats);
-    //const baseStats = monStateStore(useShallow((state) => state.baseStats));
-    //const setBaseStats = monStateStore(useShallow((state) => state.setBaseStats));
-    //const [nature, setNature] = useState(pNature);
-    //const nature = monStateStore(useShallow((state) => state.nature));
-    //const setNature = monStateStore(useShallow((state) => state.setNature));
-    //const [teraType, setTeraType] = useState((pTeraType) ? pTeraType : ((!pSpecies.includes("Terapagos")) ? ((!pSpecies.includes("Ogerpon-")) ?  gen.species.get(toID(pSpecies)).types[0] : ((pSpecies.includes("Teal")) ? "Grass" : gen.species.get(toID(pSpecies)).types[1])) : "Stellar"));
-    //const teraType = monStateStore(useShallow((state) => state.teraType));
-    //const setTeraType = monStateStore(useShallow((state) => state.setTeraType));
-    //const [ability, setAbility] = useState(pAbility);
-    //const ability = monStateStore(useShallow((state) => state.ability));
-    //const setAbility = monStateStore(useShallow((state) => state.setAbility));
-    //const [teraActive, setTeraStatus] = useState(pTeraActive);
-    //const teraActive = monStateStore(useShallow((state) => state.teraActive));
-    //const setTeraStatus = monStateStore(useShallow((state) => state.setTeraStatus));
-    //const [itemName, setItemName] = useState((pItem) ? pItem : "(no item)");
-    //const itemName = monStateStore(useShallow((state) => state.itemName));
-    //const setItemName = monStateStore(useShallow((state) => state.setItemName));
-    //var [moves, setMoves] = useState({ 
-    //    1: (pMoves["1"] !== undefined) ? pMoves["1"] : "(No Move)",
-    //    2: (pMoves["2"] !== undefined) ? pMoves["2"] : "(No Move)",
-    //    3: (pMoves["3"] !== undefined) ? pMoves["3"] : "(No Move)",
-    //    4: (pMoves["4"] !== undefined) ? pMoves["4"] : "(No Move)"});
-    //const moves = monStateStore(useShallow((state) => state.moves));
-    //const setMoves = monStateStore(useShallow((state) => state.setMoves));
-    //var [evs, setEVs] = useState({ hp: pEVs["hp"], atk: pEVs["atk"], def: pEVs["def"], spa: pEVs["spa"], spd: pEVs["spd"], spe: pEVs["spe"] });
-    //const evs = monStateStore(useShallow((state) => state.evs));
-    //const setEVs = monStateStore(useShallow((state) => state.setEVs));
-    //var [ivs, setIVs] = useState({ hp: pIVs["hp"], atk: pIVs["atk"], def: pIVs["def"], spa: pIVs["spa"], spd: pIVs["spd"], spe: pIVs["spe"] });
-    //const ivs = monStateStore(useShallow((state) => state.ivs));
-    //const setIVs = monStateStore(useShallow((state) => state.setIVs));
-    //var [boosts, setBoosts] = useState({ hp: pBoosts["hp"], atk: pBoosts["atk"], def: pBoosts["def"], spa: pBoosts["spa"], spd: pBoosts["spd"], spe: pBoosts["spe"] });
-    //const boosts = monStateStore(useShallow((state) => state.boosts));
-    //const setBoosts = monStateStore(useShallow((state) => state.setBoosts));
-    //var [notes, setNotes] = useState(passedNotes);
-    //const status = monStateStore(useShallow((state) => state.status));
-    //const setStatus = monStateStore(useShallow((state) => state.setStatus));
-    //const notes = monStateStore(useShallow((state) => state.notes));
-    //const setNotes = monStateStore(useShallow((state) => state.setNotes));
-
-    //const [, forceUpdate] = useReducer(x => x + 1, 0);
-
-    //console.log("incoming species for ", id, " is ", pSpecies, " and is it the same as previous value ", species, "? ", (pSpecies === species));
-
-    //console.log("mon index "+monID.toString()+" reinitialized with the following species:");
-    //console.log(species);
     
-
-    /*
-    function updateMon(){
-        forceUpdate();
-        //console.log(species);
-        var newMon = new Pokemon(gen, species, {
-            nature: nature,
-            ability: ability,
-            item: itemName,
-            moves: moves,
-            evs: evs,
-            ivs: ivs,
-            boosts: boosts,
-            teraType: (teraActive) ? teraType : undefined,
-        });
-        //setMon(newMon);
-        //pC.setMon(newMon, id);
-    }
-    */
-
-    //useEffect( () => {
-    //  pC.monSide = monSide;
-    //}, [monSide]);
-
-    //function setItem(item){
-    //    setItemName(item);
-        //updateMon();
-    //}
-
-    //useEffect( () => {
-    //  pC.setItem(itemName, id);
-    //}, [itemName]);
-
-    //function setSpecies(s){
-    //    setSpeciesName(s);
-    //    var newBaseStats = gen.species.get(toID(s)).baseStats;
-    //    setBaseStats(newBaseStats);
-    //    var newTeraType = ((!s.includes("Terapagos")) ? ((!s.includes("Ogerpon-")) ? gen.species.get(toID(s)).types[0] : ((s.includes("Teal")) ? "Grass" : gen.species.get(toID(s)).types[1])) : "Stellar");
-    //    changeTeraType(newTeraType);
-    //    var newAbility = gen.species.get(toID(s)).abilities[0];
-    //    updateAbility(newAbility);
-    //    setTeraStatus(((s.includes("-Tera") && !s.includes("pagos")) || s.includes("Stellar")) ? true : false);
-        //updateMon();
-
-    //}
-
-    //useEffect( () => {
-    //  pC.setSpecie(species, id);
-    //}, [species]);
-
-    //function updateAbility(abil){
-    //    setAbility(abil);
-        //updateMon();
-    //}
-
-    //useEffect( () => {
-    //  pC.setAbility(ability, id);
-    //}, [ability]);
-
-    //function toggleTera(status){
-    //    setTeraStatus(status);
-        //updateMon();
-    //}
-
-    //useEffect( () => {
-    //  pC.setTeraActive(teraActive, id);
-    //}, [teraActive]);
-
-    //function changeTeraType(type){
-    //    setTeraType(type);
-        //updateMon();
-    //}
-
-    //useEffect( () => {
-    //  pC.setTeraType(teraType, id);
-    //}, [teraType]);
-
-    //function changeNature(nat){
-     //   setNature(nat);
-        //updateMon();
-    //}
-
-    //useEffect( () => {
-    //  pC.setNature(nature, id);
-    //}, [nature]);
-
-    //function setMove(move, moveNum){
-    //    var movesCopy = {
-    //        1: moves["1"],
-    //        2: moves["2"],
-    //        3: moves["3"],
-    //        4: moves["4"],
-    //    }
-    //    movesCopy[moveNum.toString()] = move;
-    //    setMoves(movesCopy);
-        //updateMon();
-        
-    //}
-
-    //useEffect( () => {
-      //console.log("passing up moves ",moves," to mon ",monID," of ",monSide,"s");
-    //  pC.setMoveset(moves, id);
-    //}, [moves]);
-
-    //function setEV(ev, stat){
-    //    var statsCopy = {
-    //        hp: evs["hp"],
-    //        atk: evs["atk"],
-    //        def: evs["def"],
-    //        spa: evs["spa"],
-    //        spd: evs["spd"],
-    //        spe: evs["spe"],
-     //   }
-      //  statsCopy[stat] = Math.min(Math.max(ev, 0), 252);
-       // setEVs(statsCopy);
-        ////updateMon();
-    //}
-
-    //useEffect( () => {
-    //  pC.setEVs(evs, id);
-    //}, [evs]);
-
-    //function setIV(iv, stat){
-    //    var statsCopy = {
-    //        hp: ivs["hp"],
-    //        atk: ivs["atk"],
-    //        def: ivs["def"],
-     //       spa: ivs["spa"],
-     //       spd: ivs["spd"],
-      //      spe: ivs["spe"],
-      //  }
-       // statsCopy[stat] = Math.min(Math.max(iv, 0), 31);
-        //setIVs(statsCopy);
-        ////updateMon();
-    //}
-
-    //useEffect( () => {
-    //  pC.setIVs(ivs, id);
-    //}, [ivs]);
-
-    //function setBoost(boost, stat){
-    //    var statsCopy = {
-    //        hp: parseInt(boosts["hp"]),
-    //        atk: parseInt(boosts["atk"]),
-    //        def: parseInt(boosts["def"]),
-    //        spa: parseInt(boosts["spa"]),
-     //       spd: parseInt(boosts["spd"]),
-    //        spe: parseInt(boosts["spe"]),
-    //    }
-     //   statsCopy[stat] = boost;
-     //   setBoosts(statsCopy);
-        //updateMon();
-    //}
-
-    //useEffect( () => {
-    //  pC.setBoosts(boosts, id);
-    //}, [boosts]);
-
-    //useEffect( () => {
-     // pC.setStatus(status, id);
-    //}, [status]);
-
-    //function updateNotes(info){
-    //  setNotes(info);
-   // }
-
-    //useEffect( () => {
-    //  pC.setMonNotes(notes, id);
-    //}, [notes]);
-    /*
-    useEffect( () => {
-      var newMon = new Pokemon(gen, species, {
-        nature: nature,
-        ability: ability,
-        item: itemName,
-        moves: moves,
-        evs: evs,
-        ivs: ivs,
-        boosts: boosts,
-        teraType: (teraActive) ? teraType : undefined,
-      });
-      //console.log("MON UPDATED");
-      pC.setParty([...pC.party.slice(0,id), newMon, ...pC.party.slice(id+1)]);
-      //pC.setMonNotes([...pC.notes.slice(0, id), notes, ...pC.notes.slice(id+1)]);
-    }, [fetchDataSwitch]);
-    */
-  
-    //     <context.Provider value={{ sideCode, setItem, setSpecies, setMove, changeTeraType, toggleTera, changeNature, updateAbility, setEV, setIV, setBoost, updateNotes, id, notes, boosts, ivs, evs, ability, nature, teraType, teraActive, itemName, moves, species, baseStats }}>
-
     return (
       <div style={{display: "flex"}}>
         <div>

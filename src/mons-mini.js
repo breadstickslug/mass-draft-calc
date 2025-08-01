@@ -6,19 +6,6 @@ export function MonsMini({ sideCode, importedSpecies, visible, containerIndex })
     const importedMemo = useMemo(() => importedSpecies, [importedSpecies]);
     const visibleMemo = useMemo(() => visible, [visible]);
     const mons = useContext(monDispatchContext).totalMons;
-    //const [species, setSpecies] = useState((importedMemo) ? importedMemo : []);
-
-    /*
-    const importTeam = useCallback(() => {
-            if (Object.keys(importedMemo).length > 0){
-                setSpecies(importedMemo);
-            }
-    }, [importedMemo]);
-    */
-
-    //useEffect(() => {
-    //    setSpecies(importedMemo);
-    //}, [importedMemo]);
 
     return (
         <div className="minified" style={{ position: "relative", top: "2px", display: (visibleMemo) ? "inline-block" : "none", minWidth: "100px", height: "30px"}}>

@@ -3,7 +3,7 @@ import {Generations, toID, Field, Side} from '@smogon/calc';
 import './App.css';
 import { MonsContainer } from "./mons-container.js";
 import { CalcTable } from "./calc-table.js";
-import React, { useState, useMemo, useCallback, useEffect, useReducer } from 'react';
+import React, { useState, useMemo, useContext, useCallback, useEffect, useReducer } from 'react';
 import {Sets, Teams} from '@pkmn/sets';
 
 const gen = Generations.get(9);
@@ -53,13 +53,6 @@ function ImportContainer({ sideCode, importFunc }) {
 
   const updateImported = useCallback((event) => { setImportText(event.target.value); }, [setImportText]);
 
-  
-
-
-  //useEffect(() => {
-  //  console.log(importText); 
-  //}, [importText]);
-
   return (
     <div style={{ display: "flex", height: "100%"}}>
       <div style={{ marginTop: "auto", marginBottom: "auto", marginLeft: "auto", marginRight: "auto"}}>
@@ -76,10 +69,6 @@ function ExportContainer({ sideCode, exportString }) {
   const sideMemo = useMemo(() => sideCode, [sideCode]);
   const exportStringMemo = useMemo(() => exportString, [exportString]);
 
-  //const exportFuncMemo = useCallback(() => { exportFunc(exportText) }, [exportText, exportFunc]);
-
-  //const updateExported = useCallback((event) => { setExportText(event.target.value); }, [setExportText]);
-
   return (
     <div style={{ display: "flex", height: "100%"}}>
       <div style={{ marginTop: "auto", marginBottom: "auto", marginLeft: "auto", marginRight: "auto"}}>
@@ -89,7 +78,7 @@ function ExportContainer({ sideCode, exportString }) {
   );
 }
 
-function TabManager({ sideCode, containerIndex, updateMons, mons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType, swapped, openFeedback, panelOpen, setTotalMons }) {
+function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType, swapped, openFeedback, panelOpen }) {
   const [tabsActive, setTabsActive] = useState([true, false, false]);
   const [importedTeamStorage, setImportedTeamStorage] = useState({});
   const sideMemo = useMemo(() => sideCode, [sideCode]);
@@ -100,10 +89,9 @@ function TabManager({ sideCode, containerIndex, updateMons, mons, monsPanelOpen,
   const monsPanelOpenMemo = useMemo(() => monsPanelOpen, [monsPanelOpen]);
   const gameTypeMemo = useMemo(() => gameType, [gameType]);
   const swappedMemo = useMemo(() => swapped, [swapped]);
-  //const feedbackMemo = useMemo((b) => openFeedback(b), [openFeedback]);
-  //const attackerMonsMemo = useMemo(() => attackerMons, [attackerMons]);
-  //const defenderMonsMemo = useMemo(() => defenderMons, [defenderMons]);
   const [exportString, setExportString] = useState("");
+  const setTotalMons = useContext(monDispatchContext).setTotalMons;
+
 
   useEffect(() => {if (!monsPanelOpenMemo){ setContainerCollapsed(true); forceClosedContainer(); } }, [monsPanelOpenMemo]);
   
@@ -165,15 +153,6 @@ function TabManager({ sideCode, containerIndex, updateMons, mons, monsPanelOpen,
     if (input && Teams.importTeam(input)) {
       fadeImported();
       var importedTeam = Teams.importTeam(input.trim()).team;
-      var species = [];
-      var natures = [];
-      var abilities = [];
-      var items = [];
-      var teraTypes = [];
-      var moves = [];
-      var evs = [];
-      var ivs = [];
-      var notes = [];
       if (importedTeam.length > 0) { setTotalMons({ containerIndex: containerIndex, type: "wipe" }); }
       for (const mon of importedTeam) {
         if (gen.species.get((toID(mon.species)))){ // valid mon
@@ -217,49 +196,8 @@ function TabManager({ sideCode, containerIndex, updateMons, mons, monsPanelOpen,
             notes: (mon.name) ? mon.name : "",
             status: "(none)",
           }});
-          /*
-          species.push(mon.species);
-          natures.push((mon.nature && gen.natures.get((toID(mon.nature)))) ? mon.nature : "Serious");
-          abilities.push((mon.ability && gen.abilities.get((toID(mon.ability)))) ? mon.ability : gen.species.get((toID(mon.species))).abilities[0]);
-          items.push((mon.item && gen.items.get((toID(mon.item)))) ? mon.item : "(no item)");
-          teraTypes.push((mon.teraType) ? mon.teraType : undefined);
-          moves.push({
-            1: (mon.moves && mon.moves[0] && gen.moves.get((toID(mon.moves[0])))) ? mon.moves[0] : "(No Move)",
-            2: (mon.moves && mon.moves[1] && gen.moves.get((toID(mon.moves[1])))) ? mon.moves[1] : "(No Move)",
-            3: (mon.moves && mon.moves[2] && gen.moves.get((toID(mon.moves[2])))) ? mon.moves[2] : "(No Move)",
-            4: (mon.moves && mon.moves[3] && gen.moves.get((toID(mon.moves[3])))) ? mon.moves[3] : "(No Move)",
-          });
-          evs.push({
-            hp: (mon.evs && mon.evs["hp"] !== undefined && Number.isInteger(mon.evs["hp"])) ? mon.evs["hp"] : 0,
-            atk: (mon.evs && mon.evs["atk"] !== undefined && Number.isInteger(mon.evs["atk"])) ? mon.evs["atk"] : 0,
-            def: (mon.evs && mon.evs["def"] !== undefined && Number.isInteger(mon.evs["def"])) ? mon.evs["def"] : 0,
-            spa: (mon.evs && mon.evs["spa"] !== undefined && Number.isInteger(mon.evs["spa"])) ? mon.evs["spa"] : 0,
-            spd: (mon.evs && mon.evs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? mon.evs["spd"] : 0,
-            spe: (mon.evs && mon.evs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? mon.evs["spe"] : 0,
-          });
-          ivs.push({
-            hp: (mon.ivs && mon.ivs["hp"] !== undefined && Number.isInteger(mon.ivs["hp"])) ? mon.ivs["hp"] : 31,
-            atk: (mon.ivs && mon.ivs["atk"] !== undefined && Number.isInteger(mon.ivs["atk"])) ? mon.ivs["atk"] : 31,
-            def: (mon.ivs && mon.ivs["def"] !== undefined && Number.isInteger(mon.ivs["def"])) ? mon.ivs["def"] : 31,
-            spa: (mon.ivs && mon.ivs["spa"] !== undefined && Number.isInteger(mon.ivs["spa"])) ? mon.ivs["spa"] : 31,
-            spd: (mon.ivs && mon.ivs["spd"] !== undefined && Number.isInteger(mon.ivs["spd"])) ? mon.ivs["spd"] : 31,
-            spe: (mon.ivs && mon.ivs["spe"] !== undefined && Number.isInteger(mon.ivs["spe"])) ? mon.ivs["spe"] : 31,
-          });
-          notes.push((mon.name) ? mon.name : "");
-          */
         }
       }
-      setImportedTeamStorage({
-        species: species,
-        natures: natures,
-        abilities: abilities,
-        items: items,
-        teraTypes: teraTypes,
-        moves: moves,
-        evs: evs,
-        ivs: ivs,
-        notes: notes,
-      });
     }
   }
 
@@ -268,7 +206,7 @@ function TabManager({ sideCode, containerIndex, updateMons, mons, monsPanelOpen,
   return (
     <div>
       <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...(((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped)) ? { height: "var(--attacker-panel-height)" } : { height: "var(--defender-panel-height)" }), ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}>
-        <MonsContainer updateMons={updateMons} containerIndex={containerIndex} mons={mons} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={(!swapped ? sideCode : altSideCode)} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString} setTotalMons={setTotalMons}></MonsContainer>
+        <MonsContainer updateMons={updateMons} containerIndex={containerIndex} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={(!swapped ? sideCode : altSideCode)} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString} setTotalMons={setTotalMons}></MonsContainer>
       </div>
       <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={(!swapped ? sideCode : altSideCode)} importFunc={importMons}></ImportContainer></div>
       <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Export"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[2] && !containerCollapsed) ? {} : {display: "none"})}}><ExportContainer sideCode={(!swapped ? sideCode : altSideCode)} exportString={exportString}></ExportContainer></div>
@@ -458,20 +396,8 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
   );
 }
 
-/*
-
-          <div>
-            <div>Attackers</div>
-            <div><input type="checkbox" onChange={changeReflectAttacker} checked={reflectAttackerMemo && !veilAttackerMemo}></input> Reflect</div>
-            <div><input type="checkbox" onChange={changeLightscreenAttacker} checked={lightscreenAttackerMemo && !veilAttackerMemo}></input> Light Screen</div>
-            <div><input type="checkbox" onChange={changeVeilAttacker} checked={veilAttackerMemo && !reflectAttackerMemo && !lightscreenAttackerMemo}></input> Aurora Veil</div>
-          </div>
-            <div>Defenders</div>
-
-*/
-
 function monSideReducer(mons, action){ // all actions must contain containerIndex
-  console.log(action);
+  //console.log(action);
   //console.log(mons);
   var subMons;
   switch (action.containerIndex) {
@@ -632,7 +558,6 @@ function monSideReducer(mons, action){ // all actions must contain containerInde
       break;
     }
   }
-  console.log(resultMons);
   switch (action.containerIndex){
     case 0: { return [[...resultMons], [...mons[1]]]; }
     case 1: { return [[...mons[0]], [...resultMons]]; }
@@ -647,9 +572,6 @@ function App() {
   const [bottomPanelOpen, setBottomPanelOpen] = useState(false);
   const [fieldPanelOpen, setFieldPanelOpen] = useState(false);
   const [totalMons, setTotalMons] = useReducer(monSideReducer, [[], []]);
-  const [attackerMons, setAttackerMons] = useState([]);
-  const [attackerIndex] = useState([]);
-  const [defenderMons, setDefenderMons] = useState([]);
   const [field, setField] = useState({ 
                                         gameType: "Doubles",
                                         weather: "",
@@ -686,49 +608,6 @@ function App() {
                                         });
   const [gameType, setGameType] = useState("Doubles");
   const [swapped, setSwapped] = useState(false);
-
-  function updateMons(sideCode, packaged){
-    /*
-    const monified = packaged.map((mon) =>
-      new Pokemon(gen, mon.species, {
-        nature: mon.nature,
-        ability: mon.ability,
-        item: mon.item,
-        teraType: (mon.teraActive) ? (mon.teraType) : undefined,
-        moves: mon.moves,
-        evs: mon.evs,
-        ivs: mon.ivs,
-        name: mon.notes,
-      })
-    )
-    */
-    if (sideCode === "attacker") {
-      setAttackerMons(packaged);
-    }
-    else if (sideCode === "defender") {
-      setDefenderMons(packaged);
-    }
-  }
-
-  /*
-  function monSideReducer(mons, action){
-    console.log(action);
-    if (action){
-      switch (action.containerIndex){
-        case 0: {
-          var result = [monsReducer(totalMons[0], action), totalMons[1]];
-          console.log("result:");
-          console.log(result);
-          setTotalMons(result);
-        }
-        case 1: {
-          setTotalMons([totalMons[0], monsReducer(totalMons[1], action)]);
-        }
-      }  
-    }
-  }
-    */
-
   
   function swapSides(){
     setSwapped(!swapped);
@@ -873,7 +752,7 @@ function App() {
         <CalcTable field={field} attackerIndex={(swapped) ? 1 : 0} mons={totalMons}></CalcTable>
         <div style={{height: "80px"}}></div>
       </div>
-      <TabManager sideCode="attacker" updateMons={updateMons} containerIndex={0} monsPanelOpen={monsPanelOpen&&topPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setTopPanelOpen} panelOpen={topPanelOpen}></TabManager>
+      <TabManager sideCode="attacker" containerIndex={0} monsPanelOpen={monsPanelOpen&&topPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setTopPanelOpen} panelOpen={topPanelOpen}></TabManager>
       
       <FieldPanel updateHelpinghand={updateHelpinghand} updateGameType={updateGameType} updateWeather={updateWeather} updateTerrain={updateTerrain} updateGravity={updateGravity} updateReflect={updateReflect}
                   updateLightscreen={updateLightscreen} updateVeil={updateVeil} updateMagicRoom={updateMagicRoom} updateWonderRoom={updateWonderRoom} updateTailwind={updateTailwind} updateTailwindDef={updateTailwindDef}
@@ -881,7 +760,7 @@ function App() {
                   updateBeadsofruin={updateBeadsofruin} updateSwordofruin={updateSwordofruin} updateTabletsofruin={updateTabletsofruin} updateVesselofruin={updateVesselofruin} updateAurabreak={updateAurabreak}
                   updateDarkaura={updateDarkaura} updateFairyaura={updateFairyaura} fieldPanelOpen={fieldPanelOpen} setFieldPanelOpen={setFieldPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} swapSides={swapSides}></FieldPanel>
       
-      <TabManager sideCode="defender" updateMons={updateMons} containerIndex={1} monsPanelOpen={monsPanelOpen&&bottomPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setBottomPanelOpen} panelOpen={bottomPanelOpen}></TabManager>
+      <TabManager sideCode="defender" containerIndex={1} monsPanelOpen={monsPanelOpen&&bottomPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setBottomPanelOpen} panelOpen={bottomPanelOpen}></TabManager>
       </monDispatchContext.Provider>
     </div>
   );

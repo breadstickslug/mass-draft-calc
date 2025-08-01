@@ -41,12 +41,11 @@ function monToExportSet(mon, gameType) {
     return exportString;
 }
 
-export function MonsContainer({ tabActive, collapsed, sideCode, imported, updateMons, gameType, setExportString, containerIndex }){
+export function MonsContainer({ tabActive, collapsed, sideCode, imported, gameType, setExportString, containerIndex }){
     const importedMemo = useMemo(() => imported, [imported]);
     const tabActiveMemo = useMemo(() => tabActive, [tabActive]);
     const collapsedMemo = useMemo(() => collapsed, [collapsed]);
     const gameTypeMemo = useMemo(() => gameType, [gameType]);
-    const updateMonsMemo = useCallback((s, p) => updateMons(s, p), [updateMons]);
     var [party, setParty] = useState([]); // party is dummy list
     var [species, setSpecies] = useState([]);
     const [natures, setNatures] = useState([]);
@@ -225,107 +224,15 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         setNotes([...notes.slice(0, index), blurb.toString(), ...notes.slice(index+1)]);
     }
 
-    /*
-
-    function addMon(event){
-        //var newID = numCreated+1;
-        //var nextNumCreated = numCreated+1;
-        setParty(party.concat(new Pokemon(gen, "Ababo", {
-            nature: "Serious",
-            ability: "Pixilate",
-            item: "(no item)",
-            moves: ["(No Move)", "(No Move)", "(No Move)", "(No Move)"],
-            evs: {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0},
-            ivs: {hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31},
-            boosts: {hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0}
-        })));
-        setNotes(notes.concat(""));
-        //setNumCreated(nextNumCreated);
-        setSpecies(species.concat("Ababo"));
-        setNatures(natures.concat("Serious"));
-        setAbilities(abilities.concat("Pixilate"));
-        setTeraTypes(teraTypes.concat("Fairy"));
-        setTeraStatuses(terasActive.concat(false));
-        setItems(items.concat("(no item)"));
-        setMovesets(movesets.concat({
-            1: "(No Move)",
-            2: "(No Move)",
-            3: "(No Move)",
-            4: "(No Move)",
-        }));
-        setEVsets(evsets.concat({hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0}));
-        setIVsets(ivsets.concat({hp: 31, atk: 31, def: 31, spa: 31, spd: 31, spe: 31}));
-        setBoostSets(boostsets.concat({hp: 0, atk: 0, def: 0, spa: 0, spd: 0, spe: 0}));
-        setStatusSets(statussets.concat("(none)"));
-        //forceUpdate();
-        //console.log(party);
-    }
-
-    */
 
     function addMon(event){
         setTotalMons({ containerIndex: containerIndex, type: "addEnd" });
     }
 
-    /*
-    function removeMon(event){
-        setParty(party.slice(0, -1));
-        setNotes(notes.slice(0, -1));
-        setSpecies(species.slice(0, -1));
-        setNatures(natures.slice(0, -1));
-        setAbilities(abilities.slice(0, -1));
-        setTeraTypes(teraTypes.slice(0, -1));
-        setTeraStatuses(terasActive.slice(0, -1));
-        setItems(items.slice(0, -1));
-        setMovesets(movesets.slice(0, -1));
-        setEVsets(evsets.slice(0, -1));
-        setIVsets(ivsets.slice(0, -1));
-        setBoostSets(boostsets.slice(0, -1));
-        setStatusSets(statussets.slice(0, -1));
-        //forceUpdate();
-        
-    }
-    */
    function removeMon(event){
         setTotalMons({ containerIndex: containerIndex, type: "removeEnd" });
    }
 
-   /*
-    function removeSpecificMon(event){
-        //forceUpdate();
-        //console.log(event.target.id);
-        //const indexToUse = event.target.id;
-        //console.log(party);
-        const spliced = party.toSpliced(event.target.id, 1);
-        const notesSpliced = notes.toSpliced(event.target.id, 1);
-        const speciesS = species.toSpliced(event.target.id, 1);
-        const naturesS = natures.toSpliced(event.target.id, 1);
-        const abilitiesS = abilities.toSpliced(event.target.id, 1);
-        const teraTypesS = teraTypes.toSpliced(event.target.id, 1);
-        const terasActiveS = terasActive.toSpliced(event.target.id, 1);
-        const itemsS = items.toSpliced(event.target.id, 1);
-        const movesetsS = movesets.toSpliced(event.target.id, 1);
-        const evsetsS = evsets.toSpliced(event.target.id, 1);
-        const ivsetsS = ivsets.toSpliced(event.target.id, 1);
-        const boostsetsS = boostsets.toSpliced(event.target.id, 1);
-        const statussetsS = statussets.toSpliced(event.target.id, 1);
-        //console.log([...spliced]);
-        setParty([...spliced]);
-        setNotes([...notesSpliced]);
-        //console.log("removed");
-        setSpecies([...speciesS]);
-        setNatures([...naturesS]);
-        setAbilities([...abilitiesS]);
-        setTeraTypes([...teraTypesS]);
-        setTeraStatuses([...terasActiveS]);
-        setItems([...itemsS]);
-        setMovesets([...movesetsS]);
-        setEVsets([...evsetsS]);
-        setIVsets([...ivsetsS]);
-        setBoostSets([...boostsetsS]);
-        setStatusSets([...statussetsS]);
-    }
-        */
     function removeSpecificMon(event){
         setTotalMons({ containerIndex: containerIndex, type: "removeIndex", index: parseInt(event.target.id) });
     }
@@ -335,7 +242,6 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
     }
 
     useEffect(() => {
-        //updateMonsMemo(sideCodeMemo, party);
         var exportString = "";
         for (const mon of mons[containerIndex]) {
             exportString = exportString + monToExportSet(mon, gameTypeMemo) + "\n";
@@ -343,26 +249,6 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
         setExportString(exportString);
     }, [mons, sideCodeMemo, gameTypeMemo, setExportString]);
 
-
-    /*
-    const renderMon = ({ index, key, style }) => (
-        <div key={key} className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><div className="index-num">{index+1}</div>{<PokemonPanel 
-            style={{ textAlign: "center" }} 
-            monID={index} 
-            monSide={side} 
-            pSpecies={species[index]} 
-            pNature={natures[index]} 
-            pAbility={abilities[index]} 
-            pItem={items[index]} 
-            pTeraType={teraTypes[index]} 
-            pTeraActive={terasActive[index]} 
-            pMoves={movesets[index]} 
-            pEVs={evsets[index]} 
-            pIVs={ivsets[index]} 
-            pBoosts={boostsets[index]} 
-            passedNotes={notes[index]}></PokemonPanel>}</div>
-    );
-    */
 
     return (
         <partyContext.Provider value={{ notes, setMonNotes, setSpecie, setNature, setAbility, setItem, setTeraType, setTeraActive, setMoveset, setEVs, setIVs, setBoosts, setStatus, gameTypeMemo, containerIndex, sideCodeMemo }}>
@@ -380,19 +266,7 @@ export function MonsContainer({ tabActive, collapsed, sideCode, imported, update
                         className="mon-panel" style={{position: "relative"}}><button type="button" style={{width: "20px", height: "20px"}} id={index} onClick={removeSpecificMon}>X</button><button type="button" style={{width: "20px", height: "20px", textAlign: "center"}} id={index} onClick={duplicateSpecificMon}>⧉</button><div className="index-num">{index+1}</div>{<PokemonPanel 
                                                 style={{ textAlign: "center" }} 
                                                 monID={index} 
-                                                monSide={sideCodeMemo} 
-                                                pSpecies={entry.species} 
-                                                pNature={entry.nature} 
-                                                pAbility={entry.ability} 
-                                                pItem={entry.item} 
-                                                pTeraType={entry.teraType} 
-                                                pTeraActive={entry.teraActive} 
-                                                pMoves={entry.moves} 
-                                                pEVs={entry.EVs} 
-                                                pIVs={entry.IVs} 
-                                                pBoosts={entry.boosts}
-                                                pStatus={entry.status} 
-                                                passedNotes={entry.notes}></PokemonPanel>}</div>)})}
+                                                monSide={sideCodeMemo}></PokemonPanel>}</div>)})}
                 </div>
             </div>
         </div>
