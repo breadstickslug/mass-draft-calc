@@ -162,7 +162,7 @@ function moveGraphicData(type, teratype, teraactive) {
 
 
 // ITEM SELECTOR
-  function ItemIcon({ monID }) {
+  function ItemIcon({ monID, monUniqueID }) {
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
 
@@ -191,13 +191,13 @@ function moveGraphicData(type, teratype, teraactive) {
       }}></object>
     );
   }
-  function ItemDropdown({ monID }) {
+  function ItemDropdown({ monID, monUniqueID }) {
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
   
     const options = useMemo(() => sortedItems.map((item, index) =>
-      <option value={item} key={index}>{item}</option>
+      <option value={item} key={monUniqueID+"item"+index}>{item}</option>
     ), []);
 
     return (
@@ -206,18 +206,18 @@ function moveGraphicData(type, teratype, teraactive) {
       </select>
     );
   }
-  function ItemSelector({ monID }) {
+  function ItemSelector({ monID, monUniqueID }) {
     const sideCode = useContext(partyContext).sideCodeMemo;
 
     return (
-      <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon key={sideCode + monID.toString() + "itemicon"}   monID={monID}></ItemIcon><ItemDropdown key={sideCode + monID.toString() + "itempicker"}  monID={monID} ></ItemDropdown></div>
+      <div style={{display: "flex", "lineHeight": "34px"}}>Item: <ItemIcon key={monUniqueID + "itemicon"} monID={monID} monUniqueID={monUniqueID}></ItemIcon><ItemDropdown key={monUniqueID + "itempicker"} monID={monID} monUniqueID={monUniqueID}></ItemDropdown></div>
     );
   }
   
 
 
   // MOVE SELECTORS
-  function MoveIcon({ moveNum, monID }){
+  function MoveIcon({ moveNum, monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     // COME BACK AND ADD THE FIELD
@@ -260,12 +260,12 @@ function moveGraphicData(type, teratype, teraactive) {
         <div style={{ marginLeft: "auto", position: "relative", background: graphicDataMemo["background"], top: "0px", width: "30px", height: "30px"}}><img src={graphicDataMemo["imgSrc"]} style={{top: "0px", left: "0px", width: "30px", height: "30px"}} alt=""></img></div>
     );
   }
-  function MoveDropdown({ moveNum, monID }){
+  function MoveDropdown({ moveNum, monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
     const options = useMemo(() => sortedMoves.map((move, index) =>
-      <option value={move} key={index}>{move}</option>
+      <option value={move} key={monUniqueID+"move"+moveNum+"choice"+index}>{move}</option>
     ), []);
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
 
@@ -280,18 +280,18 @@ function moveGraphicData(type, teratype, teraactive) {
       </select>
     );
   }
-  function MoveSelector({ moveNum, monID }) {
+  function MoveSelector({ moveNum, monID, monUniqueID }) {
     const moveNumMemo = useMemo(() => moveNum, [moveNum]);
     const sideCode = useContext(partyContext).sideCodeMemo;
   
     return (
-        <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={sideCode + monID.toString() + "moveicon" + moveNumMemo.toString()}  moveNum={moveNumMemo} monID={monID} ></MoveIcon><MoveDropdown key={sideCode + monID.toString() + "movepicker" + moveNumMemo.toString()}  moveNum={moveNumMemo} monID={monID} ></MoveDropdown></div>
+        <div style={{display: "flex", "lineHeight": "30px"}}><MoveIcon key={monUniqueID + "moveicon" + moveNumMemo.toString()} moveNum={moveNumMemo} monID={monID} monUniqueID={monUniqueID}></MoveIcon><MoveDropdown key={monUniqueID + "movepicker" + moveNumMemo.toString()} moveNum={moveNumMemo} monID={monID} monUniqueID={monUniqueID}></MoveDropdown></div>
     );
   }
   
 
   // SPECIES SELECTOR
-  function SpeciesIcon({ monID }){
+  function SpeciesIcon({ monID, monUniqueID }){
     //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
@@ -317,7 +317,7 @@ function moveGraphicData(type, teratype, teraactive) {
       }}></object>
     );
   }
-  function SpeciesDropdown({ monID }){
+  function SpeciesDropdown({ monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -326,13 +326,13 @@ function moveGraphicData(type, teratype, teraactive) {
       new Object({
         value: specie,
         label: specie,
-        key: index,
+        key: monUniqueID+"specie"+index,
       })
     ), []);
     const sideCode = useContext(partyContext).sideCodeMemo;
 
     return (
-      <Select key={sideCode + monID.toString() + "speciesselect"} menuPosition="fixed" options={options} classNamePrefix="species" value={options.find(x => x.value === mons[pC.containerIndex][monID].species)} onChange={(o) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateSpecies", species: o.value, index: monID }); }} onSelectResetsInput={false} menuPortalTarget={document.body}
+      <Select key={monUniqueID + "speciesselect"} menuPosition="fixed" options={options} classNamePrefix="species" value={options.find(x => x.value === mons[pC.containerIndex][monID].species)} onChange={(o) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateSpecies", species: o.value, index: monID }); }} onSelectResetsInput={false} menuPortalTarget={document.body}
       
       styles={{
         container: (baseStyles, state) => ({
@@ -426,24 +426,24 @@ function moveGraphicData(type, teratype, teraactive) {
       }} />
     );
   }
-  function SpeciesSelector({ monID }) {
+  function SpeciesSelector({ monID, monUniqueID }) {
     const sideCode = useContext(partyContext).sideCodeMemo;
 
     return (
-      <div style={{display: "flex", "lineHeight": "34px"}}><SpeciesIcon key={sideCode + monID.toString() + "speciesicon"}  monID={monID} ></SpeciesIcon><SpeciesDropdown key={sideCode + monID.toString() + "speciespicker"}  monID={monID} ></SpeciesDropdown></div>
+      <div style={{display: "flex", "lineHeight": "34px"}}><SpeciesIcon key={monUniqueID + "speciesicon"} monID={monID} monUniqueID={monUniqueID}></SpeciesIcon><SpeciesDropdown key={monUniqueID + "speciespicker"} monID={monID} monUniqueID={monUniqueID}></SpeciesDropdown></div>
     );
   }
 
 
 
   // ABILITY SELECTOR
-  function AbilityDropdown({ monID }){
+  function AbilityDropdown({ monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
 
     const options = useMemo(() => sortedAbilities.map((abil, index) =>
-        <option value={abil} key={index}>{abil}</option>
+        <option value={abil} key={monUniqueID+"ability"+index}>{abil}</option>
     ), []);
 
     return (
@@ -452,23 +452,23 @@ function moveGraphicData(type, teratype, teraactive) {
         </select>
     )
   }
-  function AbilitySelector({ monID }) {
+  function AbilitySelector({ monID, monUniqueID }) {
     const sideCode = useContext(partyContext).sideCodeMemo;
 
     return (
-        <div style={{display: "flex"}}>Ability: <AbilityDropdown key={sideCode + monID.toString() + "abilitypicker"}  monID={monID} ></AbilityDropdown></div>
+        <div style={{display: "flex"}}>Ability: <AbilityDropdown key={monUniqueID + "abilitypicker"} monID={monID} monUniqueID={monUniqueID}></AbilityDropdown></div>
     );
   }
 
 
   // NATURE SELECTOR
-  function NatureDropdown({ monID }){
+  function NatureDropdown({ monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
     
     const options = useMemo(() => Array.from(gen.natures).map((nat, index) =>
-        <option value={nat.name} key={index}>{nat.name}</option>
+        <option value={nat.name} key={monUniqueID+"nature"+index}>{nat.name}</option>
     ), []);
 
     return (
@@ -477,15 +477,15 @@ function moveGraphicData(type, teratype, teraactive) {
         </select>
     )
   }
-  function NatureSelector({ monID }) {
+  function NatureSelector({ monID, monUniqueID }) {
     const sideCode = useContext(partyContext).sideCodeMemo;
 
     return (
-        <div style={{display: "flex"}}>Nature: <NatureDropdown key={sideCode + monID.toString() + "naturepicker"}  monID={monID} ></NatureDropdown></div>
+        <div style={{display: "flex"}}>Nature: <NatureDropdown key={monUniqueID + "naturepicker"} monID={monID} monUniqueID={monUniqueID}></NatureDropdown></div>
     );
   }
 
-  function StatusDropdown({ monID }){
+  function StatusDropdown({ monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -497,7 +497,7 @@ function moveGraphicData(type, teratype, teraactive) {
                                     {disp: "Paralyzed", value: "par"},
                                     {disp: "Asleep", value: "slp"},
                                     {disp: "Frozen", value: "frz"}].map((s, index) =>
-      <option value={s.value} key={index}>{s.disp}</option>
+      <option value={s.value} key={monUniqueID+"status"+index}>{s.disp}</option>
     )), []);
 
     return (
@@ -506,18 +506,18 @@ function moveGraphicData(type, teratype, teraactive) {
       </select>
     );
   }
-  function StatusSelector({ monID }){
+  function StatusSelector({ monID, monUniqueID }){
     const sideCode = useContext(partyContext).sideCodeMemo;
 
     return (
-      <div style={{display: "flex"}}>Status: <StatusDropdown key={sideCode + monID.toString() + "statuspicker"}  monID={monID} ></StatusDropdown></div>
+      <div style={{display: "flex"}}>Status: <StatusDropdown key={monUniqueID + "statuspicker"} monID={monID} monUniqueID={monUniqueID}></StatusDropdown></div>
     );
   }
 
 
 
   // TERA TYPE SELECTOR
-  function TeraIcon({ monID }){
+  function TeraIcon({ monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const teraType = mons[pC.containerIndex][monID].teraType;
@@ -532,13 +532,13 @@ function moveGraphicData(type, teratype, teraactive) {
         }}></img>
       );
   }
-  function TeraDropdown({ monID }){
+  function TeraDropdown({ monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
 
     const options = sortedTypes.map((t, index) =>
-        <option value={t} key={index}>{t}</option>
+        <option value={t} key={monUniqueID+"teratype"+index}>{t}</option>
     );
 
     return (
@@ -547,7 +547,7 @@ function moveGraphicData(type, teratype, teraactive) {
         </select>
     );
   }
-  function TeraToggle({ monID }){
+  function TeraToggle({ monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -556,18 +556,18 @@ function moveGraphicData(type, teratype, teraactive) {
         <input type="checkbox" onChange={(e) => { setTotalMons({ containerIndex: pC.containerIndex, type: "updateTeraActive", teraActive: e.target.checked, index: monID }); }} checked={mons[pC.containerIndex][monID].teraActive}></input>
     );
   }
-  function TeraTypeSelector({ monID }){
+  function TeraTypeSelector({ monID, monUniqueID }){
     const sideCode = useContext(partyContext).sideCodeMemo;
 
     return (
-        <div style={{display: "flex", "lineHeight": "30px"}}>Tera Type: <TeraIcon key={sideCode + monID.toString() + "teraicon"}  monID={monID} ></TeraIcon><TeraDropdown key={sideCode + monID.toString() + "terapicker"}  monID={monID} ></TeraDropdown><TeraToggle key={sideCode + monID.toString() + "teratoggle"}  monID={monID} ></TeraToggle></div>
+        <div style={{display: "flex", "lineHeight": "30px"}}>Tera Type: <TeraIcon key={monUniqueID + "teraicon"} monID={monID} monUniqueID={monUniqueID}></TeraIcon><TeraDropdown key={monUniqueID + "terapicker"} monID={monID} monUniqueID={monUniqueID}></TeraDropdown><TeraToggle key={monUniqueID + "teratoggle"} monID={monID} monUniqueID={monUniqueID}></TeraToggle></div>
     );
   }
 
 
   
   // STATS TABLE
-  function EVInput({ stat, monID }){
+  function EVInput({ stat, monID, monUniqueID }){
     //const monStateStore = useMemo(() => ms, [ms]);
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
@@ -577,17 +577,17 @@ function moveGraphicData(type, teratype, teraactive) {
     const statMemo = useMemo(() => stat, [stat]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="252" step="4" type="number" placeholder="0" onBlur={(e) => { var evsTemp = {
+        <input default="0" pattern="[0-9]*" min="0" max="252" step="4" type="number" placeholder="0" onChange={(e) => { var evsTemp = {
           hp: mons[pC.containerIndex][monIDMemo].EVs["hp"],
           atk: mons[pC.containerIndex][monIDMemo].EVs["atk"],
           def: mons[pC.containerIndex][monIDMemo].EVs["def"],
           spa: mons[pC.containerIndex][monIDMemo].EVs["spa"],
           spd: mons[pC.containerIndex][monIDMemo].EVs["spd"],
           spe: mons[pC.containerIndex][monIDMemo].EVs["spe"],
-      }; evsTemp[statMemo] = Math.min(Math.max(parseInt(e.target.value), 0), 252); setTotalMons({ containerIndex: pC.containerIndex, type: "updateEVs", EVs: evsTemp, index: monIDMemo }); }} defaultValue={Math.min(Math.max(mons[pC.containerIndex][monIDMemo].EVs[statMemo], 0), 252)}></input>
+      }; evsTemp[statMemo] = Math.min(Math.max((e.target.value !== "") ? parseInt(e.target.value) : 0, 0), 252); setTotalMons({ containerIndex: pC.containerIndex, type: "updateEVs", EVs: evsTemp, index: monIDMemo }); }} value={Math.min(Math.max(mons[pC.containerIndex][monIDMemo].EVs[statMemo], 0), 252)}></input>
     );
   }
-  function IVInput({ stat, monID }){
+  function IVInput({ stat, monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -596,22 +596,22 @@ function moveGraphicData(type, teratype, teraactive) {
     const monIDMemo = useMemo(() => monID, [monID]);
 
     return (
-        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onBlur={(e) => { var ivsTemp = {
+        <input default="0" pattern="[0-9]*" min="0" max="31" step="1" type="number" placeholder="31" onChange={(e) => { var ivsTemp = {
           hp: mons[pC.containerIndex][monIDMemo].IVs["hp"],
           atk: mons[pC.containerIndex][monIDMemo].IVs["atk"],
           def: mons[pC.containerIndex][monIDMemo].IVs["def"],
           spa: mons[pC.containerIndex][monIDMemo].IVs["spa"],
           spd: mons[pC.containerIndex][monIDMemo].IVs["spd"],
           spe: mons[pC.containerIndex][monIDMemo].IVs["spe"],
-      }; ivsTemp[statMemo] = Math.min(Math.max(parseInt(e.target.value), 0), 31); setTotalMons({ containerIndex: pC.containerIndex, type: "updateIVs", IVs: ivsTemp, index: monIDMemo }); }} defaultValue={Math.min(Math.max(mons[pC.containerIndex][monIDMemo].IVs[statMemo], 0), 31)}></input>
+      }; ivsTemp[statMemo] = Math.min(Math.max((e.target.value !== "") ? parseInt(e.target.value) : 0, 0), 31); setTotalMons({ containerIndex: pC.containerIndex, type: "updateIVs", IVs: ivsTemp, index: monIDMemo }); }} value={Math.min(Math.max(mons[pC.containerIndex][monIDMemo].IVs[statMemo], 0), 31)}></input>
     );
   }
-  function BoostDropdown({ stat, monID }){
+  function BoostDropdown({ stat, monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
     var options = boostList.map((boost, index) => 
-        <option value={boostValues[index]} key={index}>{boost}</option>
+        <option value={boostValues[index]} key={monUniqueID+stat+"boost"+index}>{boost}</option>
     );
 
     const statMemo = useMemo(() => stat, [stat]);
@@ -630,7 +630,7 @@ function moveGraphicData(type, teratype, teraactive) {
         </select>
     );
   }
-  function StatsTableRow({ stat, statIndex, gameType, monID }){
+  function StatsTableRow({ stat, statIndex, gameType, monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const sideCode = useContext(partyContext).sideCodeMemo;
@@ -640,7 +640,7 @@ function moveGraphicData(type, teratype, teraactive) {
     const gameTypeMemo = useMemo(() => gameType, [gameType]);
     const monIDMemo = useMemo(() => monID, [monID]);
     
-    var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown key={sideCode + monIDMemo.toString() + "boost" + statMemo}  stat={statMemo} monID={monIDMemo} ></BoostDropdown></td> : <td></td>;
+    var boostPickerNoHP = (statMemo !== "hp") ? <td><BoostDropdown key={monUniqueID + "boost" + statMemo}  stat={statMemo} monID={monIDMemo} ></BoostDropdown></td> : <td></td>;
 
     const evs = mons[pC.containerIndex][monIDMemo].EVs;
     const ivs = mons[pC.containerIndex][monIDMemo].IVs;
@@ -661,10 +661,10 @@ function moveGraphicData(type, teratype, teraactive) {
     }, [baseStats, nature, ivs, evs, boosts, statMemo, gameTypeMemo]);
 
     return (
-        <tr><td style={{color: (statMemo === minus && minus !== plus) ? "#1680f6" : ((statMemo === plus && plus !== minus) ? "#ff5a84": "#ffd21f")}}>{ev_names[statIndexMemo]}: </td><td><EVInput key={sideCode + monIDMemo.toString() + "EV" + statMemo}  stat={statMemo} monID={monIDMemo} ></EVInput></td><td> IV: </td><td><IVInput key={sideCode + monIDMemo.toString() + "IV" + statMemo}  stat={statMemo} monID={monIDMemo} ></IVInput></td>{boostPickerNoHP}<td><b>{statNumMemo}</b></td></tr>
+        <tr><td style={{color: (statMemo === minus && minus !== plus) ? "#1680f6" : ((statMemo === plus && plus !== minus) ? "#ff5a84": "#ffd21f")}}>{ev_names[statIndexMemo]}: </td><td><EVInput key={monUniqueID + "EV" + statMemo}  stat={statMemo} monID={monIDMemo} monUniqueID={monUniqueID}></EVInput></td><td> IV: </td><td><IVInput key={monUniqueID + "IV" + statMemo}  stat={statMemo} monID={monIDMemo} monUniqueID={monUniqueID}></IVInput></td>{boostPickerNoHP}<td><b>{statNumMemo}</b></td></tr>
     );
   }
-  function StatsTable({ gameType, monID }){
+  function StatsTable({ gameType, monID, monUniqueID }){
     const gameTypeMemo = useMemo(() => gameType, [gameType]);
     const monIDMemo = useMemo(() => monID, [monID]);
     const sideCode = useContext(partyContext).sideCodeMemo;
@@ -676,19 +676,19 @@ function moveGraphicData(type, teratype, teraactive) {
     return (
         <table>
             <tbody>
-                <StatsTableRow stat={"hp"} statIndex={0} key={sideCode + monIDMemo.toString() + "hp"}  gameType={gameTypeMemo} monID={monIDMemo} ></StatsTableRow>
-                <StatsTableRow stat={"atk"} statIndex={1} key={sideCode + monIDMemo.toString() + "atk"}  gameType={gameTypeMemo} monID={monIDMemo} ></StatsTableRow>
-                <StatsTableRow stat={"def"} statIndex={2} key={sideCode + monIDMemo.toString() + "def"}  gameType={gameTypeMemo} monID={monIDMemo} ></StatsTableRow>
-                <StatsTableRow stat={"spa"} statIndex={3} key={sideCode + monIDMemo.toString() + "spa"}  gameType={gameTypeMemo} monID={monIDMemo} ></StatsTableRow>
-                <StatsTableRow stat={"spd"} statIndex={4} key={sideCode + monIDMemo.toString() + "spd"}  gameType={gameTypeMemo} monID={monIDMemo} ></StatsTableRow>
-                <StatsTableRow stat={"spe"} statIndex={5} key={sideCode + monIDMemo.toString() + "spe"}  gameType={gameTypeMemo} monID={monIDMemo} ></StatsTableRow>
+                <StatsTableRow stat={"hp"} statIndex={0} key={monUniqueID + "hp"}  gameType={gameTypeMemo} monID={monIDMemo} monUniqueID={monUniqueID}></StatsTableRow>
+                <StatsTableRow stat={"atk"} statIndex={1} key={monUniqueID + "atk"}  gameType={gameTypeMemo} monID={monIDMemo} monUniqueID={monUniqueID}></StatsTableRow>
+                <StatsTableRow stat={"def"} statIndex={2} key={monUniqueID + "def"}  gameType={gameTypeMemo} monID={monIDMemo} monUniqueID={monUniqueID}></StatsTableRow>
+                <StatsTableRow stat={"spa"} statIndex={3} key={monUniqueID + "spa"}  gameType={gameTypeMemo} monID={monIDMemo} monUniqueID={monUniqueID}></StatsTableRow>
+                <StatsTableRow stat={"spd"} statIndex={4} key={monUniqueID + "spd"}  gameType={gameTypeMemo} monID={monIDMemo} monUniqueID={monUniqueID}></StatsTableRow>
+                <StatsTableRow stat={"spe"} statIndex={5} key={monUniqueID + "spe"}  gameType={gameTypeMemo} monID={monIDMemo} monUniqueID={monUniqueID}></StatsTableRow>
             </tbody>
         </table>
     );
   }
 
   // NOTES INPUT
-  function NotesInput({ monID }){
+  function NotesInput({ monID, monUniqueID }){
     const pC = useContext(partyContext);
     const mons = useContext(monDispatchContext).totalMons;
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
@@ -699,29 +699,29 @@ function moveGraphicData(type, teratype, teraactive) {
   }
 
   // MAIN PANEL
-  export function PokemonPanel({ monID, monSide}) {
+  export function PokemonPanel({ monID, monSide, monUniqueID }) {
     var pC = useContext(partyContext);
 
     const sideCode = useMemo(() => monSide, [monSide]);
     
     return (
-      <div style={{display: "flex"}}>
+      <div style={{display: "flex", textAlign: "center"}}>
         <div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector key={sideCode + monID.toString() + "species"}   monID={monID}></SpeciesSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={sideCode + monID.toString() + "nature"}   monID={monID}></NatureSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector key={sideCode + monID.toString() + "teratype"}   monID={monID}></TeraTypeSelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector key={sideCode + monID.toString() + "ability"}   monID={monID}></AbilitySelector></div>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector key={sideCode + monID.toString() + "item"}   monID={monID}></ItemSelector></div>
-          <StatsTable key={sideCode + monID.toString() + "stats"}  gameType={pC.gameTypeMemo}  monID={monID}></StatsTable>
-          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><StatusSelector key={sideCode + monID.toString() + "status"}   monID={monID}></StatusSelector></div>
-          <NotesInput key={sideCode + monID.toString() + "notes"}   monID={monID}></NotesInput>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><SpeciesSelector key={monUniqueID + "species"} monID={monID} monUniqueID={monUniqueID}></SpeciesSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><NatureSelector key={monUniqueID + "nature"} monID={monID} monUniqueID={monUniqueID}></NatureSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><TeraTypeSelector key={monUniqueID + "teratype"} monID={monID} monUniqueID={monUniqueID}></TeraTypeSelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><AbilitySelector key={monUniqueID + "ability"} monID={monID} monUniqueID={monUniqueID}></AbilitySelector></div>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><ItemSelector key={monUniqueID + "item"} monID={monID} monUniqueID={monUniqueID}></ItemSelector></div>
+          <StatsTable key={monUniqueID + "stats"}  gameType={pC.gameTypeMemo} monID={monID} monUniqueID={monUniqueID}></StatsTable>
+          <div style={{paddingTop: "1px", paddingBottom: "1px"}}><StatusSelector key={monUniqueID + "status"} monID={monID} monUniqueID={monUniqueID}></StatusSelector></div>
+          <NotesInput key={monUniqueID + "notes"} monID={monID} monUniqueID={monUniqueID}></NotesInput>
           { (sideCode === "attacker") && (
           <div>
             <p></p>
-            <div><MoveSelector key={sideCode + monID.toString() + "move1"} id={sideCode + "Move1-" + monID.toString()} moveNum={1}   monID={monID}></MoveSelector></div>
-            <div><MoveSelector key={sideCode + monID.toString() + "move2"} id={sideCode + "Move2-" + monID.toString()} moveNum={2}   monID={monID}></MoveSelector></div>
-            <div><MoveSelector key={sideCode + monID.toString() + "move3"} id={sideCode + "Move3-" + monID.toString()} moveNum={3}   monID={monID}></MoveSelector></div>
-            <div><MoveSelector key={sideCode + monID.toString() + "move4"} id={sideCode + "Move4-" + monID.toString()} moveNum={4}   monID={monID}></MoveSelector></div>
+            <div><MoveSelector key={monUniqueID + "move1"} id={"Move1-" + monUniqueID} moveNum={1} monID={monID} monUniqueID={monUniqueID}></MoveSelector></div>
+            <div><MoveSelector key={monUniqueID + "move2"} id={"Move2-" + monUniqueID} moveNum={2} monID={monID} monUniqueID={monUniqueID}></MoveSelector></div>
+            <div><MoveSelector key={monUniqueID + "move3"} id={"Move3-" + monUniqueID} moveNum={3} monID={monID} monUniqueID={monUniqueID}></MoveSelector></div>
+            <div><MoveSelector key={monUniqueID + "move4"} id={"Move4-" + monUniqueID} moveNum={4} monID={monID} monUniqueID={monUniqueID}></MoveSelector></div>
           </div>
           )}
         </div>

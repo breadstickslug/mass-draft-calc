@@ -27,6 +27,66 @@ const typeColors = {
   //stellar: 'conic-gradient(90deg, #EE3030, #b15b0c, #ffc746, #49b641, #33d6f0, #0a53a8, #c2558c, #ee3030)',
   stellar: 'conic-gradient(from 0deg at 20px 20px, #fde144, #f7a519, #f5672b, #e34a6a, #c666ba, #8d49cb, #8362c1, #6f7ba6, #879eab, #5bb9e1, #33beea, #287ada, #345ac3, #4da2ba, #61d94c, #cbdc65, #e4e8c6, #e7cc9c, #fde144)',
 };
+
+// the below reproduced from the calc
+function OF16(n) {
+  return n > 65535 ? n % 65536 : n;
+}
+
+// the below reproduced from the calc
+function getModifiedStat(stat, mod, gen) {
+  if (gen && gen.num < 3) {
+    if (mod >= 0) {
+      const pastGenBoostTable = [1, 1.5, 2, 2.5, 3, 3.5, 4];
+      stat = Math.floor(stat * pastGenBoostTable[mod]);
+    } else {
+      const numerators = [100, 66, 50, 40, 33, 28, 25];
+      stat = Math.floor((stat * numerators[-mod]) / 100);
+    }
+    return Math.min(999, Math.max(1, stat));
+  }
+  
+  const numerator = 0;
+  const denominator = 1;
+  const modernGenBoostTable = [
+    [2, 8],
+    [2, 7],
+    [2, 6],
+    [2, 5],
+    [2, 4],
+    [2, 3],
+    [2, 2],
+    [3, 2],
+    [4, 2],
+    [5, 2],
+    [6, 2],
+    [7, 2],
+    [8, 2],
+  ];
+  stat = OF16(stat * modernGenBoostTable[6 + mod][numerator]);
+  stat = Math.floor(stat / modernGenBoostTable[6 + mod][denominator]);
+
+  return stat;
+}
+
+// the below reproduced from the calc
+function getQPBoostedStat(pokemon, gen) {
+  if (pokemon.boostedStat && pokemon.boostedStat !== 'auto') {
+    return pokemon.boostedStat; // override.
+  }
+  let bestStat = 'atk';
+  for (const stat of ['def', 'spa', 'spd', 'spe']) {
+    if (
+      // proto/quark ignore boosts when considering their boost
+      getModifiedStat(pokemon.rawStats[stat], pokemon.boosts[stat], gen) >
+      getModifiedStat(pokemon.rawStats[bestStat], pokemon.boosts[bestStat], gen)
+    ) {
+      bestStat = stat;
+    }
+  }
+  return bestStat;
+}
+
 // takes move information and returns background color + img icon src
 function moveGraphicData(type, teratype, teraactive) {
     const moveType = type.toLowerCase();
@@ -134,7 +194,7 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
                   teraactive: objAttacker.teraActive,
                   status: objAttacker.status,
                 });
-    console.log(attacker);
+    //console.log(attacker);
     const defenders = objDefenders.map((d, index) => { return new Pokemon(gen, d.species, {
                   nature: d.nature,
                   ability: d.ability,
@@ -148,8 +208,8 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
                   teraactive: d.teraActive,
                   status: d.status,
                 }); });
-    console.log(objDefenders);
-    console.log(defenders);
+    //console.log(objDefenders);
+    //console.log(defenders);
     //const [calcs, setCalcs] = useState([]);
     //const attackerMemo = useMemo(() => attacker, [attacker]);
     //const defendersMemo = useMemo(() => defenders, [defenders]);
@@ -165,14 +225,18 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
         var tempDefender = defender.clone();
         if (defender.item === "(no item)") { tempDefender.item = undefined; }
         tempDefender.name = tempDefender.species.name;
+        if (defender.ability === "Protosynthesis" && (field.weather === "Sun" || field.weather === "Harsh Sunshine" || defender.item === "Booster Energy")) { tempDefender.boostedStat = getQPBoostedStat(tempDefender, gen); }
+        if (defender.ability === "Quark Drive" && (field.terrain === "Electric" || defender.item === "Booster Energy")) { tempDefender.boostedStat = getQPBoostedStat(tempDefender, gen); }
         var tempAttacker = attacker.clone();
         if (attacker.item === "(no item)") { tempAttacker.item = undefined; }
         tempAttacker.name = tempAttacker.species.name;
+        if (attacker.ability === "Protosynthesis" && (field.weather === "Sun" || field.weather === "Harsh Sunshine" || attacker.item === "Booster Energy")) { tempAttacker.boostedStat = getQPBoostedStat(tempAttacker, gen); }
+        if (attacker.ability === "Quark Drive" && (field.terrain === "Electric" || attacker.item === "Booster Energy")) { tempAttacker.boostedStat = getQPBoostedStat(tempAttacker, gen); }
         if (field.gameType === "Doubles") { tempAttacker.level = 50; tempDefender.level = 50; } else { tempAttacker.level = 100; tempDefender.level = 100; }
         return Object.values(movesFiltered).map((move) => {
-            const m = new Move(gen, move, {isStellarFirstUse: (attacker.teraType && attacker.teraType === "Stellar")});
-            //console.log("attacker ",attacker," defender ",tempDefender," move ",m);
-            //console.log(calculate(gen, attacker, tempDefender, m));
+            const m = new Move(gen, move, {ability: attacker.ability, isStellarFirstUse: (attacker.teraType && attacker.teraType === "Stellar")});
+            console.log("attacker ",tempAttacker," defender ",tempDefender," move ",m);
+            console.log(field);
             return calculate(gen, tempAttacker, tempDefender, m, field);
         });
     });
@@ -254,7 +318,7 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
 }
 
 export function CalcTable({ field, attackerIndex, mons }) {
-    console.log(attackerIndex);
+    //console.log(attackerIndex);
     const a = useMemo(() => {if (attackerIndex === 1) { return mons[1]; } else { return mons[0]; }}, [mons, attackerIndex]);
     const d = useMemo(() => {if (attackerIndex === 1) { return mons[0]; } else { return mons[1]; }}, [mons, attackerIndex]);
     const f = useMemo(() => field, [field]);

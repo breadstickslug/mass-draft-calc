@@ -17,7 +17,6 @@ function capitalize(val) {
   return val.charAt(0).toUpperCase()+val.slice(1);
 }
 
-
 function PanelButton({ text, tab, focusTab, id, sideCode }) {
   const memoTab = useMemo(() => tab, [tab]);
   const memoText = useMemo(() => text, [text]);
@@ -78,7 +77,7 @@ function ExportContainer({ sideCode, exportString }) {
   );
 }
 
-function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType, swapped, openFeedback, panelOpen }) {
+function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMonsPanelOpen, closeMonsPanels, closeFieldPanel, gameType, swapped, openFeedback, panelOpen, opCount, setOpCount }) {
   const [tabsActive, setTabsActive] = useState([true, false, false]);
   const [importedTeamStorage, setImportedTeamStorage] = useState({});
   const sideMemo = useMemo(() => sideCode, [sideCode]);
@@ -154,10 +153,13 @@ function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMo
       fadeImported();
       var importedTeam = Teams.importTeam(input.trim()).team;
       if (importedTeam.length > 0) { setTotalMons({ containerIndex: containerIndex, type: "wipe" }); }
+      var opCountRunning = opCount;
       for (const mon of importedTeam) {
         if (gen.species.get((toID(mon.species)))){ // valid mon
-          console.log(mon.species);
+          opCountRunning++;
+          //console.log(mon.species);
           setTotalMons({ containerIndex: containerIndex, type: "import", mon: {
+            id: opCountRunning,
             species: mon.species,
             nature: (mon.nature && gen.natures.get((toID(mon.nature)))) ? mon.nature : "Serious",
             ability: (mon.ability && gen.abilities.get((toID(mon.ability)))) ? mon.ability : gen.species.get((toID(mon.species))).abilities[0],
@@ -196,6 +198,7 @@ function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMo
             notes: (mon.name) ? mon.name : "",
             status: "(none)",
           }});
+          setOpCount(opCountRunning);
         }
       }
     }
@@ -206,7 +209,7 @@ function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMo
   return (
     <div>
       <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Mons"} style={{...{overflow: "hidden"}, ...containerTransition, ...(((sideCode === "attacker" && !swapped) || (sideCode === "defender" && swapped)) ? { height: "var(--attacker-panel-height)" } : { height: "var(--defender-panel-height)" }), ...{scrollbarWidth: (containerCollapsed) ? "0px" : "auto"}}}>
-        <MonsContainer updateMons={updateMons} containerIndex={containerIndex} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={(!swapped ? sideCode : altSideCode)} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString} setTotalMons={setTotalMons}></MonsContainer>
+        <MonsContainer updateMons={updateMons} opCount={opCount} setOpCount={setOpCount} containerIndex={containerIndex} tabActive={(tabsActive[0])} collapsed={containerCollapsed} sideCode={(!swapped ? sideCode : altSideCode)} imported={importedTeamStorage} gameType={gameTypeMemo} setExportString={setExportString} setTotalMons={setTotalMons}></MonsContainer>
       </div>
       <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Import"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[1] && !containerCollapsed) ? {} : {display: "none"})}}><ImportContainer sideCode={(!swapped ? sideCode : altSideCode)} importFunc={importMons}></ImportContainer></div>
       <div className={(!swapped ? sideCode : altSideCode)+"s"} id={(!swapped ? sideCode : altSideCode)+"Export"} style={{...{overflow: "hidden"}, ...containerTransition, ...((tabsActive[2] && !containerCollapsed) ? {} : {display: "none"})}}><ExportContainer sideCode={(!swapped ? sideCode : altSideCode)} exportString={exportString}></ExportContainer></div>
@@ -396,7 +399,7 @@ function FieldPanel({ updateGameType, gametype, updateWeather, weather, updateTe
   );
 }
 
-function monSideReducer(mons, action){ // all actions must contain containerIndex
+function monSideReducer(mons, action){ // all actions must contain containerIndex, opCount
   //console.log(action);
   //console.log(mons);
   var subMons;
@@ -408,8 +411,9 @@ function monSideReducer(mons, action){ // all actions must contain containerInde
   switch (action.type){
     // add/reduce: index cases require an index number
     case 'addEnd': {
-      console.log("ADDING!");
+      //console.log("ADDING!");
       resultMons = [...subMons, {
+        id: action.opCount+1,
         notes: "",
         species: "Ababo",
         nature: "Serious",
@@ -432,6 +436,7 @@ function monSideReducer(mons, action){ // all actions must contain containerInde
     }
     case 'addIndex': {
       resultMons = [...subMons.slice(0, action.index), {
+        id: action.opCount+1,
         notes: "",
         species: "Ababo",
         nature: "Serious",
@@ -457,13 +462,13 @@ function monSideReducer(mons, action){ // all actions must contain containerInde
       break;
     }
     case 'removeIndex': {
-      console.log("removing index");
+      //console.log("removing index");
       resultMons = [...subMons.slice(0, action.index), ...subMons.slice(action.index+1)];
       break;
     }
     case 'duplicateIndex': {
-      console.log("duplicating at index "+action.index);
-      resultMons = [...subMons.slice(0, action.index+1), subMons[action.index], ...subMons.slice(action.index+1)];
+      //console.log("duplicating at index "+action.index);
+      resultMons = [...subMons.slice(0, action.index+1), {...subMons[action.index], id: action.opCount+1}, ...subMons.slice(action.index+1)];
       break;
     }
     case 'wipe': {
@@ -471,12 +476,12 @@ function monSideReducer(mons, action){ // all actions must contain containerInde
       break;
     }
     case 'import': {
-      console.log("importing mon");
+      //console.log("importing mon");
       resultMons = [...subMons, action.mon];
       break;
     }
     case 'updateSpecies': {
-      console.log("species updating!");
+      //console.log("species updating!");
       resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
         species: action.species,
         ability: gen.species.get(toID(action.species)).abilities[0],
@@ -521,7 +526,7 @@ function monSideReducer(mons, action){ // all actions must contain containerInde
       break;
     }
     case 'updateMoves': { 
-      console.log("updating moves!");
+      //console.log("updating moves!");
       resultMons = [...subMons.slice(0, action.index), {...subMons[action.index],
         moves: action.moves,
       }, ...subMons.slice(action.index+1)];
@@ -608,6 +613,7 @@ function App() {
                                         });
   const [gameType, setGameType] = useState("Doubles");
   const [swapped, setSwapped] = useState(false);
+  const [opCount, setOpCount] = useState(0);
   
   function swapSides(){
     setSwapped(!swapped);
@@ -752,7 +758,7 @@ function App() {
         <CalcTable field={field} attackerIndex={(swapped) ? 1 : 0} mons={totalMons}></CalcTable>
         <div style={{height: "80px"}}></div>
       </div>
-      <TabManager sideCode="attacker" containerIndex={0} monsPanelOpen={monsPanelOpen&&topPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setTopPanelOpen} panelOpen={topPanelOpen}></TabManager>
+      <TabManager sideCode="attacker" containerIndex={0} opCount={opCount} setOpCount={setOpCount} monsPanelOpen={monsPanelOpen&&topPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setTopPanelOpen} panelOpen={topPanelOpen}></TabManager>
       
       <FieldPanel updateHelpinghand={updateHelpinghand} updateGameType={updateGameType} updateWeather={updateWeather} updateTerrain={updateTerrain} updateGravity={updateGravity} updateReflect={updateReflect}
                   updateLightscreen={updateLightscreen} updateVeil={updateVeil} updateMagicRoom={updateMagicRoom} updateWonderRoom={updateWonderRoom} updateTailwind={updateTailwind} updateTailwindDef={updateTailwindDef}
@@ -760,7 +766,7 @@ function App() {
                   updateBeadsofruin={updateBeadsofruin} updateSwordofruin={updateSwordofruin} updateTabletsofruin={updateTabletsofruin} updateVesselofruin={updateVesselofruin} updateAurabreak={updateAurabreak}
                   updateDarkaura={updateDarkaura} updateFairyaura={updateFairyaura} fieldPanelOpen={fieldPanelOpen} setFieldPanelOpen={setFieldPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} swapSides={swapSides}></FieldPanel>
       
-      <TabManager sideCode="defender" containerIndex={1} monsPanelOpen={monsPanelOpen&&bottomPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setBottomPanelOpen} panelOpen={bottomPanelOpen}></TabManager>
+      <TabManager sideCode="defender" containerIndex={1} opCount={opCount} setOpCount={setOpCount} monsPanelOpen={monsPanelOpen&&bottomPanelOpen} setMonsPanelOpen={setMonsPanelOpen} closeMonsPanels={closeMonsPanels} closeFieldPanel={closeFieldPanel} gameType={gameType} swapped={swapped} openFeedback={setBottomPanelOpen} panelOpen={bottomPanelOpen}></TabManager>
       </monDispatchContext.Provider>
     </div>
   );
