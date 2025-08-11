@@ -41,6 +41,14 @@ const gen = Generations.get(9);
 const speciesDex = dex.Dex.forGen(9);
 console.log(speciesDex);
 const ev_names = ["HP", "Attack", "Defense", "Sp. Atk", "Sp. Def", "Speed"];
+const stat_names = {
+  hp: "HP",
+  atk: "Atk",
+  def: "Def",
+  spa: "SpA",
+  spd: "SpD",
+  spe: "Spe"
+};
 const statList = ["hp", "atk", "def", "spa", "spd", "spe"];
 const boostList = ["+6", "+5", "+4", "+3", "+2", "+1", "--", "-1", "-2", "-3", "-4", "-5", "-6"];
 const boostValues = [6, 5, 4, 3, 2, 1, 0, -1, -2, -3, -4, -5, -6];
@@ -468,7 +476,7 @@ function moveGraphicData(type, teratype, teraactive) {
     const setTotalMons = useContext(monDispatchContext).setTotalMons;
     
     const options = useMemo(() => Array.from(gen.natures).map((nat, index) =>
-        <option value={nat.name} key={monUniqueID+"nature"+index}>{nat.name}</option>
+        <option value={nat.name} key={monUniqueID+"nature"+index}>{nat.name+((gen.natures.get(toID(nat.name)).plus !== gen.natures.get(toID(nat.name)).minus) ? " (+"+stat_names[gen.natures.get(toID(nat.name)).plus]+", -"+stat_names[gen.natures.get(toID(nat.name)).minus]+")" : "")}</option>
     ), []);
 
     return (
