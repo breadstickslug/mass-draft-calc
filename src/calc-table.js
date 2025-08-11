@@ -306,7 +306,12 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
                                 }}></object></td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.defender.species.name + ((defenders[index1].name !== undefined && defenders[index1].name !== "" && defenders[index1].name !== calc.defender.species.name) ? " ("+defenders[index1].name+")" : "")}</td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.range()[0]+ " - " + calc.range()[1]}</td>
-                <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px", background: dmgGradient}}>{pctLower.toString()+" - "+pctHigher.toString()+"%"}</td>
+                <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px", background: dmgGradient, position: "relative"}}>
+                  {pctLower.toString()+" - "+pctHigher.toString()+"%"}
+                  <div className="calcHover" onClick={(e) => navigator.clipboard.writeText(calc.fullDesc())}>
+                    <button className="copyButton" type="button" onClick={(e) => navigator.clipboard.writeText(calc.fullDesc())}>Copy</button>
+                  </div>
+                </td>
             </tr>
             );
         });
