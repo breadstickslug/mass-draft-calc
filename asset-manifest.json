@@ -1,18 +1,18 @@
 {
   "files": {
-    "main.css": "/mass-draft-calc/static/css/main.77b9fbec.css",
-    "main.js": "/mass-draft-calc/static/js/main.bc5dc2c0.js",
+    "main.css": "/mass-draft-calc/static/css/main.d52602cf.css",
+    "main.js": "/mass-draft-calc/static/js/main.9822789f.js",
     "static/js/67.677ec8b4.chunk.js": "/mass-draft-calc/static/js/67.677ec8b4.chunk.js",
     "static/js/488.43967b10.chunk.js": "/mass-draft-calc/static/js/488.43967b10.chunk.js",
     "static/media/FOT-UDKakugoC80Pro-M.otf": "/mass-draft-calc/static/media/FOT-UDKakugoC80Pro-M.7f16333bc71aea747e79.otf",
     "index.html": "/mass-draft-calc/index.html",
-    "main.77b9fbec.css.map": "/mass-draft-calc/static/css/main.77b9fbec.css.map",
-    "main.bc5dc2c0.js.map": "/mass-draft-calc/static/js/main.bc5dc2c0.js.map",
+    "main.d52602cf.css.map": "/mass-draft-calc/static/css/main.d52602cf.css.map",
+    "main.9822789f.js.map": "/mass-draft-calc/static/js/main.9822789f.js.map",
     "67.677ec8b4.chunk.js.map": "/mass-draft-calc/static/js/67.677ec8b4.chunk.js.map",
     "488.43967b10.chunk.js.map": "/mass-draft-calc/static/js/488.43967b10.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.77b9fbec.css",
-    "static/js/main.bc5dc2c0.js"
+    "static/css/main.d52602cf.css",
+    "static/js/main.9822789f.js"
   ]
 }
