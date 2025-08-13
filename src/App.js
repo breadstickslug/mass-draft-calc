@@ -32,9 +32,10 @@ function ImportContainer({ sideCode, importFunc }) {
   const [importText, setImportText] = useState("");
   const sideMemo = useMemo(() => sideCode, [sideCode]);
   var [importedStyle1, setImportedStyle1] = useState({ transition: "opacity 0ms", opacity: "0" });
-  var [importedStyle2, setImportedStyle2] = useState({ opacity: "0", transition: "opacity 2000ms"});
+  var [importedStyle2, setImportedStyle2] = useState({ transition: "opacity 0ms", opacity: "0" });
   var [using2, setUsing2] = useState(true);
-  function fadeImported(){
+  function fadeImported(successful){
+    /*
     console.log("switchin");
     if (using2){
       setImportedStyle2({ transition: "opacity 0ms", opacity: "1" });
@@ -46,7 +47,19 @@ function ImportContainer({ sideCode, importFunc }) {
       setImportedStyle2({ opacity: "0", transition: "opacity 2000ms"});
       setUsing2(true);
     }
-    
+    */
+    if (successful)
+    {
+      setImportedStyle1({ ...importedStyle1, display: "block", transition: "opacity 0ms", opacity: "1" });
+      setImportedStyle2({ ...importedStyle2, display: "none" });
+      setTimeout(() => setImportedStyle1({ ...importedStyle1, display: "block", transition: "opacity 2000ms", opacity: "0"}));
+    }
+    else
+    {
+      setImportedStyle2({ ...importedStyle2, display: "block", transition: "opacity 0ms", opacity: "1" });
+      setImportedStyle1({ ...importedStyle1, display: "none" });
+      setTimeout(() => setImportedStyle2({ ...importedStyle2, display: "block", transition: "opacity 2000ms", opacity: "0"}));
+    }
   }
   const importFuncMemo = useCallback(() => { importFunc(importText, fadeImported) }, [importText, importFunc]);
 
@@ -56,7 +69,7 @@ function ImportContainer({ sideCode, importFunc }) {
     <div style={{ display: "flex", height: "100%"}}>
       <div style={{ marginTop: "auto", marginBottom: "auto", marginLeft: "auto", marginRight: "auto"}}>
         <textarea id={sideMemo} cols="75" rows="20" onChange={updateImported} value={importText}></textarea>
-        <p /><div style={{...{transition: "opacity 2000ms"}, ...importedStyle1}}>imported!</div><div style={{...{transition: "opacity 2000ms"}, ...importedStyle2}}>imported!</div>
+        <p /><div style={{...{transition: "opacity 2000ms"}, ...importedStyle1}}>Import Successful!</div><div style={{transition: "opacity 2000ms", ...importedStyle2}}>Error when Importing</div>
         <button type="button" onClick={importFuncMemo}>Import</button>
       </div>
     </div>
@@ -150,10 +163,10 @@ function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMo
 
   function importMons(input, fadeImported) {
     if (input && Teams.importTeam(input)) {
-      fadeImported();
       var importedTeam = Teams.importTeam(input.trim()).team;
       if (importedTeam.length > 0) { setTotalMons({ containerIndex: containerIndex, type: "wipe" }); }
       var opCountRunning = opCount;
+      var successfulImports = 0;
       for (const mon of importedTeam) {
         if (gen.species.get((toID(mon.species)))){ // valid mon
           opCountRunning++;
@@ -199,8 +212,10 @@ function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMo
             status: "(none)",
           }});
           setOpCount(opCountRunning);
+          successfulImports++;
         }
       }
+      fadeImported(successfulImports > 0);
     }
   }
 
