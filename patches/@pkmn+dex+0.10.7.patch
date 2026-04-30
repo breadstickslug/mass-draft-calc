@@ -1,0 +1,191 @@
+diff --git a/node_modules/@pkmn/dex/build/index.js b/node_modules/@pkmn/dex/build/index.js
+index 1e4d362..b3cf76d 100644
+--- a/node_modules/@pkmn/dex/build/index.js
++++ b/node_modules/@pkmn/dex/build/index.js
+@@ -53130,7 +53130,7 @@ var _49 = {
+       spd: 110,
+       spe: 70
+     },
+-    abilities: { "0": "Cute Charm", "1": "Magic Guard", H: "Unaware" },
++    abilities: { "0": "Magic Bounce" },
+     weightkg: 42.3,
+     eggGroups: ["Field"],
+     requiredItem: "Clefablite",
+@@ -54054,7 +54054,7 @@ var _49 = {
+       spd: 95,
+       spe: 70
+     },
+-    abilities: { "0": "Chlorophyll", H: "Gluttony" },
++    abilities: { "0": "Innards Out" },
+     weightkg: 125.5,
+     eggGroups: ["Grass"],
+     requiredItem: "Victreebelite",
+@@ -55454,13 +55454,13 @@ var _49 = {
+     gender: "N",
+     baseStats: {
+       hp: 60,
+-      atk: 140,
++      atk: 100,
+       def: 105,
+       spa: 130,
+       spd: 105,
+       spe: 120
+     },
+-    abilities: { "0": "Illuminate", "1": "Natural Cure", H: "Analytic" },
++    abilities: { "0": "Huge Power" },
+     weightkg: 80,
+     eggGroups: ["Water 3"],
+     requiredItem: "Starminite",
+@@ -56311,7 +56311,7 @@ var _49 = {
+       spd: 125,
+       spe: 100
+     },
+-    abilities: { "0": "Inner Focus", H: "Multiscale" },
++    abilities: { "0": "Multiscale" },
+     weightkg: 290,
+     eggGroups: ["Water 1", "Dragon"],
+     requiredItem: "Dragoninite",
+@@ -56469,7 +56469,7 @@ var _49 = {
+       spd: 115,
+       spe: 80
+     },
+-    abilities: { "0": "Overgrow", H: "Leaf Guard" },
++    abilities: { "0": "Mega Sol" },
+     weightkg: 201,
+     eggGroups: ["Monster", "Grass"],
+     requiredItem: "Meganiumite",
+@@ -56629,7 +56629,7 @@ var _49 = {
+       spd: 93,
+       spe: 78
+     },
+-    abilities: { "0": "Torrent", H: "Sheer Force" },
++    abilities: { "0": "Dragonize" },
+     weightkg: 108.8,
+     eggGroups: ["Monster", "Water 1"],
+     requiredItem: "Feraligite",
+@@ -58126,7 +58126,7 @@ var _49 = {
+       spd: 100,
+       spe: 110
+     },
+-    abilities: { "0": "Keen Eye", "1": "Sturdy", H: "Weak Armor" },
++    abilities: { "0": "Stalwart" },
+     weightkg: 40.4,
+     eggGroups: ["Flying"],
+     requiredItem: "Skarmorite",
+@@ -63713,7 +63713,7 @@ var _49 = {
+       spd: 100,
+       spe: 120
+     },
+-    abilities: { "0": "Snow Cloak", H: "Cursed Body" },
++    abilities: { "0": "Snow Warning" },
+     weightkg: 29.6,
+     eggGroups: ["Fairy", "Mineral"],
+     requiredItem: "Froslassite",
+@@ -64791,7 +64791,7 @@ var _49 = {
+       spd: 110,
+       spe: 75
+     },
+-    abilities: { "0": "Blaze", H: "Reckless" },
++    abilities: { "0": "Mold Breaker" },
+     weightkg: 180.3,
+     eggGroups: ["Field"],
+     requiredItem: "Emboarite",
+@@ -65388,7 +65388,7 @@ var _49 = {
+       spd: 65,
+       spe: 103
+     },
+-    abilities: { "0": "Sand Rush", "1": "Sand Force", H: "Mold Breaker" },
++    abilities: { "0": "Piercing Drill" },
+     weightkg: 60,
+     eggGroups: ["Field"],
+     requiredItem: "Excadrite",
+@@ -67210,7 +67210,7 @@ var _49 = {
+       spd: 110,
+       spe: 90
+     },
+-    abilities: { "0": "Flash Fire", "1": "Flame Body", H: "Infiltrator" },
++    abilities: { "0": "Infiltrator" },
+     weightkg: 69.6,
+     eggGroups: ["Amorphous"],
+     requiredItem: "Chandelurite",
+@@ -67499,7 +67499,7 @@ var _49 = {
+       spd: 105,
+       spe: 55
+     },
+-    abilities: { "0": "Iron Fist", "1": "Klutz", H: "No Guard" },
++    abilities: { "0": "Unseen Fist" },
+     weightkg: 330,
+     eggGroups: ["Mineral"],
+     requiredItem: "Golurkite",
+@@ -69039,7 +69039,7 @@ var _49 = {
+       spd: 148,
+       spe: 102
+     },
+-    abilities: { "0": "Flower Veil", H: "Symbiosis" },
++    abilities: { "0": "Fairy Aura" },
+     weightkg: 100.8,
+     eggGroups: ["Undiscovered"],
+     requiredItem: "Floettite",
+@@ -69271,7 +69271,7 @@ var _49 = {
+       spd: 101,
+       spe: 124
+     },
+-    abilities: { "0": "Keen Eye", "1": "Infiltrator", H: "Competitive" },
++    abilities: { "0": "Trace" },
+     weightkg: 10.1,
+     eggGroups: ["Field"],
+     requiredItem: "Meowsticite",
+@@ -69293,7 +69293,7 @@ var _49 = {
+       spd: 101,
+       spe: 124
+     },
+-    abilities: { "0": "Keen Eye", "1": "Infiltrator", H: "Competitive" },
++    abilities: { "0": "Trace" },
+     weightkg: 10.1,
+     eggGroups: ["Field"],
+     requiredItem: "Meowsticite",
+@@ -69833,7 +69833,7 @@ var _49 = {
+       spd: 93,
+       spe: 118
+     },
+-    abilities: { "0": "Limber", "1": "Unburden", H: "Mold Breaker" },
++    abilities: { "0": "No Guard" },
+     weightkg: 25,
+     eggGroups: ["Flying", "Human-Like"],
+     requiredItem: "Hawluchanite",
+@@ -70965,7 +70965,7 @@ var _49 = {
+       spd: 107,
+       spe: 33
+     },
+-    abilities: { "0": "Hyper Cutter", "1": "Iron Fist", H: "Anger Point" },
++    abilities: { "0": "Iron Fist" },
+     weightkg: 252.8,
+     eggGroups: ["Water 3"],
+     requiredItem: "Crabominite",
+@@ -72524,7 +72524,7 @@ var _49 = {
+       spd: 116,
+       spe: 36
+     },
+-    abilities: { "0": "Berserk", "1": "Sap Sipper", H: "Cloud Nine" },
++    abilities: { "0": "Berserk" },
+     weightkg: 185,
+     eggGroups: ["Monster", "Dragon"],
+     requiredItem: "Drampanite",
+@@ -76927,7 +76927,7 @@ var _49 = {
+       spd: 85,
+       spe: 75
+     },
+-    abilities: { "0": "Chlorophyll", "1": "Insomnia", H: "Moody" },
++    abilities: { "0": "Spicy Spray" },
+     weightkg: 22,
+     eggGroups: ["Grass"],
+     requiredItem: "Scovillainite"
+@@ -77287,7 +77287,7 @@ var _49 = {
+       spd: 96,
+       spe: 101
+     },
+-    abilities: { "0": "Toxic Debris", H: "Corrosion" },
++    abilities: { "0": "Adaptability" },
+     weightkg: 77,
+     eggGroups: ["Mineral"],
+     requiredItem: "Glimmoranite"

@@ -28,6 +28,44 @@ const typeColors = {
   stellar: 'conic-gradient(from 0deg at 20px 20px, #fde144, #f7a519, #f5672b, #e34a6a, #c666ba, #8d49cb, #8362c1, #6f7ba6, #879eab, #5bb9e1, #33beea, #287ada, #345ac3, #4da2ba, #61d94c, #cbdc65, #e4e8c6, #e7cc9c, #fde144)',
 };
 
+function iconIndexToCoords(num) {
+  const top = -Math.floor(num / 12) * 30;
+  const left = -(num % 12) * 40;
+  return { top: top, left: left };
+}
+
+function speciesIconExceptions(name) {
+  if (name === "Vanilluxe") { return iconIndexToCoords(584); }
+  if (name === "Absol") { return iconIndexToCoords(359); }
+  if (name === "Absol-Mega") { return iconIndexToCoords(1354); }
+  if (name === "Tsareena") { return iconIndexToCoords(763); }
+  if (name === "Torterra") { return iconIndexToCoords(389); }
+  if (name === "Sylveon") { return iconIndexToCoords(700); }
+  if (name === "Simisear") { return iconIndexToCoords(514); }
+  if (name === "Scovillain-Mega") { return iconIndexToCoords(1446); }
+  if (name === "Rotom-Wash") { return iconIndexToCoords(1084); }
+  if (name === "Roserade") { return iconIndexToCoords(407); }
+  if (name === "Politoed") { return iconIndexToCoords(186); }
+  if (name === "Meowstic-M-Mega") { return iconIndexToCoords(1440); }
+  if (name === "Meowstic-F-Mega") { return iconIndexToCoords(1440); }
+  if (name === "Klefki") { return iconIndexToCoords(707); }
+  if (name === "Greninja") { return iconIndexToCoords(658); }
+  if (name === "Golurk") { return iconIndexToCoords(623); }
+  if (name === "Golurk-Mega") { return iconIndexToCoords(1439); }
+  if (name === "Glimmora-Mega") { return iconIndexToCoords(1447); }
+  if (name === "Garbodor") { return iconIndexToCoords(569); }
+  if (name === "Excadrill") { return iconIndexToCoords(530); }
+  if (name === "Emboar") { return iconIndexToCoords(500); }
+  if (name === "Crabominable-Mega") { return iconIndexToCoords(1441); }
+  if (name === "Clefable") { return iconIndexToCoords(36); }
+  if (name === "Clawitzer") { return iconIndexToCoords(693); }
+  if (name === "Chimecho-Mega") { return iconIndexToCoords(1432); }
+  if (name === "Castform-Snowy") { return iconIndexToCoords(1068); }
+  if (name === "Aegislash-Shield") { return iconIndexToCoords(681); }
+  if (name === "Aegislash-Both") { return iconIndexToCoords(681); }
+  return { top: img.Icons.getPokemon(name).top.toString(), left: img.Icons.getPokemon(name).left.toString() };
+}
+
 // the below reproduced from the calc
 function OF16(n) {
   return n > 65535 ? n % 65536 : n;
@@ -182,11 +220,12 @@ function colorMap(colors, pct)
 function AttackerRows({ objAttacker, objDefenders, fieldObject }){
     const field = new Field(fieldObject);
     const attacker = new Pokemon(gen, objAttacker.species, {
+                  level: 50,
                   nature: objAttacker.nature,
                   ability: objAttacker.ability,
                   item: objAttacker.item,
                   moves: Object.values(objAttacker.moves),
-                  evs: objAttacker.EVs,
+                  evs: { hp: objAttacker.EVs["hp"] * 8, atk: objAttacker.EVs["atk"] * 8, def: objAttacker.EVs["def"] * 8, spa: objAttacker.EVs["spa"] * 8, spd: objAttacker.EVs["spd"] * 8, spe: objAttacker.EVs["hp"] * 8 },
                   ivs: objAttacker.IVs,
                   boosts: objAttacker.boosts,
                   name: objAttacker.notes,
@@ -196,11 +235,12 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
                 });
     //console.log(attacker);
     const defenders = objDefenders.map((d, index) => { return new Pokemon(gen, d.species, {
+                  level: 50,
                   nature: d.nature,
                   ability: d.ability,
                   item: d.item,
                   moves: Object.values(d.moves),
-                  evs: d.EVs,
+                  evs: { hp: d.EVs["hp"] * 8, atk: d.EVs["atk"] * 8, def: d.EVs["def"] * 8, spa: d.EVs["spa"] * 8, spd: d.EVs["spd"] * 8, spe: d.EVs["hp"] * 8 },
                   ivs: d.IVs,
                   boosts: d.boosts,
                   name: d.notes,
@@ -233,11 +273,12 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
         if (attacker.ability === "Protosynthesis" && (field.weather === "Sun" || field.weather === "Harsh Sunshine" || attacker.item === "Booster Energy")) { tempAttacker.boostedStat = getQPBoostedStat(tempAttacker, gen); }
         if (attacker.ability === "Quark Drive" && (field.terrain === "Electric" || attacker.item === "Booster Energy")) { tempAttacker.boostedStat = getQPBoostedStat(tempAttacker, gen); }
         if (field.gameType === "Doubles") { tempAttacker.level = 50; tempDefender.level = 50; } else { tempAttacker.level = 100; tempDefender.level = 100; }
+        console.log(tempAttacker);
         return Object.values(movesFiltered).map((move) => {
             const m = new Move(gen, move, {ability: attacker.ability, isStellarFirstUse: (attacker.teraType && attacker.teraType === "Stellar")});
             console.log("attacker ",tempAttacker," defender ",tempDefender," move ",m);
             console.log(field);
-            return calculate(gen, tempAttacker, tempDefender, m, field);
+            return calculate(0, tempAttacker, tempDefender, m, field);
         });
     });
 
@@ -270,6 +311,8 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
                                                                               .concat(", ")
                                                                               .concat(colorMap(["#6aa84f", "#ffd966", "#e06666", "#cc0000"], (pctHigher/100)))
                                                                               .concat(")");
+            var aImgData = speciesIconExceptions(calc.attacker.species.name);
+            var dImgData = speciesIconExceptions(calc.defender.species.name);
             return (
             <tr key={calc.attacker.species.name+attacker.name+calc.move.name+calc.defender.species.name+defenders[index1].name+index1+" "+index2} style={{height: "34px"}}>
                 <td style={{ textAlign: "center", paddingLeft: "5px"}}><object src="//:0" alt=" " style={{
@@ -278,7 +321,7 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
                                 display: "inline-block",
                                 imageRendering: "pixelated",
                                 border: "0",
-                                background: "transparent url("+img.Icons.getPokemon(calc.attacker.species.name).url+") no-repeat scroll "+img.Icons.getPokemon(calc.attacker.species.name).left.toString()+"px "+img.Icons.getPokemon(calc.attacker.species.name).top.toString()+"px",
+                                background: "transparent url("+img.Icons.getPokemon(calc.attacker.species.name).url+") no-repeat scroll "+aImgData.left+"px "+aImgData.top+"px",
                                 }}></object></td>
                 <td style={{ textAlign: "center", paddingRight: "5px" }}>{calc.attacker.species.name + ((attacker.name !== undefined && attacker.name !== "" && attacker.name !== calc.attacker.species.name) ? " ("+attacker.name+")" : "")}</td>
                 <td style={{ textAlign: "center", display: "flex", lineHeight: "34px", background: gD["background"]}}>
@@ -302,14 +345,14 @@ function AttackerRows({ objAttacker, objDefenders, fieldObject }){
                                 display: "inline-block",
                                 imageRendering: "pixelated",
                                 border: "0",
-                                background: "transparent url("+img.Icons.getPokemon(calc.defender.species.name).url+") no-repeat scroll "+img.Icons.getPokemon(calc.defender.species.name).left.toString()+"px "+img.Icons.getPokemon(calc.defender.species.name).top.toString()+"px",
+                                background: "transparent url("+img.Icons.getPokemon(calc.defender.species.name).url+") no-repeat scroll "+dImgData.left+"px "+dImgData.top+"px",
                                 }}></object></td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.defender.species.name + ((defenders[index1].name !== undefined && defenders[index1].name !== "" && defenders[index1].name !== calc.defender.species.name) ? " ("+defenders[index1].name+")" : "")}</td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px" }}>{calc.range()[0]+ " - " + calc.range()[1]}</td>
                 <td style={{ textAlign: "center", paddingLeft: "5px", paddingRight: "5px", background: dmgGradient, position: "relative"}}>
                   {pctLower.toString()+" - "+pctHigher.toString()+"%"}
                   <div className="calcHover" onClick={(e) => navigator.clipboard.writeText(calc.fullDesc())}>
-                    <button className="copyButton" type="button" onClick={(e) => navigator.clipboard.writeText(calc.fullDesc())}>Copy</button>
+                    <button className="copyButton" type="button" >Copy</button>
                   </div>
                 </td>
             </tr>

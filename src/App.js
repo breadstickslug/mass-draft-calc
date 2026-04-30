@@ -185,12 +185,12 @@ function TabManager({ sideCode, containerIndex, updateMons, monsPanelOpen, setMo
             },
             teraType: (mon.teraType) ? mon.teraType : gen.species.get((toID(mon.species))).types[0],
             EVs: {
-              hp: (mon.evs && mon.evs["hp"] !== undefined && Number.isInteger(mon.evs["hp"])) ? mon.evs["hp"] : 0,
-              atk: (mon.evs && mon.evs["atk"] !== undefined && Number.isInteger(mon.evs["atk"])) ? mon.evs["atk"] : 0,
-              def: (mon.evs && mon.evs["def"] !== undefined && Number.isInteger(mon.evs["def"])) ? mon.evs["def"] : 0,
-              spa: (mon.evs && mon.evs["spa"] !== undefined && Number.isInteger(mon.evs["spa"])) ? mon.evs["spa"] : 0,
-              spd: (mon.evs && mon.evs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? mon.evs["spd"] : 0,
-              spe: (mon.evs && mon.evs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? mon.evs["spe"] : 0,
+              hp: (mon.evs && mon.evs["hp"] !== undefined && Number.isInteger(mon.evs["hp"])) ? Math.min(mon.evs["hp"], 32) : 0,
+              atk: (mon.evs && mon.evs["atk"] !== undefined && Number.isInteger(mon.evs["atk"])) ? Math.min(mon.evs["atk"], 32) : 0,
+              def: (mon.evs && mon.evs["def"] !== undefined && Number.isInteger(mon.evs["def"])) ? Math.min(mon.evs["def"], 32) : 0,
+              spa: (mon.evs && mon.evs["spa"] !== undefined && Number.isInteger(mon.evs["spa"])) ? Math.min(mon.evs["spa"], 32) : 0,
+              spd: (mon.evs && mon.evs["spd"] !== undefined && Number.isInteger(mon.evs["spd"])) ? Math.min(mon.evs["spd"], 32) : 0,
+              spe: (mon.evs && mon.evs["spe"] !== undefined && Number.isInteger(mon.evs["spe"])) ? Math.min(mon.evs["spe"], 32) : 0,
             },
             IVs: {
               hp: (mon.ivs && mon.ivs["hp"] !== undefined && Number.isInteger(mon.ivs["hp"])) ? mon.ivs["hp"] : 31,
@@ -430,10 +430,10 @@ function monSideReducer(mons, action){ // all actions must contain containerInde
       resultMons = [...subMons, {
         id: action.opCount+1,
         notes: "",
-        species: "Ababo",
+        species: "Abomasnow",
         nature: "Serious",
-        ability: "Pixilate",
-        teraType: "Fairy",
+        ability: "Snow Warning",
+        teraType: "Grass",
         teraActive: false,
         item: "(no item)",
         moves: {
@@ -453,10 +453,10 @@ function monSideReducer(mons, action){ // all actions must contain containerInde
       resultMons = [...subMons.slice(0, action.index), {
         id: action.opCount+1,
         notes: "",
-        species: "Ababo",
+        species: "Abomasnow",
         nature: "Serious",
-        ability: "Pixilate",
-        teraType: "Fairy",
+        ability: "Snow Warning",
+        teraType: "Grass",
         teraActive: false,
         item: "(no item)",
         moves: {
