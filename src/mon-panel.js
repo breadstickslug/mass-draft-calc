@@ -818,9 +818,135 @@ const ChampionsLegalSpecies = [
   'Hydrapple'
 ];
 
+const ChampionsLegalItems = [
+  'Black Belt',
+  'Black Glasses',
+  'Bright Powder',
+  'Charcoal',
+  'Choice Scarf',
+  'Dragon Fang',
+  'Fairy Feather',
+  'Focus Band',
+  'Focus Sash',
+  'Hard Stone',
+  'King\'s Rock',
+  'Leftovers',
+  'Light Ball',
+  'Magnet',
+  'Mental Herb',
+  'Metal Coat',
+  'Miracle Seed',
+  'Mystic Water',
+  'Never-Melt Ice',
+  'Poison Barb',
+  'Quick Claw',
+  'Scope Lens',
+  'Sharp Beak',
+  'Shell Bell',
+  'Silk Scarf',
+  'Silver Powder',
+  'Soft Sand',
+  'Spell Tag',
+  'Twisted Spoon',
+  'White Herb',
+  'Abomasite',
+  'Absolite',
+  'Aerodactylite',
+  'Aggronite',
+  'Alakazite',
+  'Altarianite',
+  'Ampharosite',
+  'Audinite',
+  'Banettite',
+  'Beedrillite',
+  'Blastoisinite',
+  'Cameruptite',
+  'Chandelurite',
+  'Charizardite X',
+  'Charizardite Y',
+  'Chesnaughtite',
+  'Chimechite',
+  'Clefablite',
+  'Crabominite',
+  'Delphoxite',
+  'Dragoninite',
+  'Drampanite',
+  'Emboarite',
+  'Excadrite',
+  'Feraligite',
+  'Floettite',
+  'Froslassite',
+  'Galladite',
+  'Garchompite',
+  'Gardevoirite',
+  'Gengarite',
+  'Glalitite',
+  'Glimmoranite',
+  'Golurkite',
+  'Greninjite',
+  'Gyaradosite',
+  'Hawluchanite',
+  'Heracronite',
+  'Houndoominite',
+  'Kangaskhanite',
+  'Lopunnite',
+  'Lucarionite',
+  'Manectite',
+  'Medichamite',
+  'Meganiumite',
+  'Meowsticite',
+  'Pidgeotite',
+  'Pinsirite',
+  'Sablenite',
+  'Scizorite',
+  'Scovillainite',
+  'Sharpedonite',
+  'Skarmorite',
+  'Slowbronite',
+  'Starminite',
+  'Steelixite',
+  'Tyranitarite',
+  'Venusaurite',
+  'Victreebelite',
+  'Aspear Berry',
+  'Babiri Berry',
+  'Charti Berry',
+  'Cheri Berry',
+  'Chesto Berry',
+  'Chilan Berry',
+  'Chople Berry',
+  'Coba Berry',
+  'Colbur Berry',
+  'Haban Berry',
+  'Kasib Berry',
+  'Kebia Berry',
+  'Leppa Berry',
+  'Lum Berry',
+  'Occa Berry',
+  'Oran Berry',
+  'Passho Berry',
+  'Payapa Berry',
+  'Pecha Berry',
+  'Persim Berry',
+  'Rawst Berry',
+  'Rindo Berry',
+  'Roseli Berry',
+  'Shuca Berry',
+  'Sitrus Berry',
+  'Tanga Berry',
+  'Wacan Berry',
+  'Yache Berry'
+];
+
 function iconIndexToCoords(num) {
   const top = -Math.floor(num / 12) * 30;
   const left = -(num % 12) * 40;
+  return { top: top, left: left };
+}
+
+function iconIndexToCoordsItem(num) {
+  const top = -Math.floor(num / 16) * 24;
+  const left = -(num % 16) * 24;
   return { top: top, left: left };
 }
 
@@ -856,6 +982,16 @@ function speciesIconExceptions(name) {
   return { top: img.Icons.getPokemon(name).top.toString(), left: img.Icons.getPokemon(name).left.toString() };
 }
 
+function itemIconExceptions(name) {
+  if (name === "Chimechite") { return iconIndexToCoordsItem(498); }
+  if (name === "Crabominite") { return iconIndexToCoordsItem(507); }
+  if (name === "Glimmoranite") { return iconIndexToCoordsItem(512); }
+  if (name === "Golurkite") { return iconIndexToCoordsItem(505); }
+  if (name === "Meowsticite") { return iconIndexToCoordsItem(506); }
+  if (name === "Scovillainite") { return iconIndexToCoordsItem(511); }
+  return { top: img.Icons.getItem(name).top.toString(), left: img.Icons.getItem(name).left.toString() };
+}
+
 const gen = Generations.get(9);
 console.log(gen);
 
@@ -888,8 +1024,10 @@ sortedTypes.sort(function(a, b) {
 })
 
 var sortedItems = [];
-for (const id of gen.items) {
-  sortedItems.push(id.name);
+//for (const id of gen.items) {
+for (const id of ChampionsLegalItems) {
+//  sortedItems.push(id.name);
+  sortedItems.push(id);
 }
 sortedItems.sort(function(a, b) {
   if (a.toUpperCase() > b.toUpperCase()) { return 1; }
@@ -1004,12 +1142,19 @@ function moveGraphicData(type, teratype, teraactive) {
     const itemName = mons[pC.containerIndex][monID].item;
     
     const imgSrcMemo = useMemo(() => {
+      var imgData = itemIconExceptions(itemName);
       return "transparent url(".concat(img.Icons.getItem(itemName).url)
                               .concat(") no-repeat scroll ")
-                              .concat(img.Icons.getItem(itemName).left.toString())
+                              .concat(imgData.left)
                               .concat("px ")
-                              .concat(img.Icons.getItem(itemName).top.toString())
+                              .concat(imgData.top)
                               .concat("px");
+    //  return "transparent url(".concat(img.Icons.getItem(itemName).url)
+    //                          .concat(") no-repeat scroll ")
+    //                          .concat(img.Icons.getItem(itemName).left.toString())
+    //                          .concat("px ")
+    //                          .concat(img.Icons.getItem(itemName).top.toString())
+    //                          .concat("px");
     }, [itemName]);
     return (
       <object src="//:0" alt=" " style={{
